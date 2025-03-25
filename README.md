@@ -34,3 +34,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## API Endpoints
+
+### POST /api/register
+- **Description**: Registers a new user with Clerk.
+- **Request**: `POST /api/register`
+  - **Body**: `{ "email": string, "password": string, "name": string }`
+    - `email`: A valid email address (required).
+    - `password`: Must be at least 8 characters and not found in a data breach (required).
+    - `name`: Full name (first and last name, required).
+- **Responses**:
+  - **Success (200)**: `{ "message": "Registration successful", "userId": string }`
+  - **Error (400)**: 
+    - `{ "error": "Invalid email or password" }` (if email is empty or password is too short)
+    - `{ "error": "Password has been found in a data breach. Please use a different password." }` (if password is pwned)
+    - `{ "error": "Email address already exists. Please use a different email." }` (if email is already registered, after adding the optional handling)
+  - **Error (500)**: `{ "error": "Registration failed", "details": string }` (for other errors)
