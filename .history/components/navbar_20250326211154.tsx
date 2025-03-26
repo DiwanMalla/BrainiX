@@ -42,7 +42,7 @@ import type {
   PurchasedCourse,
 } from "@/lib/local-storage";
 import { useToast } from "@/hooks/use-toast";
-import { useClerk, UserButton } from "@clerk/nextjs";
+import { useAuth, useClerk, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 
 export default function Navbar() {

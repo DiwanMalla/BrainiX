@@ -15,7 +15,9 @@ import { Brain } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
-export default function AuthPage() {
+interface AuthPageProps {}
+
+export default function AuthPage({}: AuthPageProps) {
   const [isResetting, setIsResetting] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
