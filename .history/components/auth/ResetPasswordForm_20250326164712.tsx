@@ -37,10 +37,7 @@ export default function ResetPasswordForm({
       });
       setResetSent(true);
     } catch (err) {
-      setError(
-        (err as Error).message ||
-          "Failed to send reset email. Please try again."
-      );
+      setError(err.message || "Failed to send reset email. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -62,7 +59,7 @@ export default function ResetPasswordForm({
 
       if (result.status === "complete") {
         if (result.createdSessionId) {
-          setActive({ session: result.createdSessionId });
+          await setActive({ session: result.createdSessionId });
         } else {
           setError("Failed to create session. Please try again.");
         }
@@ -70,12 +67,11 @@ export default function ResetPasswordForm({
       } else {
         setError("Unexpected response from server. Please try again.");
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(
-        (err as Error).message === "Incorrect code"
+        err.message === "Incorrect code"
           ? "The reset code is incorrect or has expired. Please check the code or request a new one."
-          : (err as Error).message ||
-              "Failed to reset password. Please try again."
+          : err.message || "Failed to reset password. Please try again."
       );
     } finally {
       setIsSubmitting(false);

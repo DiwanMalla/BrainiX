@@ -454,7 +454,7 @@ export default function Navbar() {
                           className="relative h-12 w-20 rounded overflow-hidden flex-shrink-0"
                           onClick={() => setIsCartOpen(false)}
                         >
-                          <Image
+                          <img
                             src={item.image || "/placeholder.svg"}
                             alt={item.title}
                             className="h-full w-full object-cover transition-transform group-hover:scale-105"

@@ -51,22 +51,13 @@ export default function VerificationForm({
             : "Unexpected response from server. Please try again or request a new code."
         );
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Verification error:", JSON.stringify(err, null, 2)); // Detailed error log
-      if (
-        err instanceof Error &&
-        (err as any).errors?.[0]?.code === "form_code_incorrect"
-      ) {
-        setError(
-          "The verification code is incorrect or expired. Please check the code or request a new one."
-        );
-      } else {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to verify email. Please try again."
-        );
-      }
+      setError(
+        err.errors?.[0]?.code === "form_code_incorrect"
+          ? "The verification code is incorrect or expired. Please check the code or request a new one."
+          : err.message || "Failed to verify email. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }

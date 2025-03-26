@@ -34,12 +34,8 @@ export default function SignUpForm({
       });
       await signUp.prepareEmailAddressVerification();
       setIsVerifying(true);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || "Failed to sign up. Please try again.");
-      } else {
-        setError("Failed to sign up. Please try again.");
-      }
+    } catch (err: any) {
+      setError(err.message || "Failed to sign up. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

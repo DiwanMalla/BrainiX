@@ -43,7 +43,6 @@ import type {
 } from "@/lib/local-storage";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth, useClerk, UserButton } from "@clerk/nextjs";
-import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
@@ -135,6 +134,11 @@ export default function Navbar() {
   const goToWishlist = () => {
     router.push("/wishlist");
     setIsWishlistOpen(false);
+  };
+  const handleLogout = async () => {
+    await signOut(); // Signs the user out
+    // Optionally redirect after logout
+    window.location.href = "/auth?tab=signin";
   };
 
   return (
@@ -354,7 +358,7 @@ export default function Navbar() {
                           className="relative h-12 w-20 rounded overflow-hidden flex-shrink-0"
                           onClick={() => setIsWishlistOpen(false)}
                         >
-                          <Image
+                          <img
                             src={item.image || "/placeholder.svg"}
                             alt={item.title}
                             className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -454,7 +458,7 @@ export default function Navbar() {
                           className="relative h-12 w-20 rounded overflow-hidden flex-shrink-0"
                           onClick={() => setIsCartOpen(false)}
                         >
-                          <Image
+                          <img
                             src={item.image || "/placeholder.svg"}
                             alt={item.title}
                             className="h-full w-full object-cover transition-transform group-hover:scale-105"
