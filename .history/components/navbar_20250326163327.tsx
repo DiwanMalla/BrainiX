@@ -531,7 +531,9 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="hidden md:flex items-center gap-2">
-                <UserButton afterSignOutUrl="/" />
+                <Button variant="ghost" onClick={handleLogout}>
+                  LogOut
+                </Button>
               </div>
             </>
           ) : (

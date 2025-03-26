@@ -26,7 +26,6 @@ import {
   Heart,
   ShoppingCart,
   BookOpen,
-  User,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -43,7 +42,7 @@ import type {
   PurchasedCourse,
 } from "@/lib/local-storage";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth, useClerk, UserButton } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 
 export default function Navbar() {
   const router = useRouter();
@@ -59,7 +58,8 @@ export default function Navbar() {
   const { toast } = useToast();
 
   const { user } = useClerk();
-  const { signOut } = useAuth();
+  console.log(user?.fullName);
+
   useEffect(() => {
     // Load cart and wishlist from local storage
     setCartItems(getCart());
@@ -136,11 +136,6 @@ export default function Navbar() {
     router.push("/wishlist");
     setIsWishlistOpen(false);
   };
-  const handleLogout = async () => {
-    await signOut(); // Signs the user out
-    // Optionally redirect after logout
-    window.location.href = "/auth?tab=signin";
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -202,7 +197,9 @@ export default function Navbar() {
                 </nav>
                 {user ? (
                   <>
-                    <UserButton afterSignOutUrl="/" />
+                    <Button asChild>
+                      <Link href="/auth?tab=signin">Sign In</Link>
+                    </Button>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2">
@@ -531,7 +528,9 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="hidden md:flex items-center gap-2">
-                <UserButton afterSignOutUrl="/" />
+                <Button variant="ghost" asChild>
+                  <Link href="/auth?tab=signin">LogOut</Link>
+                </Button>
               </div>
             </>
           ) : (

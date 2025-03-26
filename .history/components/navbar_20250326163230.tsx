@@ -26,7 +26,6 @@ import {
   Heart,
   ShoppingCart,
   BookOpen,
-  User,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -202,7 +201,7 @@ export default function Navbar() {
                 </nav>
                 {user ? (
                   <>
-                    <UserButton afterSignOutUrl="/" />
+                    <Button onClick={handleLogout}>{UserButton}</Button>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2">
@@ -531,7 +530,9 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="hidden md:flex items-center gap-2">
-                <UserButton afterSignOutUrl="/" />
+                <Button variant="ghost" onClick={handleLogout}>
+                  LogOut
+                </Button>
               </div>
             </>
           ) : (

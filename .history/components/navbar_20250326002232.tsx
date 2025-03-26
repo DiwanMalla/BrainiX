@@ -26,7 +26,6 @@ import {
   Heart,
   ShoppingCart,
   BookOpen,
-  User,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -43,7 +42,7 @@ import type {
   PurchasedCourse,
 } from "@/lib/local-storage";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth, useClerk, UserButton } from "@clerk/nextjs";
+import { useAuth, useClerk } from "@clerk/nextjs";
 
 export default function Navbar() {
   const router = useRouter();
@@ -202,7 +201,9 @@ export default function Navbar() {
                 </nav>
                 {user ? (
                   <>
-                    <UserButton afterSignOutUrl="/" />
+                    <Button asChild onClick={handleLogout}>
+                      Log Out
+                    </Button>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2">
@@ -531,7 +532,9 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="hidden md:flex items-center gap-2">
-                <UserButton afterSignOutUrl="/" />
+                <Button variant="ghost" asChild onClick={handleLogout}>
+                  LogOut
+                </Button>
               </div>
             </>
           ) : (
