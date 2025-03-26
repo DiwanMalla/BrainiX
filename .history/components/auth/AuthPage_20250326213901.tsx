@@ -8,9 +8,9 @@ import AuthHeader from "./AuthHeader";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import VerificationForm from "./VerificationForm";
-import ResetPasswordForm from "./NewPasswordForm";
+import ResetPasswordForm from "./ResetPasswordForm";
 import SocialAuthButtons from "./SocialAuthButton";
-import { CircuitBoard } from "lucide-react";
+import { Brain, CircuitBoard } from "lucide-react";
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";

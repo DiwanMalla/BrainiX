@@ -8,9 +8,9 @@ import AuthHeader from "./AuthHeader";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import VerificationForm from "./VerificationForm";
-import ResetPasswordForm from "./NewPasswordForm";
+import ResetPasswordForm from "./ResetPasswordForm";
 import SocialAuthButtons from "./SocialAuthButton";
-import { CircuitBoard } from "lucide-react";
+import { Brain } from "lucide-react";
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -42,30 +42,23 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center bg-background">
-      {/* Back to Home Button with Futuristic Animation */}
+    <div className="container flex h-screen w-screen flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Back to Home Button with Futuristic Glow */}
       <Link href="/" className="absolute left-4 top-4 md:left-8 md:top-8">
         <Button
           variant="ghost"
-          className="group relative rounded-full border border-border bg-background p-2 text-foreground transition-all duration-300 hover:bg-primary/5 hover:text-primary"
+          className="group relative overflow-hidden rounded-full border border-gray-700 bg-gray-800/50 text-gray-200 hover:text-white"
         >
-          {/* Circuit Animation Container */}
-          <span className="absolute inset-0 rounded-full border border-transparent transition-all duration-500 group-hover:border-primary/50 group-hover:animate-circuit-trace" />
-
-          {/* Icon with Pulse Effect */}
-          <CircuitBoard className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:scale-105 group-hover:animate-pulse" />
-
-          {/* Text with Subtle Shift */}
-          <span className="relative font-mono text-sm tracking-tight transition-all duration-300 group-hover:tracking-wider">
-            Back to Home
-          </span>
+          <span className="absolute inset-0 scale-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 transition-transform duration-300 group-hover:scale-150 group-hover:opacity-20"></span>
+          <Brain className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+          Back to Home
         </Button>
       </Link>
 
       {/* Main Auth Container with Robot-Inspired Styling */}
-      <div className="relative mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px] rounded-xl bg-background p-6 shadow-md ring-1 ring-border">
-        {/* Robot Accent: Top Glowing Line */}
-        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+      <div className="relative mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px] rounded-xl bg-gray-800/80 p-6 shadow-lg ring-1 ring-gray-700/50 backdrop-blur-md">
+        {/* Subtle Robot Accent (Top Glow Line) */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-75"></div>
 
         <AuthHeader title={getHeaderText()} description={getDescription()} />
 
@@ -83,16 +76,16 @@ export default function AuthPage() {
           />
         ) : (
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted/50 p-1 shadow-inner ring-1 ring-border">
+            <TabsList className="grid w-full grid-cols-2 rounded-lg bg-gray-900/50 p-1 shadow-inner ring-1 ring-gray-700">
               <TabsTrigger
                 value="signin"
-                className="rounded-md text-foreground transition-all duration-200 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                className="rounded-md text-gray-300 transition-all duration-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=active]:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
               >
                 Sign In
               </TabsTrigger>
               <TabsTrigger
                 value="signup"
-                className="rounded-md text-foreground transition-all duration-200 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                className="rounded-md text-gray-300 transition-all duration-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=active]:shadow-[0_0_10px_rgba(147,51,234,0.5)]"
               >
                 Sign Up
               </TabsTrigger>
@@ -115,8 +108,8 @@ export default function AuthPage() {
           </Tabs>
         )}
 
-        {/* Robot Accent: Bottom Glowing Line */}
-        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+        {/* Subtle Robot Accent (Bottom Glow Line) */}
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-75"></div>
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import { Inter } from "next/font/google";
 import { ToastProvider } from "@/components/toast/toast-provider";
 import DebugStorage from "@/components/debug-storage";
 import ChatIcon from "@/components/chat/chat-icon";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,14 +21,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ClerkProvider>
-        <body className={inter.className}>
-          {children}
-          <ToastProvider />
-          <DebugStorage />
-          <ChatIcon />
-        </body>
-      </ClerkProvider>
+      <body className={inter.className}>
+        {children}
+        <ToastProvider />
+        <DebugStorage />
+        <ChatIcon />
+      </body>
     </html>
   );
 }

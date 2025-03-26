@@ -2,10 +2,9 @@ import type React from "react";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ToastProvider } from "@/components/toast/toast-provider";
+import { ToastProvider } from "@/components/ui/toast-provider";
 import DebugStorage from "@/components/debug-storage";
-import ChatIcon from "@/components/chat/chat-icon";
-import { ClerkProvider } from "@clerk/nextjs";
+import ChatIcon from "@/components/chat-icon";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,14 +21,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ClerkProvider>
-        <body className={inter.className}>
-          {children}
-          <ToastProvider />
-          <DebugStorage />
-          <ChatIcon />
-        </body>
-      </ClerkProvider>
+      <body className={inter.className}>
+        {children}
+        <ToastProvider />
+        <DebugStorage />
+        <ChatIcon />
+      </body>
     </html>
   );
 }

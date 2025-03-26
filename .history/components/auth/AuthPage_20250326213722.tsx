@@ -8,9 +8,9 @@ import AuthHeader from "./AuthHeader";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import VerificationForm from "./VerificationForm";
-import ResetPasswordForm from "./NewPasswordForm";
+import ResetPasswordForm from "./ResetPasswordForm";
 import SocialAuthButtons from "./SocialAuthButton";
-import { CircuitBoard } from "lucide-react";
+import { Brain } from "lucide-react";
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -47,18 +47,11 @@ export default function AuthPage() {
       <Link href="/" className="absolute left-4 top-4 md:left-8 md:top-8">
         <Button
           variant="ghost"
-          className="group relative rounded-full border border-border bg-background p-2 text-foreground transition-all duration-300 hover:bg-primary/5 hover:text-primary"
+          className="group relative overflow-hidden rounded-full border border-border bg-background text-foreground hover:text-primary"
         >
-          {/* Circuit Animation Container */}
-          <span className="absolute inset-0 rounded-full border border-transparent transition-all duration-500 group-hover:border-primary/50 group-hover:animate-circuit-trace" />
-
-          {/* Icon with Pulse Effect */}
-          <CircuitBoard className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:scale-105 group-hover:animate-pulse" />
-
-          {/* Text with Subtle Shift */}
-          <span className="relative font-mono text-sm tracking-tight transition-all duration-300 group-hover:tracking-wider">
-            Back to Home
-          </span>
+          <span className="absolute inset-0 scale-0 rounded-full bg-primary/10 transition-transform duration-300 group-hover:scale-150"></span>
+          <Brain className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+          Back to Home
         </Button>
       </Link>
 

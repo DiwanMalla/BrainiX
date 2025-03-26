@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, CheckCircle, Globe, Laptop, Users } from "lucide-react";
 import Navbar from "@/components/navbar";
 import Image from "next/image";
-import Footer from "@/components/footer";
 // import CourseCard from "@/components/course-card"
 // import TestimonialCard from "@/components/testimonial-card"
 // import Navbar from "@/components/navbar"
@@ -14,7 +13,7 @@ export default function Home() {
   // const featuredCourses = getAllCourses().slice(0, 3)
 
   return (
-    <div className="flex min-h-screen flex-col ">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
@@ -239,7 +238,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

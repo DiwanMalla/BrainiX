@@ -8,7 +8,7 @@ import AuthHeader from "./AuthHeader";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import VerificationForm from "./VerificationForm";
-import ResetPasswordForm from "./NewPasswordForm";
+import ResetPasswordForm from "./ResetPassword/ResetPasswordForm";
 import SocialAuthButtons from "./SocialAuthButton";
 import { CircuitBoard } from "lucide-react";
 
