@@ -20,18 +20,13 @@ export async function GET() {
     // Ensure TypeScript properly infers the type
     const formattedWishlist = wishlist.map(
       (item: {
-        course: {
-          id: string;
-          slug: string;
-          title: string;
-          thumbnail: string | null;
-        };
+        course: { id: string; slug: string; title: string; thumbnail: string };
       }) => ({
         course: {
           id: item.course.id,
           slug: item.course.slug,
           title: item.course.title,
-          thumbnail: item.course.thumbnail || "/placeholder.svg",
+          thumbnail: item.course.thumbnail,
         },
       })
     );

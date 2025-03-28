@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import prisma from "@/lib/db";
+import prisma from "@/lib/prismadb";
+import { getAuthUser } from "@/lib/auth";
+
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await getAuthUser();
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const wishlist = await prisma.wishlist.findMany({
-      where: { userId },
+      where: { userId: user.id },
       include: {
         course: {
           select: { id: true, slug: true, title: true, thumbnail: true },
@@ -20,18 +21,13 @@ export async function GET() {
     // Ensure TypeScript properly infers the type
     const formattedWishlist = wishlist.map(
       (item: {
-        course: {
-          id: string;
-          slug: string;
-          title: string;
-          thumbnail: string | null;
-        };
+        course: { id: string; slug: string; title: string; thumbnail: string };
       }) => ({
         course: {
           id: item.course.id,
           slug: item.course.slug,
           title: item.course.title,
-          thumbnail: item.course.thumbnail || "/placeholder.svg",
+          thumbnail: item.course.thumbnail,
         },
       })
     );
