@@ -7,9 +7,9 @@ type Course = {
   id: string;
   slug: string;
   title: string;
-  thumbnail: string | null;
+  thumbnail: string;
   price: number;
-  instructor: { name: string | null };
+  instructor: { name: string };
 };
 
 type CartItem = {
@@ -45,13 +45,7 @@ export async function GET() {
 
     // Ensure type safety in mapping
     const courses: Course[] =
-      cartItems?.items.map((item: CartItem) => ({
-        ...item.course,
-        instructor: {
-          ...item.course.instructor,
-          name: item.course.instructor.name || "Unknown",
-        },
-      })) || [];
+      cartItems?.items.map((item: CartItem) => item.course) || [];
 
     return NextResponse.json(courses);
   } catch (error) {
