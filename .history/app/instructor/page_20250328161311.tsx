@@ -36,25 +36,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { UserButton } from "@clerk/nextjs";
+import { useClerk, UserButton } from "@clerk/nextjs";
 
 export default function InstructorCoursesPage() {
   // const [instructor, setInstructor] = useState<Instructor | null>(null);
-  interface Course {
-    id: string;
-    title: string;
-    image?: string;
-    published?: boolean;
-    bestseller?: boolean;
-    shortDescription?: string;
-    description: string;
-    students: number;
-    rating: number;
-    duration: string;
-    price: number;
-  }
-
-  const [instructorCourses] = useState<Course[]>([]);
+  const [instructorCourses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const { toast } = useToast();
@@ -101,7 +87,7 @@ export default function InstructorCoursesPage() {
       description: "The course has been deleted successfully",
     });
   };
-
+  const user = useClerk();
   return (
     <div className="flex min-h-screen">
       <InstructorSidebar />

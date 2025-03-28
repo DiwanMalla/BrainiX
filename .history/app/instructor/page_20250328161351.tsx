@@ -36,7 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { UserButton } from "@clerk/nextjs";
+import { useClerk, UserButton } from "@clerk/nextjs";
 
 export default function InstructorCoursesPage() {
   // const [instructor, setInstructor] = useState<Instructor | null>(null);
@@ -101,7 +101,7 @@ export default function InstructorCoursesPage() {
       description: "The course has been deleted successfully",
     });
   };
-
+  const user = useClerk();
   return (
     <div className="flex min-h-screen">
       <InstructorSidebar />

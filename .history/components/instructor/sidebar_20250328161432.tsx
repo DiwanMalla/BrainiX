@@ -16,12 +16,14 @@ import {
   MessageSquare,
   Settings,
   HelpCircle,
+  LogOut,
 } from "lucide-react";
 // import {
 //   getCurrentInstructor,
 //   logoutInstructor,
 //   type Instructor,
 // } from "@/lib/instructor-auth";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   className?: string;
@@ -29,7 +31,7 @@ interface SidebarProps {
 
 export function InstructorSidebar({ className }: SidebarProps) {
   const pathname = usePathname();
-
+  const router = useRouter();
   // const [instructor, setInstructor] = useState<Instructor | null>(null);
   const [open, setOpen] = useState(false);
 
