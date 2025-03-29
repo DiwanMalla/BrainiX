@@ -5,10 +5,10 @@ interface Params {
   slug: string;
 }
 
-export async function PUT(req: NextRequest, context: { params: Params }) {
+export async function PUT(req: NextRequest, { params }: { params: Params }) {
   try {
     const body = await req.json();
-    const { slug } = context.params;
+    const { slug } = params;
 
     // Update course in Prisma (assuming a Course model exists)
     const updatedCourse = await prisma.course.update({
