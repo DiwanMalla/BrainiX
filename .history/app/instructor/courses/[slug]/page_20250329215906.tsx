@@ -1,4 +1,5 @@
-import { GetServerSideProps } from "next";
+"use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCourseBySlug, Course } from "@/lib/course-data";
@@ -9,30 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Define the type for params explicitly
-interface Params {
-  slug: string;
-}
-
-interface EditCoursePageProps {
-  params: Params;
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.params as Params;
-
-  // Fetch course based on slug
-  const course = await getCourseBySlug(slug);
-
-  return {
-    props: {
-      params: { slug },
-      course,
-    },
-  };
-};
-
-export default function EditCoursePage({ params }: EditCoursePageProps) {
+export default function EditCoursePage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<Partial<Course>>({});
