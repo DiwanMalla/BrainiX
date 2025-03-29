@@ -1,7 +1,7 @@
 "use client";
-
+import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getCourseBySlug, Course } from "@/lib/course-data";
 
 import { Button } from "@/components/ui/button";
@@ -9,22 +9,41 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React from "react";
 
-export default function EditCoursePage() {
-  const params = useParams();
+// Define the type for params explicitly
+interface Params {
+  slug: string;
+}
+
+interface EditCoursePageProps {
+  params: Params;
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.params as Params;
+
+  // Fetch course based on slug
+  const course = await getCourseBySlug(slug);
+
+  return {
+    props: {
+      params: { slug },
+      course,
+    },
+  };
+};
+
+export default function EditCoursePage({ params }: EditCoursePageProps) {
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<Partial<Course>>({});
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof params.slug === "string") {
-      const fetchedCourse = getCourseBySlug(params.slug);
-      if (fetchedCourse) {
-        setCourse(fetchedCourse);
-        setFormData(fetchedCourse);
-      }
+    const fetchedCourse = getCourseBySlug(params.slug);
+    if (fetchedCourse) {
+      setCourse(fetchedCourse);
+      setFormData(fetchedCourse);
     }
     setIsLoading(false);
   }, [params.slug]);

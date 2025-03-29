@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getCourseBySlug, Course } from "@/lib/course-data";
@@ -9,25 +8,30 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React from "react";
 
 export default function EditCoursePage() {
-  const params = useParams();
+  const router = useRouter();
+  const { slug } = useParams() as { slug: string };
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<Partial<Course>>({});
-  const router = useRouter();
+  const [isHydrated, setIsHydrated] = useState(false); // Add hydration check
 
   useEffect(() => {
-    if (typeof params.slug === "string") {
-      const fetchedCourse = getCourseBySlug(params.slug);
-      if (fetchedCourse) {
-        setCourse(fetchedCourse);
-        setFormData(fetchedCourse);
-      }
+    if (!slug) return;
+
+    const fetchedCourse = getCourseBySlug(slug);
+    if (fetchedCourse) {
+      setCourse(fetchedCourse);
+      setFormData(fetchedCourse);
     }
     setIsLoading(false);
-  }, [params.slug]);
+  }, [slug]);
+
+  useEffect(() => {
+    // Ensuring hydration on the client
+    setIsHydrated(true);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,7 +43,7 @@ export default function EditCoursePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/courses/${params.slug}`, {
+      const response = await fetch(`/api/courses/${slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -56,7 +60,7 @@ export default function EditCoursePage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !isHydrated) {
     return (
       <div className="flex min-h-screen bg-background">
         <div className="flex-1 flex items-center justify-center p-6">

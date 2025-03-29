@@ -19,12 +19,10 @@ export default function EditCoursePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof params.slug === "string") {
-      const fetchedCourse = getCourseBySlug(params.slug);
-      if (fetchedCourse) {
-        setCourse(fetchedCourse);
-        setFormData(fetchedCourse);
-      }
+    const fetchedCourse = getCourseBySlug(params.slug);
+    if (fetchedCourse) {
+      setCourse(fetchedCourse);
+      setFormData(fetchedCourse);
     }
     setIsLoading(false);
   }, [params.slug]);

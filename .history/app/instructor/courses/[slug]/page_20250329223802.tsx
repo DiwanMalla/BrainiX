@@ -9,25 +9,24 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React from "react";
 
 export default function EditCoursePage() {
-  const params = useParams();
+  const router = useRouter();
+  const { slug } = useParams() as { slug: string }; // Access slug from dynamic route params
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<Partial<Course>>({});
-  const router = useRouter();
 
   useEffect(() => {
-    if (typeof params.slug === "string") {
-      const fetchedCourse = getCourseBySlug(params.slug);
-      if (fetchedCourse) {
-        setCourse(fetchedCourse);
-        setFormData(fetchedCourse);
-      }
+    if (!slug) return; // If slug is not available, don't fetch the course yet
+
+    const fetchedCourse = getCourseBySlug(slug);
+    if (fetchedCourse) {
+      setCourse(fetchedCourse);
+      setFormData(fetchedCourse);
     }
     setIsLoading(false);
-  }, [params.slug]);
+  }, [slug]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,7 +38,7 @@ export default function EditCoursePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/courses/${params.slug}`, {
+      const response = await fetch(`/api/courses/${slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
