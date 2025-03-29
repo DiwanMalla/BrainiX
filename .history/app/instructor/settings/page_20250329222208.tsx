@@ -116,7 +116,7 @@ export default function InstructorSettingsPage() {
     toast({ title: "Preferences saved (local only)" });
   };
 
-  const handleSaveDefaults = async () => {
+  const handleSaveDefaults = async (s) => {
     // const defaults = {
     //   defaultPrice: Number(data.defaultPrice),
     //   defaultVisibility,
