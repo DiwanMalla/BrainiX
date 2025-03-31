@@ -2,12 +2,10 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
-// Correct type for params
-interface CourseParams {
-  slug: string;
-}
-
-export async function GET(req: Request, { params }: { params: CourseParams }) {
+export async function GET(
+  req: Request,
+  { params }: { params: { slug: string } }
+) {
   const { slug } = params;
 
   try {
@@ -30,7 +28,10 @@ export async function GET(req: Request, { params }: { params: CourseParams }) {
   }
 }
 
-export async function PUT(req: Request, { params }: { params: CourseParams }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: { slug: string } }
+) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
