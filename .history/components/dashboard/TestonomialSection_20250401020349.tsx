@@ -1,4 +1,4 @@
-import { TestimonialCard } from "../TestonomialCard";
+import { TestimonialCard } from "../TestimonialCard";
 import { motion } from "framer-motion";
 
 const hardcodedTestimonials = [
@@ -10,7 +10,7 @@ const hardcodedTestimonials = [
     authorTitle: "Software Engineer at TechCorp",
     rating: 4.8,
     course: { title: "Web Development Bootcamp" },
-    avatarUrl: "https://i.pravatar.cc/150?img=1",
+    avatarUrl: "https://i.pravatar.cc/150?img=1", // Placeholder avatar
   },
   {
     id: "2",
@@ -35,8 +35,14 @@ const hardcodedTestimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
-      <div className="container px-4 md:px-6">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-gray-900 to-gray-800 relative overflow-hidden">
+      {/* Particle Effect Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full filter blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full filter blur-3xl animate-pulse delay-1000" />
+      </div>
+
+      <div className="container px-4 md:px-6 relative z-10">
         <div className="flex flex-col items-center space-y-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -44,10 +50,10 @@ export default function TestimonialsSection() {
             transition={{ duration: 0.8 }}
             className="space-y-2"
           >
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl text-foreground">
+            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
               What Our Students Say
             </h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed">
+            <p className="max-w-[900px] text-gray-300 md:text-xl/relaxed">
               Hear from our community of learners who have transformed their
               careers with BrainiX.
             </p>

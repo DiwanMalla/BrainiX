@@ -1,4 +1,4 @@
-import { TestimonialCard } from "../TestonomialCard";
+import { TestimonialCard } from "../TestimonialCard";
 import { motion } from "framer-motion";
 
 const hardcodedTestimonials = [

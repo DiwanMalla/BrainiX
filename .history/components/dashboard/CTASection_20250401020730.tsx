@@ -20,15 +20,9 @@ export default function CTASection({ isSignedIn }: CTASectionProps) {
             </p>
           </div>
           <div className="flex flex-col gap-2 min-[400px]:flex-row">
-            {/* Removed Get Started Button */}
-            <Button
-              size="lg"
-              variant="outline"
-              className="hover:bg-transparent hover:text-primary-foreground border-primary-foreground bg-primary-foreground text-primary"
-              asChild
-            >
+            <Button size="lg" variant="secondary" asChild>
               <Link href={isSignedIn ? "/dashboard" : "/auth?tab=signup"}>
-                {isSignedIn ? "Go to Dashboard" : "Join for Free"}
+                {isSignedIn ? "Get Started" : "Join for Free"}
               </Link>
             </Button>
             <Button

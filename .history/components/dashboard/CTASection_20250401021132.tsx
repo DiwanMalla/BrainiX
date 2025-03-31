@@ -24,7 +24,7 @@ export default function CTASection({ isSignedIn }: CTASectionProps) {
             <Button
               size="lg"
               variant="outline"
-              className="hover:bg-transparent hover:text-primary-foreground border-primary-foreground bg-primary-foreground text-primary"
+              className=" border-primary-foreground hover:bg-primary-foreground hover:text-primary"
               asChild
             >
               <Link href={isSignedIn ? "/dashboard" : "/auth?tab=signup"}>
