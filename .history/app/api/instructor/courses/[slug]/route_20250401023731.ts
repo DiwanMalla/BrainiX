@@ -7,10 +7,8 @@ interface CourseParams {
   slug: string;
 }
 
-export async function GET(params: Promise<{ params: CourseParams }>) {
-  const {
-    params: { slug },
-  } = await params;
+export async function GET(req: Request, { params }: { params: CourseParams }) {
+  const { slug } = params;
 
   try {
     const course = await prisma.course.findUnique({

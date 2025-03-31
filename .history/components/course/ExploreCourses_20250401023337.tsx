@@ -37,6 +37,7 @@ interface Course {
   shortDescription?: string;
   duration?: number; // Added for duration filter
   subtitlesLanguages?: string[]; // Added for subtitles filter
+  certificateAvailable?: boolean; // Added for certificate filter
 }
 
 // Define filter state interface
@@ -124,6 +125,13 @@ export default function ExploreCourses() {
             (course) => course.duration && Number(course.duration) > 8
           );
         }
+      }
+
+      // Subtitles Filter
+      if (filters.subtitles) {
+        result = result.filter(
+          (course) => course.subtitlesLanguages?.length > 0
+        );
       }
 
       // Certificate Filter

@@ -37,6 +37,7 @@ interface Course {
   shortDescription?: string;
   duration?: number; // Added for duration filter
   subtitlesLanguages?: string[]; // Added for subtitles filter
+  certificateAvailable?: boolean; // Added for certificate filter
 }
 
 // Define filter state interface

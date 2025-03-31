@@ -37,6 +37,7 @@ interface Course {
   shortDescription?: string;
   duration?: number; // Added for duration filter
   subtitlesLanguages?: string[]; // Added for subtitles filter
+  certificateAvailable?: boolean; // Added for certificate filter
 }
 
 // Define filter state interface
@@ -110,17 +111,18 @@ export default function ExploreCourses() {
       if (filters.duration !== "any") {
         if (filters.duration === "short") {
           result = result.filter(
-            (course) => course.duration && Number(course.duration) <= 4
+            (course) => course.duration && !isNaN(Number(course.duration)) && Number(course.duration) <= 4
           );
         } else if (filters.duration === "medium") {
           result = result.filter(
             (course) =>
               course.duration &&
+              !isNaN(Number(course.duration)) &&
               Number(course.duration) > 4 &&
               Number(course.duration) <= 8
           );
         } else if (filters.duration === "long") {
-          result = result.filter(
+            (course) => course.duration && !isNaN(Number(course.duration)) && Number(course.duration) > 8
             (course) => course.duration && Number(course.duration) > 8
           );
         }
