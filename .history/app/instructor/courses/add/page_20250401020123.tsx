@@ -56,24 +56,22 @@ const CreateNewCourseDialog: React.FC<CreateNewCourseDialogProps> = ({
     categoryId: "", // Assuming you'll fetch categories separately
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleArrayChange = (name: string, value: string) => {
+  const handleArrayChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value.split(",").map((item) => item.trim()),
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData); // Pass the data to parent component to handle API submission
     onClose(); // Close dialog after submission

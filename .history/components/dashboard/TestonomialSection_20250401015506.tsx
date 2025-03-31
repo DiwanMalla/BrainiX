@@ -1,4 +1,4 @@
-import { TestimonialCard } from "../TestonomialCard";
+import { TestimonialCard } from "@/components/TestimonialCard";
 
 const hardcodedTestimonials = [
   {

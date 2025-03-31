@@ -1,4 +1,4 @@
-import { TestimonialCard } from "../TestonomialCard";
+import Testono
 
 const hardcodedTestimonials = [
   {
