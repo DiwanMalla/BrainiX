@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import CourseCard from "../Card/CourseCard";
+import CourseCard from "@/components/CourseCard";
 
+// Define the course data structure
 interface Course {
   id: string;
   title: string;

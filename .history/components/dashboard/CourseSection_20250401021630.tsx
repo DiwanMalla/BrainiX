@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import CourseCard from "../Card/CourseCard";
 
+// Define the course data structure
 interface Course {
   id: string;
   title: string;

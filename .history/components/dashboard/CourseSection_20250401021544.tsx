@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import CourseCard from "../Card/CourseCard";
 
+// Define the course data structure
 interface Course {
   id: string;
   title: string;
@@ -61,31 +61,33 @@ export default function CoursesSection() {
 
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <p className="text-muted-foreground">Loading...</p>
-          </div>
-        ) : courses.length === 0 ? (
-          <div className="flex justify-center py-12">
-            <p className="text-muted-foreground">No courses available.</p>
+            <p>Loading...</p>
           </div>
         ) : (
           <div className="mx-auto grid max-w-5xl gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
-              <CourseCard
+              <div
                 key={course.id}
-                id={course.id}
-                slug={course.slug}
-                title={course.title}
-                instructor={course.instructor.name}
-                rating={course.rating}
-                students={course.students}
-                price={course.price}
-                image={course.thumbnail}
-                discount={course.discount}
-                bestseller={course.bestseller}
-                category={course.category.name}
-                level={course.level}
-                shortDescription={course.shortDescription}
-              />
+                className="bg-white shadow-lg p-6 rounded-lg"
+              >
+                {course.thumbnail && (
+                  <img
+                    src={course.thumbnail}
+                    alt={course.title}
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                )}
+                <h3 className="text-xl font-semibold">{course.title}</h3>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {course.shortDescription}
+                </p>
+                <div className="mt-4 flex justify-between items-center">
+                  <span className="text-lg font-bold">${course.price}</span>
+                  <Link href={`/courses/${course.slug}`}>
+                    <Button size="sm">View Course</Button>
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         )}
