@@ -54,7 +54,7 @@ export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchData = async () => {
+  useEffect(() => {
     if (!user) {
       setCartItems([]);
       setWishlistItems([]);
@@ -63,52 +63,52 @@ export default function Navbar() {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const [wishlistRes, cartRes, enrollmentsRes] = await Promise.all([
-        fetch("/api/wishlist", { cache: "no-store" }),
-        fetch("/api/cart", { cache: "no-store" }),
-        fetch("/api/enrollments", { cache: "no-store" }),
-      ]);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [wishlistRes, cartRes, enrollmentsRes] = await Promise.all([
+          fetch("/api/wishlist"),
+          fetch("/api/cart"),
+          fetch("/api/enrollments"),
+        ]);
 
-      if (wishlistRes.ok) setWishlistItems(await wishlistRes.json());
-      else console.error("Wishlist fetch failed:", wishlistRes.status);
-      if (cartRes.ok) setCartItems(await cartRes.json());
-      else console.error("Cart fetch failed:", cartRes.status);
-      if (enrollmentsRes.ok) setEnrolledCourses(await enrollmentsRes.json());
-      else console.error("Enrollments fetch failed:", enrollmentsRes.status);
-    } catch (error) {
-      console.error("Error fetching navbar data:", error);
-      toast({ title: "Error", description: "Failed to load data" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        if (wishlistRes.ok) setWishlistItems(await wishlistRes.json());
+        if (cartRes.ok) setCartItems(await cartRes.json());
+        if (enrollmentsRes.ok) setEnrolledCourses(await enrollmentsRes.json());
+      } catch (error) {
+        console.error("Error fetching navbar data:", error);
+        toast({ title: "Error", description: "Failed to load data" });
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  useEffect(() => {
     fetchData();
-    // Poll every 10 seconds to keep in sync (simple approach)
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, [user]);
+  }, [user, toast]);
 
   const totalCartPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   const handleRemoveFromCart = async (courseId: string) => {
+    // Placeholder: Implement /api/cart DELETE endpoint
+    setCartItems(cartItems.filter((item) => item.id !== courseId));
+    toast({ title: "Removed from cart", description: "Course removed" });
+  };
+
+  const handleRemoveFromWishlist = async (courseId: string) => {
     try {
-      const res = await fetch("/api/cart", {
+      const res = await fetch("/api/wishlist", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ courseId }),
       });
 
-      if (!res.ok) throw new Error("Failed to remove from cart");
+      if (!res.ok) throw new Error("Failed to remove from wishlist");
 
-      setCartItems(cartItems.filter((item) => item.id !== courseId));
-      toast({ title: "Removed from cart", description: "Course removed" });
+      setWishlistItems(wishlistItems.filter((item) => item.id !== courseId));
+      toast({ title: "Removed from wishlist", description: "Course removed" });
     } catch (error) {
-      console.error("Error removing from cart:", error);
-      toast({ title: "Error", description: "Failed to remove from cart" });
+      console.error("Error removing from wishlist:", error);
+      toast({ title: "Error", description: "Failed to remove from wishlist" });
     }
   };
 
@@ -308,6 +308,13 @@ export default function Navbar() {
                         ${item.price}
                       </p>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveFromWishlist(item.id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))
               ) : (

@@ -74,15 +74,6 @@ interface Course {
   discountPrice?: number;
 }
 
-interface CourseItem {
-  id: string;
-  slug: string;
-  title: string;
-  thumbnail?: string | null;
-  price: number;
-  instructor: { name: string };
-}
-
 export default function CategoryDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -99,25 +90,6 @@ export default function CategoryDetailPage() {
   const [sortOption, setSortOption] = useState("popular");
   const [activeTab, setActiveTab] = useState("all");
   const [wishlist, setWishlist] = useState<string[]>([]); // Track wishlist course IDs
-
-  const fetchWishlist = async () => {
-    if (!user) {
-      setWishlist([]);
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/wishlist", { cache: "no-store" });
-      if (res.ok) {
-        const wishlistItems: CourseItem[] = await res.json();
-        setWishlist(wishlistItems.map((item) => item.id));
-      } else {
-        console.error("Failed to fetch wishlist:", res.status);
-      }
-    } catch (error) {
-      console.error("Error fetching wishlist:", error);
-    }
-  };
 
   useEffect(() => {
     const fetchCategoryDetails = async () => {
@@ -152,13 +124,23 @@ export default function CategoryDetailPage() {
       }
     };
 
+    const fetchWishlist = async () => {
+      if (!user) return;
+
+      try {
+        const res = await fetch("/api/wishlist");
+        if (res.ok) {
+          const wishlistItems = await res.json();
+          setWishlist(wishlistItems.map((item: CourseItem) => item.id));
+        }
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    };
+
     fetchCategoryDetails();
     fetchWishlist();
-
-    // Refetch wishlist when window regains focus
-    window.addEventListener("focus", fetchWishlist);
-    return () => window.removeEventListener("focus", fetchWishlist);
-  }, [slug, user]);
+  }, [slug, user, wishlist]);
 
   const handleCourseClick = (courseSlug: string) => {
     console.log(`Navigating to course: ${courseSlug}`);
@@ -193,12 +175,13 @@ export default function CategoryDetailPage() {
 
       if (!res.ok) throw new Error("Failed to update wishlist");
 
-      // Refetch the updated wishlist
-      await fetchWishlist();
-
-      toast({
-        title: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
-      });
+      if (isWishlisted) {
+        setWishlist(wishlist.filter((id) => id !== courseId));
+        toast({ title: "Removed from wishlist" });
+      } else {
+        setWishlist([...wishlist, courseId]);
+        toast({ title: "Added to wishlist" });
+      }
     } catch (error) {
       console.error("Error toggling wishlist:", error);
       toast({ title: "Error", description: "Failed to update wishlist" });

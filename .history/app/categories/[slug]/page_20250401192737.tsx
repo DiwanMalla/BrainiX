@@ -13,7 +13,6 @@ import {
   Search,
   ArrowRight,
   GraduationCap,
-  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,8 +34,6 @@ import {
 } from "@/components/ui/select";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { useClerk } from "@clerk/nextjs";
-import { useToast } from "@/hooks/use-toast";
 
 interface Category {
   id: string;
@@ -74,21 +71,9 @@ interface Course {
   discountPrice?: number;
 }
 
-interface CourseItem {
-  id: string;
-  slug: string;
-  title: string;
-  thumbnail?: string | null;
-  price: number;
-  instructor: { name: string };
-}
-
 export default function CategoryDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useClerk();
-  const { toast } = useToast();
-
   const slug = params?.slug as string;
 
   const [category, setCategory] = useState<Category | null>(null);
@@ -98,26 +83,6 @@ export default function CategoryDetailPage() {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("all");
   const [sortOption, setSortOption] = useState("popular");
   const [activeTab, setActiveTab] = useState("all");
-  const [wishlist, setWishlist] = useState<string[]>([]); // Track wishlist course IDs
-
-  const fetchWishlist = async () => {
-    if (!user) {
-      setWishlist([]);
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/wishlist", { cache: "no-store" });
-      if (res.ok) {
-        const wishlistItems: CourseItem[] = await res.json();
-        setWishlist(wishlistItems.map((item) => item.id));
-      } else {
-        console.error("Failed to fetch wishlist:", res.status);
-      }
-    } catch (error) {
-      console.error("Error fetching wishlist:", error);
-    }
-  };
 
   useEffect(() => {
     const fetchCategoryDetails = async () => {
@@ -153,12 +118,7 @@ export default function CategoryDetailPage() {
     };
 
     fetchCategoryDetails();
-    fetchWishlist();
-
-    // Refetch wishlist when window regains focus
-    window.addEventListener("focus", fetchWishlist);
-    return () => window.removeEventListener("focus", fetchWishlist);
-  }, [slug, user]);
+  }, [slug]);
 
   const handleCourseClick = (courseSlug: string) => {
     console.log(`Navigating to course: ${courseSlug}`);
@@ -175,36 +135,6 @@ export default function CategoryDetailPage() {
     router.push("/categories");
   };
 
-  const toggleWishlist = async (courseId: string) => {
-    if (!user) {
-      toast({ title: "Please sign in to manage your wishlist" });
-      router.push("/auth?tab=signin");
-      return;
-    }
-
-    try {
-      const isWishlisted = wishlist.includes(courseId);
-      const method = isWishlisted ? "DELETE" : "POST";
-      const res = await fetch("/api/wishlist", {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId }),
-      });
-
-      if (!res.ok) throw new Error("Failed to update wishlist");
-
-      // Refetch the updated wishlist
-      await fetchWishlist();
-
-      toast({
-        title: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
-      });
-    } catch (error) {
-      console.error("Error toggling wishlist:", error);
-      toast({ title: "Error", description: "Failed to update wishlist" });
-    }
-  };
-
   const filteredCourses =
     category?.courses.filter((course) => {
       const matchesSearch =
@@ -212,7 +142,11 @@ export default function CategoryDetailPage() {
         course.shortDescription
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
+
+      // Since courses are directly tied to this category, subcategory filter is less relevant here
+      // We'll keep it for UI consistency, but it won't filter unless courses have subcategory links
       const matchesSubcategory = selectedSubcategory === "all";
+
       const matchesTab =
         activeTab === "all" ||
         (activeTab === "beginner" && course.level === "BEGINNER") ||
@@ -301,12 +235,12 @@ export default function CategoryDetailPage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative">
-          <div className="relative h-64 md:h-80 w-full overflow-hidden">
+          <div className="relative h-70 md:h-80 w-full overflow-hidden">
             <Image
-              src={category.image}
-              alt={category.name}
+              src={`/${slug}.png`}
+              alt={slug}
               fill
-              className="object-cover"
+              className="object-full"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
@@ -485,11 +419,7 @@ export default function CategoryDetailPage() {
                   <Card
                     key={course.id}
                     className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer group"
-                    onClick={(e) => {
-                      if ((e.target as HTMLElement).tagName !== "BUTTON") {
-                        handleCourseClick(course.slug);
-                      }
-                    }}
+                    onClick={() => handleCourseClick(course.slug)}
                   >
                     <div className="relative h-48 w-full">
                       <Image
@@ -498,30 +428,13 @@ export default function CategoryDetailPage() {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      <div className="absolute top-3 right-3 flex gap-2">
+                      <div className="absolute top-3 right-3">
                         <Badge
                           variant="secondary"
                           className="bg-background/80 backdrop-blur-sm"
                         >
                           {course.level}
                         </Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="bg-background/80 backdrop-blur-sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleWishlist(course.id);
-                          }}
-                        >
-                          <Heart
-                            className={`h-4 w-4 ${
-                              wishlist.includes(course.id)
-                                ? "fill-red-500 text-red-500"
-                                : "text-muted-foreground"
-                            }`}
-                          />
-                        </Button>
                       </div>
                     </div>
                     <CardHeader className="pb-2">

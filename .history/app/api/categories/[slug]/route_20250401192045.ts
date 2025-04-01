@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const category = await prisma.category.findUnique({
-      where: { slug: await params.slug },
+      where: { slug: params.slug },
       include: {
         courses: {
           where: { published: true },

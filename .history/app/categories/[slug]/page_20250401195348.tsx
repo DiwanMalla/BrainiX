@@ -193,12 +193,13 @@ export default function CategoryDetailPage() {
 
       if (!res.ok) throw new Error("Failed to update wishlist");
 
-      // Refetch the updated wishlist
-      await fetchWishlist();
-
-      toast({
-        title: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
-      });
+      if (isWishlisted) {
+        setWishlist(wishlist.filter((id) => id !== courseId));
+        toast({ title: "Removed from wishlist" });
+      } else {
+        setWishlist([...wishlist, courseId]);
+        toast({ title: "Added to wishlist" });
+      }
     } catch (error) {
       console.error("Error toggling wishlist:", error);
       toast({ title: "Error", description: "Failed to update wishlist" });

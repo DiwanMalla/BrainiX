@@ -28,11 +28,20 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useClerk } from "@clerk/nextjs";
+import {
+  addToCart,
+  addToWishlist,
+  removeFromWishlist,
+  isInWishlist,
+  isPurchased,
+} from "@/lib/local-storage";
+import coursesData from "@/lib/course-data";
 import CourseCard from "@/components/Card/CourseCard";
 
 interface CoursePageProps {
-  params: { slug: string };
+  params: {
+    slug: string;
+  };
 }
 
 interface Course {
@@ -66,177 +75,116 @@ type RecommendedCourse = {
   price: number;
   discount?: number;
   thumbnail: string;
-  instructor: { name: string };
-  rating: number;
-  students: number;
-  bestseller: boolean;
-  category: { name: string };
+  instructor: {
+    name: string;
+  };
+  rating: number; // Add this line
+  students: number; // Add this line
+  bestseller: boolean; // Add this line
+  category: {
+    name: string;
+  };
   level: string;
 };
 
+
 export default function CoursePage({ params }: CoursePageProps) {
   const router = useRouter();
-  const { user } = useClerk();
   const [course, setCourse] = useState<Course | null>(null);
   const [recommendedCourses, setRecommendedCourses] = useState<
     RecommendedCourse[]
   >([]);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isInCart, setIsInCart] = useState(false);
-  const [isPurchased, setIsPurchased] = useState(false);
+  const [isAlreadyPurchased, setIsAlreadyPurchased] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const { toast } = useToast();
-
+  console.log(fetch(`/api/courses/${params.slug}`));
   useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const res = await fetch(`/api/courses/${params.slug}`, {
-          cache: "no-store",
-        });
-        if (!res.ok) throw new Error("Failed to fetch course");
-        const data = await res.json();
+    // Fetch course data
+    fetch(`/api/courses/${params.slug}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
         setCourse(data);
-      } catch (error) {
+        setIsFavorite(isInWishlist(data.id));
+        setIsAlreadyPurchased(isPurchased(data.id));
+      })
+      .catch((error) => {
         console.error("Error fetching course:", error);
-      }
-    };
+      });
 
-    const fetchRecommendedCourses = async () => {
-      try {
-        const res = await fetch(
-          `/api/courses/recommended?excludeSlug=${params.slug}`,
-          { cache: "no-store" }
-        );
-        if (!res.ok) throw new Error("Failed to fetch recommended courses");
-        const data = await res.json();
+    // Fetch recommended courses
+    fetch(`/api/courses/recommended?excludeSlug=${params.slug}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) throw new Error(data.error);
         setRecommendedCourses(data);
-      } catch (error) {
-        console.error("Error fetching recommended courses:", error);
-      }
-    };
-
-    const fetchUserData = async () => {
-      if (!user) {
-        setIsFavorite(false);
-        setIsInCart(false);
-        setIsPurchased(false);
-        return;
-      }
-
-      try {
-        const [wishlistRes, cartRes, enrollmentRes] = await Promise.all([
-          fetch("/api/wishlist", { cache: "no-store" }),
-          fetch("/api/cart", { cache: "no-store" }),
-          fetch("/api/enrollments", { cache: "no-store" }),
-        ]);
-
-        if (wishlistRes.ok) {
-          const wishlist = await wishlistRes.json();
-          setIsFavorite(!!wishlist.find((item: any) => item.id === course?.id));
-        }
-        if (cartRes.ok) {
-          const cart = await cartRes.json();
-          setIsInCart(!!cart.find((item: any) => item.id === course?.id));
-        }
-        if (enrollmentRes.ok) {
-          const enrollments = await enrollmentRes.json();
-          setIsPurchased(
-            !!enrollments.find((item: any) => item.id === course?.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchCourseData();
-    fetchRecommendedCourses();
-    fetchUserData();
-
-    // Refetch when window regains focus
-    window.addEventListener("focus", fetchUserData);
-    return () => window.removeEventListener("focus", fetchUserData);
-  }, [params.slug, user, course?.id]);
+      })
+      .catch((error) =>
+        console.error("Error fetching recommended courses:", error)
+      );
+  }, [params.slug, router]);
 
   if (!course) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Or a proper loading component
   }
-
-  const toggleFavorite = async (e: React.MouseEvent) => {
+  console.log(course);
+  const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!user) {
-      toast({ title: "Please sign in to manage your wishlist" });
-      router.push("/auth?tab=signin");
-      return;
-    }
-
-    try {
-      const method = isFavorite ? "DELETE" : "POST";
-      const res = await fetch("/api/wishlist", {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId: course.id }),
-      });
-
-      if (!res.ok) throw new Error("Failed to update wishlist");
-
-      setIsFavorite(!isFavorite);
+    if (isFavorite) {
+      removeFromWishlist(course.id);
       toast({
-        title: isFavorite ? "Removed from wishlist" : "Added to wishlist",
-        description: `Course ${
-          isFavorite ? "removed from" : "added to"
-        } your wishlist`,
+        title: "Removed from wishlist",
+        description: "Course removed from your wishlist",
       });
-    } catch (error) {
-      console.error("Error toggling wishlist:", error);
-      toast({ title: "Error", description: "Failed to update wishlist" });
+    } else {
+      addToWishlist({
+        id: course.id,
+        slug: course.slug,
+        title: course.title,
+        instructor: course.instructor.name,
+        price: course.price,
+        image: course.thumbnail,
+      });
+      toast({
+        title: "Added to wishlist",
+        description: "Course added to your wishlist",
+      });
     }
+
+    setIsFavorite(!isFavorite);
+    window.dispatchEvent(new Event("localStorageChange"));
   };
 
-  const addToCartHandler = async () => {
-    if (!user) {
-      toast({ title: "Please sign in to add to cart" });
-      router.push("/auth?tab=signin");
-      return;
-    }
-
-    if (isInCart) {
-      toast({
-        title: "Already in cart",
-        description: "This course is already in your cart",
-      });
-      return;
-    }
-
+  const addToCartHandler = () => {
     setAddingToCart(true);
 
-    try {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId: course.id }),
-      });
+    addToCart({
+      id: course.id,
+      slug: course.slug,
+      title: course.title,
+      instructor: course.instructor.name,
+      price: course.discountPrice || course.price,
+      originalPrice: course.discount ? course.price : undefined,
+      discount: course.discount,
+      image: course.thumbnail,
+    });
 
-      if (!res.ok) throw new Error("Failed to add to cart");
+    toast({
+      title: "Added to cart",
+      description: `${course.title} has been added to your cart`,
+    });
 
-      setIsInCart(true);
-      toast({
-        title: "Added to cart",
-        description: `${course.title} has been added to your cart`,
-      });
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      toast({ title: "Error", description: "Failed to add to cart" });
-    } finally {
-      setAddingToCart(false);
-    }
+    window.dispatchEvent(new Event("localStorageChange"));
+
+    setTimeout(() => setAddingToCart(false), 1000);
   };
 
   const buyNow = () => {
     addToCartHandler();
-    if (user && !isInCart) router.push("/checkout");
+    router.push("/checkout");
   };
 
   const goToLearning = () => {
@@ -384,7 +332,7 @@ export default function CoursePage({ params }: CoursePageProps) {
                     </button>
                   </div>
                   <div className="space-y-3">
-                    {isPurchased ? (
+                    {isAlreadyPurchased ? (
                       <Button
                         className="w-full"
                         size="lg"
@@ -402,7 +350,7 @@ export default function CoursePage({ params }: CoursePageProps) {
                           variant="outline"
                           size="lg"
                           onClick={addToCartHandler}
-                          disabled={addingToCart || isInCart}
+                          disabled={addingToCart}
                         >
                           {addingToCart && (
                             <span className="absolute inset-0 bg-primary/10 flex items-center justify-center">
@@ -419,11 +367,7 @@ export default function CoursePage({ params }: CoursePageProps) {
                               addingToCart ? "animate-bounce" : ""
                             }`}
                           />
-                          {isInCart
-                            ? "In Cart"
-                            : addingToCart
-                            ? "Adding..."
-                            : "Add to Cart"}
+                          {addingToCart ? "Adding..." : "Add to Cart"}
                         </Button>
                       </>
                     )}
@@ -450,7 +394,6 @@ export default function CoursePage({ params }: CoursePageProps) {
                       Share this course
                     </p>
                     <div className="flex justify-center gap-4 mt-2">
-                      {/* Share buttons remain unchanged */}
                       <button className="text-muted-foreground hover:text-primary transition-colors">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -764,7 +707,7 @@ export default function CoursePage({ params }: CoursePageProps) {
               {recommendedCourses.map((course) => (
                 <CourseCard
                   key={course.id}
-                  id={course.id.toString()}
+                  id={course.id}
                   slug={course.slug}
                   title={course.title}
                   instructor={course.instructor?.name || "Unknown Instructor"}

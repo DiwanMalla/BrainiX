@@ -88,7 +88,7 @@ export default function Navbar() {
   useEffect(() => {
     fetchData();
     // Poll every 10 seconds to keep in sync (simple approach)
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -109,6 +109,24 @@ export default function Navbar() {
     } catch (error) {
       console.error("Error removing from cart:", error);
       toast({ title: "Error", description: "Failed to remove from cart" });
+    }
+  };
+
+  const handleRemoveFromWishlist = async (courseId: string) => {
+    try {
+      const res = await fetch("/api/wishlist", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId }),
+      });
+
+      if (!res.ok) throw new Error("Failed to remove from wishlist");
+
+      setWishlistItems(wishlistItems.filter((item) => item.id !== courseId));
+      toast({ title: "Removed from wishlist", description: "Course removed" });
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+      toast({ title: "Error", description: "Failed to remove from wishlist" });
     }
   };
 
@@ -308,6 +326,13 @@ export default function Navbar() {
                         ${item.price}
                       </p>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveFromWishlist(item.id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
                 ))
               ) : (
