@@ -7,6 +7,7 @@ import DebugStorage from "@/components/debug-storage";
 import ChatIcon from "@/components/chat/chat-icon";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
+import { CartProvider } from "@/lib/cart-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default function RootLayout({
       <ClerkProvider>
         <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
+            <CartProvider>{children}</CartProvider>
           </ThemeProvider>
           <ToastProvider />
           <DebugStorage />

@@ -37,6 +37,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { useClerk } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
+import { dispatchWishlistUpdate, listenToWishlistUpdate } from "@/lib/event";
 
 interface Category {
   id: string;
@@ -155,9 +156,9 @@ export default function CategoryDetailPage() {
     fetchCategoryDetails();
     fetchWishlist();
 
-    // Refetch wishlist when window regains focus
-    window.addEventListener("focus", fetchWishlist);
-    return () => window.removeEventListener("focus", fetchWishlist);
+    // Listen for wishlist updates
+    const unsubscribe = listenToWishlistUpdate(fetchWishlist);
+    return () => unsubscribe();
   }, [slug, user]);
 
   const handleCourseClick = (courseSlug: string) => {
@@ -193,8 +194,9 @@ export default function CategoryDetailPage() {
 
       if (!res.ok) throw new Error("Failed to update wishlist");
 
-      // Refetch the updated wishlist
+      // Refetch the updated wishlist and dispatch event
       await fetchWishlist();
+      dispatchWishlistUpdate();
 
       toast({
         title: isWishlisted ? "Removed from wishlist" : "Added to wishlist",

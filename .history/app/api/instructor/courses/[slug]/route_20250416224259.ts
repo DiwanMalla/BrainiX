@@ -1,0 +1,171 @@
+import { NextResponse } from "next/server";
+import prisma from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
+
+interface Params {
+  params: { slug: string };
+}
+
+export async function GET(_req: Request, { params }: Params) {
+  if (!params || !params.slug) {
+    return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+  }
+
+  const { slug } = params;
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: { slug },
+      include: {
+        instructor: true,
+        modules: {
+          include: {
+            lessons: true,
+          },
+          orderBy: { position: "asc" },
+        },
+      },
+    });
+
+    if (!course) {
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(course);
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch course" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request, { params }: Params) {
+  if (!params || !params.slug) {
+    return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+  }
+
+  const { slug } = params;
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const {
+    title,
+    shortDescription,
+    description,
+    price,
+    discountPrice,
+    modules,
+  } = await req.json();
+
+  try {
+    const course = await prisma.course.findUnique({ where: { slug } });
+    if (!course) {
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (course.instructorId !== user.id || user.role !== "INSTRUCTOR") {
+      return NextResponse.json(
+        { error: "Unauthorized to edit this course" },
+        { status: 403 }
+      );
+    }
+
+    const updatedCourse = await prisma.course.update({
+      where: { slug },
+      data: {
+        title,
+        shortDescription,
+        description,
+        price: parseFloat(price),
+        discountPrice: discountPrice ? parseFloat(discountPrice) : 0,
+        modules: modules
+          ? {
+              upsert: modules.map((module: any, index: number) => ({
+                where: { id: module.id },
+                update: {
+                  title: module.title,
+                  description: module.description,
+                  position: index,
+                  lessons: {
+                    upsert: module.lessons.map(
+                      (lesson: any, lessonIndex: number) => ({
+                        where: { id: lesson.id },
+                        update: {
+                          title: lesson.title,
+                          description: lesson.description,
+                          type: lesson.type,
+                          duration: lesson.duration,
+                          position: lessonIndex,
+                        },
+                        create: {
+                          id: lesson.id,
+                          title: lesson.title,
+                          description: lesson.description,
+                          type: lesson.type,
+                          duration: lesson.duration,
+                          position: lessonIndex,
+                        },
+                      })
+                    ),
+                    deleteMany: {
+                      id: { notIn: module.lessons.map((l: any) => l.id) },
+                    },
+                  },
+                },
+                create: {
+                  id: module.id,
+                  title: module.title,
+                  description: module.description,
+                  position: index,
+                  lessons: {
+                    create: module.lessons.map(
+                      (lesson: any, lessonIndex: number) => ({
+                        id: lesson.id,
+                        title: lesson.title,
+                        description: lesson.description,
+                        type: lesson.type,
+                        duration: lesson.duration,
+                        position: lessonIndex,
+                      })
+                    ),
+                  },
+                },
+              })),
+              deleteMany: {
+                id: { notIn: modules.map((m: any) => m.id) },
+              },
+            }
+          : undefined,
+      },
+      include: {
+        modules: {
+          include: { lessons: true },
+          orderBy: { position: "asc" },
+        },
+      },
+    });
+
+    return NextResponse.json(updatedCourse);
+  } catch (error) {
+    console.error("Error updating course:", error);
+    return NextResponse.json(
+      { error: "Failed to update course" },
+      { status: 500 }
+    );
+  }
+}
