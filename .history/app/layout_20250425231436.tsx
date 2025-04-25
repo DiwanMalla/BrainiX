@@ -9,6 +9,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "next-themes";
 import { CartProvider } from "@/lib/cart-context";
 import Chatbot from "@/components/chat/chat-icon";
+import Chat from "@/components/chat/chat-icon";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,7 @@ export default function RootLayout({
           </ThemeProvider>
           <ToastProvider />
           <DebugStorage />
-          <Chatbot />
+          <Chat />
         </body>
       </ClerkProvider>
     </html>

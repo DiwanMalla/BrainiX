@@ -16,10 +16,7 @@ interface Course {
   duration: number;
   rating: number;
   category: string;
-  instructor: string;
-  enrollmentCount: number;
   slug: string;
-  thumbnail?: string; // Added for thumbnail image
 }
 
 interface ChatbotProps {
@@ -32,10 +29,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [categoryFilter, setCategoryFilter] = useState<string>("");
-  const [sortBy, setSortBy] = useState<"rating" | "price" | "duration">(
-    "rating"
-  );
-  const [favorites, setFavorites] = useState<string[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { userId, isLoaded } = useAuth();
 
@@ -59,7 +52,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
         }
       );
 
-      // Parse courses from response
+      // Parse courses from response if present
       let courses: Course[] = [];
       if (response.data.reply.includes("**")) {
         const courseMatches = response.data.reply.match(
@@ -74,28 +67,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
             const duration = parseFloat(
               match.match(/Duration: ([\d.]+) hours/)?.[1] || "0"
             );
-            const rating = parseFloat__(
+            const rating = parseFloat(
               match.match(/Rating: ([\d.]+)\/5/)?.[1] || "0"
             );
             const category = match.match(/Category: (.*?)\n/)?.[1] || "";
-            const instructor = match.match(/Instructor: (.*?)\n/)?.[1] || "";
-            const enrollmentCount = parseInt(
-              match.match(/Enrollments: (\d+)/)?.[1] || "0"
-            );
             const slug = match.match(/Enroll: \/courses\/(.*?)$/m)?.[1] || "";
-            // Placeholder thumbnail (replace with actual URL if available)
-            const thumbnail = "https://via.placeholder.com/150";
-            return {
-              title,
-              price,
-              duration,
-              rating,
-              category,
-              instructor,
-              enrollmentCount,
-              slug,
-              thumbnail,
-            };
+            return { title, price, duration, rating, category, slug };
           });
         }
       }
@@ -121,12 +98,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
     }
   };
 
-  const toggleFavorite = (slug: string) => {
-    setFavorites((prev) =>
-      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
-    );
-  };
-
   // Auto-scroll to bottom
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -142,21 +113,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
     }
   }, [userId, isLoaded, isOpen]);
 
-  // Sort courses
-  const sortCourses = (courses: Course[]) => {
-    return [...courses].sort((a, b) => {
-      if (sortBy === "price") return a.price - b.price;
-      if (sortBy === "duration") return a.duration - b.duration;
-      return b.rating - a.rating; // Default: rating
-    });
-  };
-
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105"
+          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hoverthe hover:bg-blue-700 transition-transform transform hover:scale-105"
           aria-label="Open chatbot"
         >
           <svg
@@ -198,37 +160,26 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               </svg>
             </button>
           </div>
-          <div className="p-4 flex space-x-2">
+          <div className="p-4">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Categories</option>
               <option value="Technology">Technology</option>
               <option value="Business">Business</option>
               <option value="Design">Design</option>
             </select>
-            <select
-              value={sortBy}
-              onChange={(e) =>
-                setSortBy(e.target.value as "rating" | "price" | "duration")
-              }
-              className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="rating">Sort by Rating</option>
-              <option value="price">Sort by Price</option>
-              <option value="duration">Sort by Duration</option>
-            </select>
           </div>
           <div
             ref={chatContainerRef}
             className="flex-1 p-4 overflow-y-auto bg-gray-50 scrollbar-thin"
-            style={{ maxHeight: "calc(80vh - 200px)" }}
+            style={{ maxHeight: "calc(80vh - 180px)" }}
           >
             {chatHistory.length === 0 && (
               <div className="text-center text-gray-500">
-                Ask about courses, BrainiX features, or your learning progress!
+                Ask about courses or BrainiX features!
               </div>
             )}
             {chatHistory.map((chat, index) => (
@@ -247,73 +198,31 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                 >
                   {chat.text}
                   {chat.courses && chat.courses.length > 0 && (
-                    <div className="mt-2 space-y-3">
-                      {sortCourses(
-                        chat.courses.filter((course) =>
+                    <div className="mt-2">
+                      {chat.courses
+                        .filter((course) =>
                           categoryFilter
                             ? course.category === categoryFilter
                             : true
                         )
-                      ).map((course) => (
-                        <Link
-                          href={`/courses/${course.slug}`}
-                          key={course.slug}
-                          className="block bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-start space-x-4">
-                            <img
-                              src={
-                                course.thumbnail ||
-                                "https://via.placeholder.com/150"
-                              }
-                              alt={`${course.title} thumbnail`}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg text-gray-800">
-                                {course.title}
-                              </h3>
-                              <p className="text-gray-600">
-                                Price: ${course.price.toFixed(2)}
-                              </p>
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault(); // Prevent Link navigation
-                                  toggleFavorite(course.slug);
-                                }}
-                                className={`mt-2 p-1 rounded ${
-                                  favorites.includes(course.slug)
-                                    ? "text-red-500"
-                                    : "text-gray-500"
-                                }`}
-                                aria-label={
-                                  favorites.includes(course.slug)
-                                    ? "Remove from favorites"
-                                    : "Add to favorites"
-                                }
-                              >
-                                <svg
-                                  className="w-5 h-5"
-                                  fill={
-                                    favorites.includes(course.slug)
-                                      ? "currentColor"
-                                      : "none"
-                                  }
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
+                        .map((course) => (
+                          <div
+                            key={course.slug}
+                            className="bg-white p-3 rounded-lg shadow mt-2"
+                          >
+                            <h3 className="font-semibold">{course.title}</h3>
+                            <p>Price: ${course.price.toFixed(2)}</p>
+                            <p>Duration: {course.duration} hours</p>
+                            <p>Rating: {course.rating.toFixed(1)}/5</p>
+                            <p>Category: {course.category}</p>
+                            <Link
+                              href={`/courses/${course.slug}`}
+                              className="inline-block mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                            >
+                              Enroll Now
+                            </Link>
                           </div>
-                        </Link>
-                      ))}
+                        ))}
                     </div>
                   )}
                 </div>

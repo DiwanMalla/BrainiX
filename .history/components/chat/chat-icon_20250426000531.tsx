@@ -19,7 +19,6 @@ interface Course {
   instructor: string;
   enrollmentCount: number;
   slug: string;
-  thumbnail?: string; // Added for thumbnail image
 }
 
 interface ChatbotProps {
@@ -74,7 +73,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
             const duration = parseFloat(
               match.match(/Duration: ([\d.]+) hours/)?.[1] || "0"
             );
-            const rating = parseFloat__(
+            const rating = parseFloat(
               match.match(/Rating: ([\d.]+)\/5/)?.[1] || "0"
             );
             const category = match.match(/Category: (.*?)\n/)?.[1] || "";
@@ -83,8 +82,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               match.match(/Enrollments: (\d+)/)?.[1] || "0"
             );
             const slug = match.match(/Enroll: \/courses\/(.*?)$/m)?.[1] || "";
-            // Placeholder thumbnail (replace with actual URL if available)
-            const thumbnail = "https://via.placeholder.com/150";
             return {
               title,
               price,
@@ -94,7 +91,6 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               instructor,
               enrollmentCount,
               slug,
-              thumbnail,
             };
           });
         }
@@ -247,7 +243,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                 >
                   {chat.text}
                   {chat.courses && chat.courses.length > 0 && (
-                    <div className="mt-2 space-y-3">
+                    <div className="mt-2">
                       {sortCourses(
                         chat.courses.filter((course) =>
                           categoryFilter
@@ -255,64 +251,59 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                             : true
                         )
                       ).map((course) => (
-                        <Link
-                          href={`/courses/${course.slug}`}
+                        <div
                           key={course.slug}
-                          className="block bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow"
+                          className="bg-white p-3 rounded-lg shadow mt-2 relative"
                         >
-                          <div className="flex items-start space-x-4">
-                            <img
-                              src={
-                                course.thumbnail ||
-                                "https://via.placeholder.com/150"
+                          <h3 className="font-semibold text-lg">
+                            {course.title}
+                          </h3>
+                          <p>Price: ${course.price.toFixed(2)}</p>
+                          <p>Duration: {course.duration} hours</p>
+                          <p>Rating: {course.rating.toFixed(1)}/5</p>
+                          <p>Category: {course.category}</p>
+                          <p>Instructor: {course.instructor}</p>
+                          <p>Enrollments: {course.enrollmentCount}</p>
+                          <div className="flex space-x-2 mt-2">
+                            <Link
+                              href={`/courses/${course.slug}`}
+                              className="inline-block bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                            >
+                              Enroll Now
+                            </Link>
+                            <button
+                              onClick={() => toggleFavorite(course.slug)}
+                              className={`p-1 rounded ${
+                                favorites.includes(course.slug)
+                                  ? "text-red-500"
+                                  : "text-gray-500"
+                              }`}
+                              aria-label={
+                                favorites.includes(course.slug)
+                                  ? "Remove from favorites"
+                                  : "Add to favorites"
                               }
-                              alt={`${course.title} thumbnail`}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg text-gray-800">
-                                {course.title}
-                              </h3>
-                              <p className="text-gray-600">
-                                Price: ${course.price.toFixed(2)}
-                              </p>
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault(); // Prevent Link navigation
-                                  toggleFavorite(course.slug);
-                                }}
-                                className={`mt-2 p-1 rounded ${
+                            >
+                              <svg
+                                className="w-5 h-5"
+                                fill={
                                   favorites.includes(course.slug)
-                                    ? "text-red-500"
-                                    : "text-gray-500"
-                                }`}
-                                aria-label={
-                                  favorites.includes(course.slug)
-                                    ? "Remove from favorites"
-                                    : "Add to favorites"
+                                    ? "currentColor"
+                                    : "none"
                                 }
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                               >
-                                <svg
-                                  className="w-5 h-5"
-                                  fill={
-                                    favorites.includes(course.slug)
-                                      ? "currentColor"
-                                      : "none"
-                                  }
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
+                              </svg>
+                            </button>
                           </div>
-                        </Link>
+                        </div>
                       ))}
                     </div>
                   )}
