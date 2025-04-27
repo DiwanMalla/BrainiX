@@ -23,7 +23,7 @@ export default function CourseLearningPage() {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { isLoaded, isSignedIn, userId } = useAuth();
-  const [showChat, setShowChat] = useState(false);
+  const [showChat, setShowChat] = useState(false); // Disabled to avoid 404 errors
   const [chatMessage, setChatMessage] = useState("");
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -343,11 +343,11 @@ export default function CourseLearningPage() {
         console.error("handleProgress: Error", err);
       }
     },
-    5000
+    5000 // Aligned with VideoPlayer
   );
 
   const sendChatMessage = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) e.preventDefault(); // Prevent form submission
     if (!chatMessage.trim()) {
       console.log("sendChatMessage: Empty message, aborting");
       return;
@@ -417,6 +417,7 @@ export default function CourseLearningPage() {
         activeLesson={activeLesson}
         setActiveModule={setActiveModule}
         setActiveLesson={setActiveLesson}
+        setNotes={() => {}} // No longer needed
         setVideoError={setVideoError}
         setIsVideoLoading={setIsVideoLoading}
       />
@@ -443,6 +444,7 @@ export default function CourseLearningPage() {
               activeLesson={activeLesson}
               setActiveModule={setActiveModule}
               setActiveLesson={setActiveLesson}
+              setNotes={() => {}} // No longer needed
               setVideoError={setVideoError}
               setIsVideoLoading={setIsVideoLoading}
               markLessonComplete={markLessonComplete}
@@ -458,6 +460,7 @@ export default function CourseLearningPage() {
                 activeLesson={activeLesson}
                 setActiveModule={setActiveModule}
                 setActiveLesson={setActiveLesson}
+                setNotes={() => {}} // No longer needed
                 setVideoError={setVideoError}
                 setIsVideoLoading={setIsVideoLoading}
               />

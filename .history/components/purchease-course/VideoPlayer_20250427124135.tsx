@@ -275,7 +275,7 @@ export default function LessonContent({
                     style={{ position: "absolute", top: 0, left: 0 }}
                     controls
                     playing={true}
-                    onProgress={undefined}
+                    onProgress={debouncedHandleProgress}
                     onError={(e: any, data: any) => {
                       console.error("Video playback error:", {
                         error: e,

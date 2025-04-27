@@ -104,7 +104,17 @@ export default function CourseContentSidebar({
                         ? "bg-accent/50"
                         : ""
                     }`}
-                    onClick={() => switchLesson(moduleIndex, lessonIndex)}
+                    onClick={() => {
+                      console.log("CourseContentSidebar: Switching lesson", {
+                        moduleIndex,
+                        lessonIndex,
+                      });
+                      setActiveModule(moduleIndex);
+                      setActiveLesson(lessonIndex);
+                      setNotes(lesson.progress.notes || "");
+                      setVideoError(null);
+                      setIsVideoLoading(true);
+                    }}
                   >
                     <div className="flex-shrink-0">
                       {lesson.progress.completed ? (

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import Stripe from "stripe";
+import { generate } from "random-words";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-03-31.basil",
@@ -9,16 +10,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: Request) {
   const { userId } = await auth();
-  console.log("User ID:", userId);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const { total, promoCode, billingDetails } = await request.json();
-    if (total === undefined || total === null || isNaN(total) || total <= 0) {
+    const { paymentIntentId, total, promoCode, billingDetails } =
+      await request.json();
+
+    // Verify payment intent
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    if (paymentIntent.status !== "succeeded") {
       return NextResponse.json(
-        { error: "Invalid total amount. Total must be greater than zero." },
+        { error: "Payment not successful" },
         { status: 400 }
       );
     }
@@ -33,7 +37,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // Calculate server-side total
+    // Calculate totals
     let subtotal = cartItems.reduce(
       (sum, item) => sum + (item.course.discountPrice || item.course.price),
       0
@@ -41,7 +45,6 @@ export async function POST(request: Request) {
     let discount = 0;
     let couponId: string | undefined;
 
-    // Validate promo code
     if (promoCode) {
       const coupon = await prisma.coupon.findUnique({
         where: { code: promoCode.toLowerCase() },
@@ -58,7 +61,6 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
-      podp;
       if (coupon.minOrderValue && subtotal < coupon.minOrderValue) {
         return NextResponse.json(
           { error: "Order value below minimum for this promo" },
@@ -75,6 +77,12 @@ export async function POST(request: Request) {
         discount = coupon.discountValue;
       }
       couponId = coupon.id;
+
+      // Update coupon usage
+      await prisma.coupon.update({
+        where: { id: coupon.id },
+        data: { usedCount: { increment: 1 } },
+      });
     }
 
     const calculatedTotal = subtotal - discount;
@@ -85,49 +93,66 @@ export async function POST(request: Request) {
       );
     }
 
-    const amount = Math.round(calculatedTotal * 100);
-    if (amount <= 0) {
-      return NextResponse.json(
-        { error: "Total amount must be greater than zero" },
-        { status: 400 }
-      );
-    }
+    // Generate unique order number
+    const orderNumber = `ORD-${generate({
+      exactly: 1,
+      wordsPerString: 2,
+      separator: "-",
+    })[0].toUpperCase()}-${Date.now().toString().slice(-4)}`;
 
-    // Create PaymentIntent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: "aud",
-      payment_method_types: ["card"],
-      metadata: {
+    // Create order
+    const order = await prisma.order.create({
+      data: {
+        orderNumber,
         userId,
-        courseIds: cartItems.map((item) => item.courseId).join(","),
-        promoCode: promoCode || "",
-        billingDetails: JSON.stringify(billingDetails || {}),
+        status: "COMPLETED",
+        total: calculatedTotal,
+        discount,
+        tax: 0,
+        currency: "AUD",
+        paymentMethod: "card",
+        paymentId: paymentIntentId,
+        couponId,
+        billingAddress: billingDetails,
+        items: {
+          create: cartItems.map((item) => ({
+            courseId: item.courseId,
+            price: item.course.discountPrice || item.course.price,
+          })),
+        },
       },
+      include: { items: true },
     });
 
-    // Optionally, update coupon usage if a promo code was used
-    if (couponId) {
-      await prisma.coupon.update({
-        where: { id: couponId },
-        data: { usedCount: { increment: 1 } },
+    // Create enrollments for each course
+    for (const item of cartItems) {
+      await prisma.enrollment.upsert({
+        where: {
+          userId_courseId: {
+            userId,
+            courseId: item.courseId,
+          },
+        },
+        update: {}, // No updates needed if enrollment exists
+        create: {
+          userId,
+          courseId: item.courseId,
+          createdAt: new Date(),
+        },
       });
     }
 
-    return NextResponse.json({
-      clientSecret: paymentIntent.client_secret,
-      discount,
-    });
+    // Clear cart
+    await prisma.cart.deleteMany({ where: { userId } });
+
+    return NextResponse.json({ order }, { status: 201 });
   } catch (error: any) {
-    console.error("Error creating payment intent:", {
+    console.error("Error creating order:", {
       error: error.message,
       stack: error.stack,
     });
     return NextResponse.json(
-      {
-        error: "Failed to create payment intent",
-        details: error.message || "Unknown error",
-      },
+      { error: "Failed to create order", details: error.message },
       { status: 500 }
     );
   }

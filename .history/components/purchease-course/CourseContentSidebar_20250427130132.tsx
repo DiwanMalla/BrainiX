@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Course } from "@/app/my-learning/[slug]/page";
-import { debounce } from "lodash";
 
 interface CourseContentSidebarProps {
   course: Course | null;
@@ -42,15 +41,6 @@ export default function CourseContentSidebar({
   setVideoError,
   setIsVideoLoading,
 }: CourseContentSidebarProps) {
-  const switchLesson = debounce((moduleIndex: number, lessonIndex: number) => {
-    setActiveModule(moduleIndex);
-    setActiveLesson(lessonIndex);
-    setNotes(
-      course.modules[moduleIndex].lessons[lessonIndex].progress.notes || ""
-    );
-    setVideoError(null);
-    setIsVideoLoading(true);
-  }, 300);
   return (
     <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 border-b bg-muted/50">
@@ -104,7 +94,17 @@ export default function CourseContentSidebar({
                         ? "bg-accent/50"
                         : ""
                     }`}
-                    onClick={() => switchLesson(moduleIndex, lessonIndex)}
+                    onClick={() => {
+                      console.log("CourseContentSidebar: Switching lesson", {
+                        moduleIndex,
+                        lessonIndex,
+                      });
+                      setActiveModule(moduleIndex);
+                      setActiveLesson(lessonIndex);
+                      setNotes(lesson.progress.notes || "");
+                      setVideoError(null);
+                      setIsVideoLoading(true);
+                    }}
                   >
                     <div className="flex-shrink-0">
                       {lesson.progress.completed ? (

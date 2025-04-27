@@ -70,10 +70,9 @@ export default function LessonContent({
   const debouncedHandleProgress = useCallback(
     debounce((state: { playedSeconds: number; played: number }) => {
       handleProgress(state);
-    }, 15000), // Debounce for 15 seconds
+    }, 5000), // Debounce for 5 seconds
     [handleProgress]
   );
-
   // Initialize markdown-it
   const md = new MarkdownIt({
     html: true,
@@ -81,8 +80,7 @@ export default function LessonContent({
     typographer: true,
   });
 
-  const toggleFullscreen = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default behavior
+  const toggleFullscreen = () => {
     if (!document.fullscreenElement && videoContainerRef.current) {
       videoContainerRef.current.requestFullscreen().catch((err) => {
         console.error(`Error enabling fullscreen: ${err.message}`);
@@ -94,8 +92,7 @@ export default function LessonContent({
     }
   };
 
-  const retryVideoLoad = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default behavior
+  const retryVideoLoad = () => {
     setVideoError(null);
     setIsVideoLoading(true);
     if (playerRef.current) {
@@ -107,8 +104,7 @@ export default function LessonContent({
     setQuizAnswers((prev) => ({ ...prev, [questionId]: answer }));
   };
 
-  const submitQuiz = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default behavior
+  const submitQuiz = () => {
     if (!lesson?.quiz) return;
 
     let score = 0;
@@ -125,8 +121,7 @@ export default function LessonContent({
     });
   };
 
-  const handleAssignmentSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default behavior
+  const handleAssignmentSubmit = async () => {
     if (!assignmentFile) {
       toast({
         title: "No File Selected",
@@ -174,14 +169,6 @@ export default function LessonContent({
         variant: "destructive",
       });
     }
-  };
-
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default behavior
-    toast({
-      title: "Bookmark Saved",
-      description: "This lesson has been bookmarked.",
-    });
   };
 
   const normalizedVideoUrl = normalizeYouTubeUrl(lesson?.videoUrl);
@@ -232,7 +219,6 @@ export default function LessonContent({
                       onClick={retryVideoLoad}
                       variant="outline"
                       className="text-white border-white/50 hover:bg-white/20"
-                      type="button" // Prevent form submission
                     >
                       Retry
                     </Button>
@@ -241,7 +227,6 @@ export default function LessonContent({
                         asChild
                         variant="outline"
                         className="text-white border-white/50 hover:bg-white/20"
-                        type="button" // Prevent form submission
                       >
                         <a
                           href={lesson.videoUrl}
@@ -256,7 +241,6 @@ export default function LessonContent({
                       asChild
                       variant="outline"
                       className="text-white border-white/50 hover:bg-white/20"
-                      type="button" // Prevent form submission
                     >
                       <Link href="/support">Contact Support</Link>
                     </Button>
@@ -275,7 +259,7 @@ export default function LessonContent({
                     style={{ position: "absolute", top: 0, left: 0 }}
                     controls
                     playing={true}
-                    onProgress={undefined}
+                    onProgress={debouncedHandleProgress} // Use debounced handler
                     onError={(e: any, data: any) => {
                       console.error("Video playback error:", {
                         error: e,
@@ -358,7 +342,6 @@ export default function LessonContent({
                 asChild
                 variant="outline"
                 className="border-gray-300 hover:bg-gray-100"
-                type="button" // Prevent form submission
               >
                 <Link href="#content">View Lesson Content</Link>
               </Button>
@@ -431,7 +414,6 @@ export default function LessonContent({
                     disabled={
                       Object.keys(quizAnswers).length !== lesson.quiz.length
                     }
-                    type="button" // Prevent form submission
                   >
                     Submit Quiz
                   </Button>
@@ -489,7 +471,6 @@ export default function LessonContent({
                   <Button
                     onClick={handleAssignmentSubmit}
                     disabled={!assignmentFile}
-                    type="button" // Prevent form submission
                   >
                     <Send className="h-5 w-5 mr-2" />
                     Submit Assignment
@@ -517,8 +498,12 @@ export default function LessonContent({
             variant="ghost"
             size="icon"
             className="text-white bg-black/50 hover:bg-black/70"
-            onClick={handleBookmark}
-            type="button" // Prevent form submission
+            onClick={() => {
+              toast({
+                title: "Bookmark Saved",
+                description: "This lesson has been bookmarked.",
+              });
+            }}
           >
             <Bookmark className="h-5 w-5" />
           </Button>
@@ -527,7 +512,6 @@ export default function LessonContent({
             size="icon"
             className="text-white bg-black/50 hover:bg-black/70"
             onClick={toggleFullscreen}
-            type="button" // Prevent form submission
           >
             {isFullscreen ? (
               <Minimize2 className="h-5 w-5" />

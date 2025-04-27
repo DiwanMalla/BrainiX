@@ -70,7 +70,7 @@ export default function LessonContent({
   const debouncedHandleProgress = useCallback(
     debounce((state: { playedSeconds: number; played: number }) => {
       handleProgress(state);
-    }, 15000), // Debounce for 15 seconds
+    }, 5000), // Debounce for 5 seconds
     [handleProgress]
   );
 
@@ -275,7 +275,7 @@ export default function LessonContent({
                     style={{ position: "absolute", top: 0, left: 0 }}
                     controls
                     playing={true}
-                    onProgress={undefined}
+                    onProgress={debouncedHandleProgress}
                     onError={(e: any, data: any) => {
                       console.error("Video playback error:", {
                         error: e,

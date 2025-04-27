@@ -23,7 +23,7 @@ export default function CourseLearningPage() {
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { isLoaded, isSignedIn, userId } = useAuth();
-  const [showChat, setShowChat] = useState(false);
+  const [showChat, setShowChat] = useState(false); // Disabled to avoid 404 errors
   const [chatMessage, setChatMessage] = useState("");
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -305,49 +305,34 @@ export default function CourseLearningPage() {
     }
   };
 
-  const handleProgress = debounce(
-    async (state: { playedSeconds: number; played: number }) => {
-      if (!course || !course.modules[activeModule]?.lessons[activeLesson]) {
-        console.log("handleProgress: No course or lesson available");
-        return;
-      }
-
-      const currentLesson = course.modules[activeModule].lessons[activeLesson];
-      const watchedSeconds = Math.floor(state.playedSeconds);
-      const lastPosition = watchedSeconds;
-
-      console.log("handleProgress: Updating", {
-        courseId: course.id,
-        lessonId: currentLesson.id,
-        watchedSeconds,
+  const handleProgress = async (state: {
+    playedSeconds: number;
+    played: number;
+  }) => {
+    if (!lesson) return;
+    console.log("handleProgress:", state); // Debug log
+    try {
+      const response = await fetch("/api/courses/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: "course_13", // Replace with actual course ID
+          lessonId: lesson.id,
+          watchedSeconds: Math.floor(state.playedSeconds),
+          lastPosition: Math.floor(state.playedSeconds),
+        }),
       });
-
-      try {
-        const res = await fetch("/api/courses/progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            courseId: course.id,
-            lessonId: currentLesson.id,
-            watchedSeconds,
-            lastPosition,
-          }),
-        });
-        if (!res.ok) {
-          const errorData = await res.json();
-          console.error("handleProgress: Failed", errorData);
-        } else {
-          console.log("handleProgress: Success");
-        }
-      } catch (err) {
-        console.error("handleProgress: Error", err);
+      if (!response.ok) {
+        console.error("Progress update failed:", response.statusText);
       }
-    },
-    5000
-  );
-
+      const data = await response.json();
+      console.log("Progress API response:", data); // Debug log
+    } catch (error) {
+      console.error("Progress update error:", error);
+    }
+  };
   const sendChatMessage = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) e.preventDefault(); // Prevent form submission
     if (!chatMessage.trim()) {
       console.log("sendChatMessage: Empty message, aborting");
       return;
@@ -417,6 +402,7 @@ export default function CourseLearningPage() {
         activeLesson={activeLesson}
         setActiveModule={setActiveModule}
         setActiveLesson={setActiveLesson}
+        setNotes={() => {}} // No longer needed
         setVideoError={setVideoError}
         setIsVideoLoading={setIsVideoLoading}
       />
@@ -443,6 +429,7 @@ export default function CourseLearningPage() {
               activeLesson={activeLesson}
               setActiveModule={setActiveModule}
               setActiveLesson={setActiveLesson}
+              setNotes={() => {}} // No longer needed
               setVideoError={setVideoError}
               setIsVideoLoading={setIsVideoLoading}
               markLessonComplete={markLessonComplete}
@@ -458,6 +445,7 @@ export default function CourseLearningPage() {
                 activeLesson={activeLesson}
                 setActiveModule={setActiveModule}
                 setActiveLesson={setActiveLesson}
+                setNotes={() => {}} // No longer needed
                 setVideoError={setVideoError}
                 setIsVideoLoading={setIsVideoLoading}
               />
