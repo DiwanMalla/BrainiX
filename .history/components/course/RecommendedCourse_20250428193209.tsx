@@ -79,7 +79,7 @@ const RecommendedCourse = ({
       </section>
     );
   }
-  console.log("Recommended courses:", recommendedCourses);
+
   return (
     <section className="mt-8">
       <h2 className="mb-6 text-2xl font-bold">Recommended Courses</h2>

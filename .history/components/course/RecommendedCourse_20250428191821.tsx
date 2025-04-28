@@ -1,9 +1,6 @@
-"use client";
-
 import { useEffect, useState, useCallback } from "react";
 import CourseCard from "../Card/CourseCard";
 import { CartItem } from "@/lib/cart-context";
-import { useUser } from "@clerk/nextjs";
 
 type RecommendedCourse = {
   id: string | number;
@@ -15,7 +12,7 @@ type RecommendedCourse = {
   thumbnail: string;
   instructor: string;
   rating: number;
-  students: number;
+  students: number; // Ensure students is included
   bestseller: boolean;
   category: string;
   level: string;
@@ -24,13 +21,16 @@ type RecommendedCourse = {
 interface RecommendedCourseProps {
   excludeSlug?: string;
   cartItems?: CartItem[];
+  userId?: string; // Add userId for personalized recommendations
+  searchQuery?: string; // Add searchQuery for search-based recommendations
 }
 
 const RecommendedCourse = ({
   excludeSlug,
   cartItems = [],
+  userId,
+  searchQuery,
 }: RecommendedCourseProps) => {
-  const { user } = useUser();
   const [recommendedCourses, setRecommendedCourses] = useState<
     RecommendedCourse[]
   >([]);
@@ -39,16 +39,18 @@ const RecommendedCourse = ({
   const fetchRecommendedCourses = useCallback(async () => {
     try {
       setLoading(true);
-      const url = excludeSlug
-        ? `/api/courses/recommended?excludeSlug=${encodeURIComponent(
-            excludeSlug
-          )}&userId=${user?.id || ""}`
-        : `/api/courses/recommended?userId=${user?.id || ""}`;
+      // Construct URL with query parameters
+      const params = new URLSearchParams();
+      if (excludeSlug) params.append("excludeSlug", excludeSlug);
+      if (userId) params.append("userId", userId);
+      if (searchQuery) params.append("search", searchQuery);
+
+      const url = `/api/courses/recommended?${params.toString()}`;
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch recommended courses");
       const data: RecommendedCourse[] = await res.json();
 
-      // Filter out courses already in cart
+      // Filter out courses that are already in the cart
       const filteredCourses = data.filter(
         (course) => !cartItems.some((item) => item.id === course.id.toString())
       );
@@ -58,7 +60,7 @@ const RecommendedCourse = ({
     } finally {
       setLoading(false);
     }
-  }, [excludeSlug, cartItems, user?.id]);
+  }, [excludeSlug, cartItems, userId, searchQuery]);
 
   useEffect(() => {
     fetchRecommendedCourses();
@@ -79,7 +81,7 @@ const RecommendedCourse = ({
       </section>
     );
   }
-  console.log("Recommended courses:", recommendedCourses);
+
   return (
     <section className="mt-8">
       <h2 className="mb-6 text-2xl font-bold">Recommended Courses</h2>
@@ -93,7 +95,7 @@ const RecommendedCourse = ({
               title={course.title}
               instructor={course.instructor || "Unknown Instructor"}
               rating={course.rating}
-              students={course.students}
+              students={course.students} // Pass students to CourseCard
               price={course.price}
               image={course.thumbnail}
               discount={course.discount}

@@ -1,9 +1,6 @@
-"use client";
-
 import { useEffect, useState, useCallback } from "react";
 import CourseCard from "../Card/CourseCard";
 import { CartItem } from "@/lib/cart-context";
-import { useUser } from "@clerk/nextjs";
 
 type RecommendedCourse = {
   id: string | number;
@@ -30,7 +27,6 @@ const RecommendedCourse = ({
   excludeSlug,
   cartItems = [],
 }: RecommendedCourseProps) => {
-  const { user } = useUser();
   const [recommendedCourses, setRecommendedCourses] = useState<
     RecommendedCourse[]
   >([]);
@@ -40,15 +36,13 @@ const RecommendedCourse = ({
     try {
       setLoading(true);
       const url = excludeSlug
-        ? `/api/courses/recommended?excludeSlug=${encodeURIComponent(
-            excludeSlug
-          )}&userId=${user?.id || ""}`
-        : `/api/courses/recommended?userId=${user?.id || ""}`;
+        ? `/api/courses/recommended?excludeSlug=${excludeSlug}`
+        : "/api/courses/recommended";
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch recommended courses");
       const data: RecommendedCourse[] = await res.json();
 
-      // Filter out courses already in cart
+      // Filter out courses that are already in the cart
       const filteredCourses = data.filter(
         (course) => !cartItems.some((item) => item.id === course.id.toString())
       );
@@ -58,7 +52,7 @@ const RecommendedCourse = ({
     } finally {
       setLoading(false);
     }
-  }, [excludeSlug, cartItems, user?.id]);
+  }, [excludeSlug, cartItems]);
 
   useEffect(() => {
     fetchRecommendedCourses();
@@ -79,7 +73,7 @@ const RecommendedCourse = ({
       </section>
     );
   }
-  console.log("Recommended courses:", recommendedCourses);
+
   return (
     <section className="mt-8">
       <h2 className="mb-6 text-2xl font-bold">Recommended Courses</h2>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import CourseCard from "../Card/CourseCard";
+import CourseCard from "./Card/CourseCard";
 import { CartItem } from "@/lib/cart-context";
 import { useUser } from "@clerk/nextjs";
 
@@ -79,7 +79,7 @@ const RecommendedCourse = ({
       </section>
     );
   }
-  console.log("Recommended courses:", recommendedCourses);
+
   return (
     <section className="mt-8">
       <h2 className="mb-6 text-2xl font-bold">Recommended Courses</h2>

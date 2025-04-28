@@ -65,52 +65,22 @@ export async function GET(request: Request) {
 
     // Prepare prompt for Groq API
     const prompt = `
- You are an AI assistant tasked with recommending online course categories based on user activity. Your goal is to suggest categories that align with the user's interests and activity, or provide popular, trending categories when user data is limited.
+      You are an AI assistant tasked with recommending online course categories based on user activity.
+      User context:
+      - Courses in cart: ${cartItems.length ? cartItems.join(", ") : "None"}
+      - Courses in wishlist: ${
+        wishlistItems.length ? wishlistItems.join(", ") : "None"
+      }
+      - Interests: ${interests.length ? interests.join(", ") : "None"}
+      - Exclude course slug: ${excludeSlug || "None"}
 
-User context:
+      Recommend 3 course categories that align with the user's interests and activity.
+      Return the response in JSON format:
+      {
+        "categories": ["category1", "category2", "category3"]
+      }
+    `;
 
-
-
-
-
-Courses in cart: ${cartItems.length ? cartItems.join(", ") : "None"}
-
-
-
-Courses in wishlist: ${wishlistItems.length ? wishlistItems.join(", ") : "None"}
-
-
-
-Interests: ${interests.length ? interests.join(", ") : "None"}
-
-
-
-Exclude course slug: ${excludeSlug || "None"}
-
-Instructions:
-
-
-
-
-
-If the user has specific interests or activity (cart/wishlist), prioritize categories closely related to those inputs. For example, if the user has a programming course in their cart, recommend categories like "Web Development" or "Data Science."
-
-
-
-If user activity or interests are limited or empty, recommend 3 popular or trending course categories based on general online learning trends (e.g., Programming, Business, Design, Data Science, or Personal Development).
-
-
-
-Ensure the recommended categories are broad enough to match available courses but specific enough to be relevant.
-
-
-
-Avoid recommending the same category as the excluded course slug, if provided.
-
-
-
-Return the response in JSON format with exactly 3 categories: { "categories": ["category1", "category2", "category3"] }
-`;
     let recommendedCategories: string[] = [];
     try {
       const completion = await groq.chat.completions.create({

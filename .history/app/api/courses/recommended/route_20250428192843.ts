@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/db";
 import { Groq } from "groq-sdk";
 
@@ -21,17 +21,22 @@ interface RecommendedCourse {
   students: number;
 }
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const excludeSlug = searchParams.get("excludeSlug");
-  const userId = searchParams.get("userId");
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { excludeSlug, userId } = req.query;
 
   // Validate inputs
-  if (excludeSlug && typeof excludeSlug !== "string") {
-    return NextResponse.json({ error: "Invalid excludeSlug" }, { status: 400 });
+  if (typeof excludeSlug !== "string" && excludeSlug !== undefined) {
+    return res.status(400).json({ error: "Invalid excludeSlug" });
   }
-  if (userId && typeof userId !== "string") {
-    return NextResponse.json({ error: "Invalid userId" }, { status: 400 });
+  if (typeof userId !== "string" && userId !== undefined) {
+    return res.status(400).json({ error: "Invalid userId" });
   }
 
   try {
@@ -43,21 +48,21 @@ export async function GET(request: Request) {
     if (userId) {
       // Fetch cart
       const cart = await prisma.cart.findMany({
-        where: { userId },
+        where: { userId: userId as string },
         select: { courseId: true },
       });
       cartItems = cart.map((item) => item.courseId);
 
       // Fetch wishlist
       const wishlist = await prisma.wishlist.findMany({
-        where: { userId },
+        where: { userId: userId as string },
         select: { courseId: true },
       });
       wishlistItems = wishlist.map((item) => item.courseId);
 
       // Fetch student profile interests
       const studentProfile = await prisma.studentProfile.findUnique({
-        where: { userId },
+        where: { userId: userId as string },
         select: { interests: true },
       });
       interests = studentProfile?.interests || [];
@@ -65,52 +70,22 @@ export async function GET(request: Request) {
 
     // Prepare prompt for Groq API
     const prompt = `
- You are an AI assistant tasked with recommending online course categories based on user activity. Your goal is to suggest categories that align with the user's interests and activity, or provide popular, trending categories when user data is limited.
+      You are an AI assistant tasked with recommending online course categories based on user activity.
+      User context:
+      - Courses in cart: ${cartItems.length ? cartItems.join(", ") : "None"}
+      - Courses in wishlist: ${
+        wishlistItems.length ? wishlistItems.join(", ") : "None"
+      }
+      - Interests: ${interests.length ? interests.join(", ") : "None"}
+      - Exclude course slug: ${excludeSlug || "None"}
 
-User context:
+      Recommend 3 course categories that align with the user's interests and activity.
+      Return the response in JSON format:
+      {
+        "categories": ["category1", "category2", "category3"]
+      }
+    `;
 
-
-
-
-
-Courses in cart: ${cartItems.length ? cartItems.join(", ") : "None"}
-
-
-
-Courses in wishlist: ${wishlistItems.length ? wishlistItems.join(", ") : "None"}
-
-
-
-Interests: ${interests.length ? interests.join(", ") : "None"}
-
-
-
-Exclude course slug: ${excludeSlug || "None"}
-
-Instructions:
-
-
-
-
-
-If the user has specific interests or activity (cart/wishlist), prioritize categories closely related to those inputs. For example, if the user has a programming course in their cart, recommend categories like "Web Development" or "Data Science."
-
-
-
-If user activity or interests are limited or empty, recommend 3 popular or trending course categories based on general online learning trends (e.g., Programming, Business, Design, Data Science, or Personal Development).
-
-
-
-Ensure the recommended categories are broad enough to match available courses but specific enough to be relevant.
-
-
-
-Avoid recommending the same category as the excluded course slug, if provided.
-
-
-
-Return the response in JSON format with exactly 3 categories: { "categories": ["category1", "category2", "category3"] }
-`;
     let recommendedCategories: string[] = [];
     try {
       const completion = await groq.chat.completions.create({
@@ -180,12 +155,11 @@ Return the response in JSON format with exactly 3 categories: { "categories": ["
       };
     });
 
-    return NextResponse.json(formattedCourses);
+    return res.status(200).json(formattedCourses);
   } catch (error) {
     console.error("Error fetching recommended courses:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch recommended courses" },
-      { status: 500 }
-    );
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch recommended courses" });
   }
 }
