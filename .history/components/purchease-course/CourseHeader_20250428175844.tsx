@@ -26,7 +26,7 @@ interface CourseHeaderProps {
   activeLesson: number;
   setActiveModule: (value: number) => void;
   setActiveLesson: (value: number) => void;
-  setNotes: (value: Note[]) => void;
+  setNotes: (value: string) => void;
   setVideoError: (value: string | null) => void;
   setIsVideoLoading: (value: boolean) => void;
 }
@@ -100,22 +100,10 @@ export default function CourseHeader({
                                   ? "bg-accent"
                                   : ""
                               }`}
-                              onClick={async () => {
+                              onClick={() => {
                                 setActiveModule(index);
                                 setActiveLesson(lessonIndex);
-                                try {
-                                  const res = await fetch(
-                                    `/api/courses/notes?courseId=${course.id}&lessonId=${lesson.id}`,
-                                    { credentials: "include" }
-                                  );
-                                  if (!res.ok) {
-                                    throw new Error("Failed to fetch notes");
-                                  }
-                                  const data = await res.json();
-                                  setNotes(data);
-                                } catch (err) {
-                                  console.error("Error fetching notes:", err);
-                                }
+                                setNotes(lesson.progress.notes || "");
                                 setVideoError(null);
                                 setIsVideoLoading(true);
                                 document

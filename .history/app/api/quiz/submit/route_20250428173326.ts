@@ -36,7 +36,6 @@ export async function POST(req: Request) {
       quizId,
       courseId,
       answerCount: Object.keys(answers).length,
-      answers, // Debug: Log full answers object
     });
 
     // Verify enrollment
@@ -88,11 +87,6 @@ export async function POST(req: Request) {
     for (const question of quiz.questions) {
       const submittedAnswer = answers[question.id] || "";
       const isCorrect = submittedAnswer === question.correctAnswer;
-      console.log(`Processing question ${question.id}:`, {
-        submittedAnswer,
-        correctAnswer: question.correctAnswer,
-        isCorrect,
-      }); // Debug: Log answer details
 
       if (isCorrect && submittedAnswer) {
         correctAnswers++;

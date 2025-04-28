@@ -43,8 +43,7 @@ export default function AIGeneratedQuiz({
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<QuizResult[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { register, handleSubmit, reset, watch, setValue } =
-    useForm<QuizForm>();
+  const { register, handleSubmit, reset, watch } = useForm<QuizForm>();
   const { toast } = useToast();
   const formData = watch(); // Watch form data in real-time
 

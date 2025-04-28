@@ -1,24 +1,21 @@
-interface Progress {
-  id: string;
-  completed: boolean;
-  watchedSeconds: number;
-  lastPosition: number;
-  completedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Lesson {
+export interface Lesson {
   id: string;
   title: string;
-  description: string;
-  content: string;
-  type: string;
+  description: string | null;
+  content: string | null;
   videoUrl: string | null;
   duration: number;
+  type: "VIDEO" | "TEXT" | "QUIZ" | "ASSIGNMENT" | "LIVE_SESSION";
   isPreview: boolean;
-  progress: Progress[];
-  // ... other fields
+  progress: {
+    id: string;
+    completed: boolean;
+    watchedSeconds: number;
+    lastPosition: number;
+    completedAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 }
 
 export interface Module {

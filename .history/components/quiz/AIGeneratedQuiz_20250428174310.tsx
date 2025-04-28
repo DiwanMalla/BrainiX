@@ -43,8 +43,7 @@ export default function AIGeneratedQuiz({
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<QuizResult[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { register, handleSubmit, reset, watch, setValue } =
-    useForm<QuizForm>();
+  const { register, handleSubmit, reset, watch } = useForm<QuizForm>();
   const { toast } = useToast();
   const formData = watch(); // Watch form data in real-time
 
@@ -84,11 +83,6 @@ export default function AIGeneratedQuiz({
     if (!quizId) return;
     try {
       console.log("Form data before submit:", data.answers); // Debug form data
-      console.log("Sending to backend:", {
-        quizId,
-        answers: data.answers,
-        courseId,
-      }); // Debug payload
       const res = await fetch("/api/quiz/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -168,21 +162,21 @@ export default function AIGeneratedQuiz({
                       </span>
                     )}
                   </div>
-                  <RadioGroup
-                    className="space-y-2"
-                    disabled={isSubmitted}
-                    value={formData.answers?.[question.id] || ""}
-                    onValueChange={(value) => {
-                      // Manually set the selected value
-                      // Use setValue from useForm
-                      setValue(`answers.${question.id}`, value);
-                    }}
-                  >
+                  <RadioGroup className="space-y-2" disabled={isSubmitted}>
                     {question.options.map((option, i) => {
-                      const isSelected = isSubmitted
-                        ? result?.selectedAnswer === option
-                        : formData.answers?.[question.id] === option;
+                      const isSelected = result?.selectedAnswer === option;
                       const isCorrect = result?.correctAnswer === option;
+                      console.log(`Option ${i} for ${question.id}:`, {
+                        option,
+                        selectedAnswer: result?.selectedAnswer,
+                        formValue: formData.answers?.[question.id],
+                        isSelected,
+                        isCorrect,
+                        rawComparison: {
+                          selected: result?.selectedAnswer,
+                          option,
+                        },
+                      }); // Enhanced debug
                       const optionStyle =
                         isSubmitted && result
                           ? isCorrect
@@ -191,7 +185,6 @@ export default function AIGeneratedQuiz({
                             ? "bg-red-100"
                             : ""
                           : "";
-
                       return (
                         <div
                           key={i}
@@ -200,6 +193,7 @@ export default function AIGeneratedQuiz({
                           <RadioGroupItem
                             value={option}
                             id={`${question.id}-${i}`}
+                            {...register(`answers.${question.id}`)}
                           />
                           <Label htmlFor={`${question.id}-${i}`}>
                             {option}
@@ -208,7 +202,6 @@ export default function AIGeneratedQuiz({
                       );
                     })}
                   </RadioGroup>
-
                   {isSubmitted && result && (
                     <div className="mt-4 p-3 bg-gray-100 rounded-md">
                       <p className="text-sm font-medium">Explanation:</p>

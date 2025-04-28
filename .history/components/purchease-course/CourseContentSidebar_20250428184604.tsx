@@ -1,0 +1,189 @@
+"use client";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Progress } from "@/components/ui/progress";
+import {
+  Award,
+  CheckCircle,
+  FileQuestion,
+  FileText,
+  PenLine,
+  Play,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Course } from "@/app/my-learning/[slug]/page";
+import { debounce } from "lodash";
+
+interface CourseContentSidebarProps {
+  course: Course | null;
+  progress: number;
+  activeModule: number;
+  activeLesson: number;
+  setActiveModule: (value: number) => void;
+  setActiveLesson: (value: number) => void;
+  setNotes: (value: string) => void;
+  setVideoError: (value: string | null) => void;
+  setIsVideoLoading: (value: boolean) => void;
+}
+
+export default function CourseContentSidebar({
+  course,
+  progress,
+  activeModule,
+  activeLesson,
+  setActiveModule,
+  setActiveLesson,
+  setNotes,
+  setVideoError,
+  setIsVideoLoading,
+}: CourseContentSidebarProps) {
+  const switchLesson = debounce((moduleIndex: number, lessonIndex: number) => {
+    setActiveModule(moduleIndex);
+    setActiveLesson(lessonIndex);
+    setNotes(
+      course.modules[moduleIndex].lessons[lessonIndex].progress.notes || ""
+    );
+    setVideoError(null);
+    setIsVideoLoading(true);
+  }, 300);
+  return (
+    <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+      <div className="p-4 border-b bg-muted/50">
+        <h2 className="font-semibold">Course Content</h2>
+        <div className="flex items-center justify-between text-sm text-muted-foreground mt-1">
+          <span>
+            {course?.modules.length} modules •{" "}
+            {course?.modules.reduce(
+              (total, module) => total + module.lessons.length,
+              0
+            )}{" "}
+            lessons
+          </span>
+          <span>{Math.round(progress)}% complete</span>
+        </div>
+        <Progress value={progress} className="h-2 mt-2" />
+      </div>
+
+      <div className="max-h-[calc(100vh-350px)] overflow-y-auto">
+        <Accordion
+          type="single"
+          collapsible
+          defaultValue={`module-${activeModule}`}
+        >
+          {course?.modules.map((module, moduleIndex) => (
+            <AccordionItem key={module.id} value={module.id}>
+              <AccordionTrigger
+                className={`px-4 py-3 ${
+                  moduleIndex === activeModule ? "bg-accent/50" : ""
+                }`}
+              >
+                <div className="flex flex-col items-start text-left">
+                  <div className="flex items-center gap-2">
+                    <span>{module.title}</span>
+                    {console.log(module)}
+                    {module.lessons.every(
+                      (lesson) => lesson.progress[0].completed
+                    ) && <CheckCircle className="h-4 w-4 text-green-500" />}
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {module.lessons.length} lessons
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-0 py-0">
+                {module.lessons.map((lesson, lessonIndex) => (
+                  <div
+                    key={lesson.id}
+                    className={`flex items-center gap-3 p-3 border-b cursor-pointer hover:bg-accent/30 transition-colors ${
+                      moduleIndex === activeModule &&
+                      lessonIndex === activeLesson
+                        ? "bg-accent/50"
+                        : ""
+                    }`}
+                    onClick={() => switchLesson(moduleIndex, lessonIndex)}
+                  >
+                    <div className="flex-shrink-0">
+                      {lesson.progress.completed ? (
+                        <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        </div>
+                      ) : (
+                        <div className="h-6 w-6 rounded-full border border-muted-foreground/30 flex items-center justify-center">
+                          {lesson.type === "VIDEO" ? (
+                            <Play className="h-3 w-3" />
+                          ) : lesson.type === "TEXT" ? (
+                            <FileText className="h-3 w-3" />
+                          ) : lesson.type === "QUIZ" ? (
+                            <FileQuestion className="h-3 w-3" />
+                          ) : lesson.type === "ASSIGNMENT" ? (
+                            <PenLine className="h-3 w-3" />
+                          ) : (
+                            <Award className="h-3 w-3" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {lesson.title}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        {lesson.type === "VIDEO" ? (
+                          <span className="flex items-center">
+                            <Play className="h-3 w-3 mr-1" />
+                            Video
+                          </span>
+                        ) : lesson.type === "TEXT" ? (
+                          <span className="flex items-center">
+                            <FileText className="h-3 w-3 mr-1" />
+                            Article
+                          </span>
+                        ) : lesson.type === "QUIZ" ? (
+                          <span className="flex items-center">
+                            <FileQuestion className="h-3 w-3 mr-1" />
+                            Quiz
+                          </span>
+                        ) : lesson.type === "ASSIGNMENT" ? (
+                          <span className="flex items-center">
+                            <PenLine className="h-3 w-3 mr-1" />
+                            Assignment
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            <Award className="h-3 w-3 mr-1" />
+                            Live Session
+                          </span>
+                        )}
+                        <span>
+                          {lesson.duration
+                            ? `${Math.floor(lesson.duration / 60)}:${(
+                                lesson.duration % 60
+                              )
+                                .toString()
+                                .padStart(2, "0")}`
+                            : "N/A"}
+                        </span>
+                        {lesson.isPreview && (
+                          <span className="flex items-center">
+                            <Badge className="bg-secondary text-secondary-foreground">
+                              Preview
+                            </Badge>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </div>
+  );
+}

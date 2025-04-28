@@ -84,13 +84,6 @@ export default function CourseLearningPage() {
           credentials: "include",
         });
         const data = await res.json();
-        console.log("fetchCourse: API response", data);
-        console.log(
-          "fetchCourse: Lesson progress",
-          data.modules.map((module: Module) =>
-            module.lessons.map((lesson: Lesson) => lesson.progress)
-          )
-        );
         if (!res.ok) {
           throw new Error(data.error || "Failed to fetch course");
         }
@@ -108,18 +101,14 @@ export default function CourseLearningPage() {
         const completedLessons = data.modules.reduce(
           (sum: number, module: Module) =>
             sum +
-            module.lessons.filter(
-              (lesson: Lesson) => lesson.progress[0]?.completed
-            ).length,
+            module.lessons.filter((lesson: Lesson) => lesson.progress.completed)
+              .length,
           0
         );
-        const newProgress =
-          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-        setProgress(newProgress);
-        console.log("useEffect: Course fetched", {
-          courseId: data.id,
-          progress: newProgress,
-        });
+        setProgress(
+          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0
+        );
+        console.log("useEffect: Course fetched", { courseId: data.id });
       } catch (err: any) {
         console.error("useEffect: Course fetch error", {
           message: err.message,
@@ -199,11 +188,6 @@ export default function CourseLearningPage() {
 
   const markLessonComplete = async () => {
     if (!course || !course.modules[activeModule]?.lessons[activeLesson]) {
-      console.log("markLessonComplete: Invalid course or lesson", {
-        course,
-        activeModule,
-        activeLesson,
-      });
       toast({
         title: "Error",
         description: "No lesson selected.",
@@ -213,25 +197,8 @@ export default function CourseLearningPage() {
     }
 
     const currentLesson = course.modules[activeModule].lessons[activeLesson];
-    console.log("markLessonComplete: Starting", {
-      courseId: course.id,
-      lessonId: currentLesson.id,
-      activeModule,
-      activeLesson,
-      isCompleted: currentLesson.progress[0]?.completed || false,
-    });
-
-    // Check if lesson is already completed (client-side)
-    if (currentLesson.progress[0]?.completed) {
-      toast({
-        title: "Lesson Already Completed",
-        description: `${currentLesson.title} is already marked as complete.`,
-      });
-      return;
-    }
 
     try {
-      // Mark lesson as complete
       const res = await fetch("/api/courses/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -242,67 +209,39 @@ export default function CourseLearningPage() {
         }),
       });
 
-      console.log("markLessonComplete: API response", {
-        status: res.status,
-        ok: res.ok,
-      });
-
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to update progress");
       }
 
-      // Update local state
-      const updatedLesson = {
-        ...currentLesson,
-        progress: currentLesson.progress.length
-          ? [
-              {
-                ...currentLesson.progress[0],
-                completed: true,
-                completedAt: new Date(),
-              },
-            ]
-          : [{ completed: true, completedAt: new Date() }],
-        completed: true, // Sync lesson.completed if needed
-      };
-
-      setCourse((prev) => {
-        if (!prev) {
-          console.log("markLessonComplete: No previous course state");
-          return prev;
-        }
-        const newModules = [...prev.modules];
-        newModules[activeModule] = {
-          ...newModules[activeModule],
-          lessons: newModules[activeModule].lessons.map((lesson, lIdx) =>
-            lIdx === activeLesson ? updatedLesson : lesson
-          ),
-        };
-        console.log("markLessonComplete: Course state updated", {
-          moduleId: newModules[activeModule].id,
-          lessonId: updatedLesson.id,
-        });
-        return { ...prev, modules: newModules };
+      // Fetch updated course data to ensure state is in sync
+      const courseRes = await fetch(`/api/courses/${params.slug}/content`, {
+        credentials: "include",
+        cache: "no-store",
       });
+      const updatedCourse = await courseRes.json();
+      if (!courseRes.ok) {
+        throw new Error(
+          updatedCourse.error || "Failed to fetch updated course"
+        );
+      }
 
-      // Recalculate progress
-      const totalLessons = course.modules.reduce(
-        (sum, module) => sum + module.lessons.length,
+      setCourse(updatedCourse);
+
+      const totalLessons = updatedCourse.modules.reduce(
+        (sum: number, module: Module) => sum + module.lessons.length,
         0
       );
-      const completedLessons = course.modules.reduce(
-        (sum, module) =>
+      const completedLessons = updatedCourse.modules.reduce(
+        (sum: number, module: Module) =>
           sum +
-          module.lessons.filter((lesson) => lesson.progress[0]?.completed)
+          module.lessons.filter((lesson: Lesson) => lesson.progress.completed)
             .length,
         0
       );
       const newProgress =
-        totalLessons > 0 ? ((completedLessons + 1) / totalLessons) * 100 : 0;
+        totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
       setProgress(newProgress);
-
-      console.log("markLessonComplete: Progress updated", { newProgress });
 
       toast({
         title: "Lesson Completed",
@@ -313,24 +252,12 @@ export default function CourseLearningPage() {
 
       if (activeLesson < course.modules[activeModule].lessons.length - 1) {
         setActiveLesson(activeLesson + 1);
-        console.log("markLessonComplete: Advanced to next lesson", {
-          newActiveLesson: activeLesson + 1,
-        });
       } else if (activeModule < course.modules.length - 1) {
         setActiveModule(activeModule + 1);
         setActiveLesson(0);
-        console.log("markLessonComplete: Advanced to next module", {
-          newActiveModule: activeModule + 1,
-          newActiveLesson: 0,
-        });
-      } else {
-        console.log("markLessonComplete: Course completed");
       }
     } catch (err: any) {
-      console.error("markLessonComplete: Error", {
-        message: err.message,
-        stack: err.stack,
-      });
+      console.error("markLessonComplete: Error", { message: err.message });
       toast({
         title: "Error",
         description: err.message || "Failed to mark lesson as complete.",
@@ -377,6 +304,7 @@ export default function CourseLearningPage() {
           });
         } else {
           console.log("handleProgress: Success");
+          // Update local state with new progress
           setCourse((prev) => {
             if (!prev) return prev;
             const newModules = [...prev.modules];
@@ -386,15 +314,11 @@ export default function CourseLearningPage() {
                 lIdx === activeLesson
                   ? {
                       ...lesson,
-                      progress: lesson.progress.length
-                        ? [
-                            {
-                              ...lesson.progress[0],
-                              watchedSeconds,
-                              lastPosition,
-                            },
-                          ]
-                        : [{ watchedSeconds, lastPosition }],
+                      progress: {
+                        ...lesson.progress,
+                        watchedSeconds,
+                        lastPosition,
+                      },
                     }
                   : lesson
               ),
@@ -411,7 +335,7 @@ export default function CourseLearningPage() {
         });
       }
     },
-    15000
+    15000 // Debounce for 15 seconds
   );
 
   const sendChatMessage = async (e?: React.FormEvent) => {
@@ -471,7 +395,6 @@ export default function CourseLearningPage() {
   }
 
   const currentLesson = course.modules[activeModule]?.lessons[activeLesson];
-  console.log("CourseLearningPage: Current lesson", currentLesson);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -504,7 +427,7 @@ export default function CourseLearningPage() {
               normalizeYouTubeUrl={normalizeYouTubeUrl}
               isValidYouTubeUrl={isValidYouTubeUrl}
               handleProgress={handleProgress}
-              courseId={course.id}
+              courseId={course.id} // Pass courseId
             />
             <LessonContent
               course={course}

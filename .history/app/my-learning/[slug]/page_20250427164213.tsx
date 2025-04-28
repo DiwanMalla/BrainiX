@@ -84,13 +84,6 @@ export default function CourseLearningPage() {
           credentials: "include",
         });
         const data = await res.json();
-        console.log("fetchCourse: API response", data);
-        console.log(
-          "fetchCourse: Lesson progress",
-          data.modules.map((module: Module) =>
-            module.lessons.map((lesson: Lesson) => lesson.progress)
-          )
-        );
         if (!res.ok) {
           throw new Error(data.error || "Failed to fetch course");
         }
@@ -108,18 +101,14 @@ export default function CourseLearningPage() {
         const completedLessons = data.modules.reduce(
           (sum: number, module: Module) =>
             sum +
-            module.lessons.filter(
-              (lesson: Lesson) => lesson.progress[0]?.completed
-            ).length,
+            module.lessons.filter((lesson: Lesson) => lesson.progress.completed)
+              .length,
           0
         );
-        const newProgress =
-          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-        setProgress(newProgress);
-        console.log("useEffect: Course fetched", {
-          courseId: data.id,
-          progress: newProgress,
-        });
+        setProgress(
+          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0
+        );
+        console.log("useEffect: Course fetched", { courseId: data.id });
       } catch (err: any) {
         console.error("useEffect: Course fetch error", {
           message: err.message,
@@ -218,20 +207,9 @@ export default function CourseLearningPage() {
       lessonId: currentLesson.id,
       activeModule,
       activeLesson,
-      isCompleted: currentLesson.progress[0]?.completed || false,
     });
 
-    // Check if lesson is already completed (client-side)
-    if (currentLesson.progress[0]?.completed) {
-      toast({
-        title: "Lesson Already Completed",
-        description: `${currentLesson.title} is already marked as complete.`,
-      });
-      return;
-    }
-
     try {
-      // Mark lesson as complete
       const res = await fetch("/api/courses/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -252,19 +230,9 @@ export default function CourseLearningPage() {
         throw new Error(errorData.error || "Failed to update progress");
       }
 
-      // Update local state
       const updatedLesson = {
         ...currentLesson,
-        progress: currentLesson.progress.length
-          ? [
-              {
-                ...currentLesson.progress[0],
-                completed: true,
-                completedAt: new Date(),
-              },
-            ]
-          : [{ completed: true, completedAt: new Date() }],
-        completed: true, // Sync lesson.completed if needed
+        progress: { ...currentLesson.progress, completed: true },
       };
 
       setCourse((prev) => {
@@ -286,7 +254,6 @@ export default function CourseLearningPage() {
         return { ...prev, modules: newModules };
       });
 
-      // Recalculate progress
       const totalLessons = course.modules.reduce(
         (sum, module) => sum + module.lessons.length,
         0
@@ -294,8 +261,7 @@ export default function CourseLearningPage() {
       const completedLessons = course.modules.reduce(
         (sum, module) =>
           sum +
-          module.lessons.filter((lesson) => lesson.progress[0]?.completed)
-            .length,
+          module.lessons.filter((lesson) => lesson.progress.completed).length,
         0
       );
       const newProgress =
@@ -370,48 +336,14 @@ export default function CourseLearningPage() {
         if (!res.ok) {
           const errorData = await res.json();
           console.error("handleProgress: Failed", errorData);
-          toast({
-            title: "Error",
-            description: errorData.error || "Failed to update video progress.",
-            variant: "destructive",
-          });
         } else {
           console.log("handleProgress: Success");
-          setCourse((prev) => {
-            if (!prev) return prev;
-            const newModules = [...prev.modules];
-            newModules[activeModule] = {
-              ...newModules[activeModule],
-              lessons: newModules[activeModule].lessons.map((lesson, lIdx) =>
-                lIdx === activeLesson
-                  ? {
-                      ...lesson,
-                      progress: lesson.progress.length
-                        ? [
-                            {
-                              ...lesson.progress[0],
-                              watchedSeconds,
-                              lastPosition,
-                            },
-                          ]
-                        : [{ watchedSeconds, lastPosition }],
-                    }
-                  : lesson
-              ),
-            };
-            return { ...prev, modules: newModules };
-          });
         }
       } catch (err) {
         console.error("handleProgress: Error", err);
-        toast({
-          title: "Error",
-          description: "Failed to update video progress.",
-          variant: "destructive",
-        });
       }
     },
-    15000
+    5000
   );
 
   const sendChatMessage = async (e?: React.FormEvent) => {
@@ -471,7 +403,6 @@ export default function CourseLearningPage() {
   }
 
   const currentLesson = course.modules[activeModule]?.lessons[activeLesson];
-  console.log("CourseLearningPage: Current lesson", currentLesson);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -504,7 +435,6 @@ export default function CourseLearningPage() {
               normalizeYouTubeUrl={normalizeYouTubeUrl}
               isValidYouTubeUrl={isValidYouTubeUrl}
               handleProgress={handleProgress}
-              courseId={course.id}
             />
             <LessonContent
               course={course}
@@ -513,7 +443,6 @@ export default function CourseLearningPage() {
               activeLesson={activeLesson}
               setActiveModule={setActiveModule}
               setActiveLesson={setActiveLesson}
-              setNotes={setNotes}
               setVideoError={setVideoError}
               setIsVideoLoading={setIsVideoLoading}
               markLessonComplete={markLessonComplete}
@@ -529,7 +458,6 @@ export default function CourseLearningPage() {
                 activeLesson={activeLesson}
                 setActiveModule={setActiveModule}
                 setActiveLesson={setActiveLesson}
-                setNotes={setNotes}
                 setVideoError={setVideoError}
                 setIsVideoLoading={setIsVideoLoading}
               />

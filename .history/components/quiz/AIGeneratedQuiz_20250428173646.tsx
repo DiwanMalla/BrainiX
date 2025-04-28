@@ -43,10 +43,8 @@ export default function AIGeneratedQuiz({
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<QuizResult[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { register, handleSubmit, reset, watch, setValue } =
-    useForm<QuizForm>();
+  const { register, handleSubmit, reset, watch } = useForm<QuizForm>();
   const { toast } = useToast();
-  const formData = watch(); // Watch form data in real-time
 
   const generateQuiz = async () => {
     setIsLoading(true);
@@ -83,12 +81,6 @@ export default function AIGeneratedQuiz({
   const onSubmit = async (data: QuizForm) => {
     if (!quizId) return;
     try {
-      console.log("Form data before submit:", data.answers); // Debug form data
-      console.log("Sending to backend:", {
-        quizId,
-        answers: data.answers,
-        courseId,
-      }); // Debug payload
       const res = await fetch("/api/quiz/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -98,7 +90,6 @@ export default function AIGeneratedQuiz({
         throw new Error(res.statusText);
       }
       const result = await res.json();
-      console.log("Quiz results from backend:", result); // Debug full backend response
       setResults(result.results);
       setIsSubmitted(true);
       toast({
@@ -145,12 +136,6 @@ export default function AIGeneratedQuiz({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {questions.map((question, index) => {
             const result = results.find((r) => r.questionId === question.id);
-            console.log(`Question ${question.id} options:`, question.options); // Debug options
-            console.log(`Question ${question.id} result:`, result); // Debug result
-            console.log(
-              `Question ${question.id} form value:`,
-              formData.answers?.[question.id]
-            ); // Debug form value
             return (
               <Card key={question.id}>
                 <CardContent className="pt-6">
@@ -168,20 +153,9 @@ export default function AIGeneratedQuiz({
                       </span>
                     )}
                   </div>
-                  <RadioGroup
-                    className="space-y-2"
-                    disabled={isSubmitted}
-                    value={formData.answers?.[question.id] || ""}
-                    onValueChange={(value) => {
-                      // Manually set the selected value
-                      // Use setValue from useForm
-                      setValue(`answers.${question.id}`, value);
-                    }}
-                  >
+                  <RadioGroup className="space-y-2" disabled={isSubmitted}>
                     {question.options.map((option, i) => {
-                      const isSelected = isSubmitted
-                        ? result?.selectedAnswer === option
-                        : formData.answers?.[question.id] === option;
+                      const isSelected = result?.selectedAnswer === option;
                       const isCorrect = result?.correctAnswer === option;
                       const optionStyle =
                         isSubmitted && result
@@ -191,7 +165,6 @@ export default function AIGeneratedQuiz({
                             ? "bg-red-100"
                             : ""
                           : "";
-
                       return (
                         <div
                           key={i}
@@ -200,6 +173,7 @@ export default function AIGeneratedQuiz({
                           <RadioGroupItem
                             value={option}
                             id={`${question.id}-${i}`}
+                            {...register(`answers.${question.id}`)}
                           />
                           <Label htmlFor={`${question.id}-${i}`}>
                             {option}
@@ -208,7 +182,6 @@ export default function AIGeneratedQuiz({
                       );
                     })}
                   </RadioGroup>
-
                   {isSubmitted && result && (
                     <div className="mt-4 p-3 bg-gray-100 rounded-md">
                       <p className="text-sm font-medium">Explanation:</p>

@@ -43,18 +43,13 @@ export default function LessonContent({
   setIsVideoLoading,
   markLessonComplete,
 }: LessonContentProps) {
-  const handleMarkComplete = async (e: React.MouseEvent) => {
+  const handleMarkComplete = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!lesson) return;
     console.log("LessonContent: Marking lesson complete", {
-      lessonId: lesson.id,
-      lessonTitle: lesson.title,
+      lessonId: lesson?.id,
+      lessonTitle: lesson?.title,
     });
-    try {
-      await markLessonComplete();
-    } catch (error) {
-      console.error("Failed to mark lesson complete:", error);
-    }
+    markLessonComplete();
   };
 
   const handlePrevious = (e: React.MouseEvent) => {
@@ -173,9 +168,9 @@ export default function LessonContent({
           <Button
             size="sm"
             onClick={handleMarkComplete}
-            disabled={lesson.progress[0]?.completed} // Fixed from lesson.progress.completed
+            disabled={lesson.progress.completed}
           >
-            {lesson.progress[0]?.completed
+            {lesson?.progress[0]?.completed
               ? "Already Completed"
               : "Mark as Complete"}
           </Button>

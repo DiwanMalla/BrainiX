@@ -221,16 +221,24 @@ export default function CourseLearningPage() {
       isCompleted: currentLesson.progress[0]?.completed || false,
     });
 
-    // Check if lesson is already completed (client-side)
-    if (currentLesson.progress[0]?.completed) {
-      toast({
-        title: "Lesson Already Completed",
-        description: `${currentLesson.title} is already marked as complete.`,
-      });
-      return;
-    }
-
     try {
+      // Optional: Check database for completion status
+      const progressRes = await fetch(
+        `/api/courses/progress?courseId=${course.id}&lessonId=${currentLesson.id}`,
+        { credentials: "include" }
+      );
+      const progressData = await progressRes.json();
+      if (!progressRes.ok) {
+        throw new Error(progressData.error || "Failed to fetch progress");
+      }
+      if (progressData?.completed) {
+        toast({
+          title: "Lesson Already Completed",
+          description: `${currentLesson.title} is already marked as complete.`,
+        });
+        return;
+      }
+
       // Mark lesson as complete
       const res = await fetch("/api/courses/progress", {
         method: "POST",
@@ -264,7 +272,6 @@ export default function CourseLearningPage() {
               },
             ]
           : [{ completed: true, completedAt: new Date() }],
-        completed: true, // Sync lesson.completed if needed
       };
 
       setCourse((prev) => {
@@ -522,7 +529,7 @@ export default function CourseLearningPage() {
 
           {showSidebar && (
             <div className="lg:col-span-4 space-y-6">
-              <CourseContentSidebar
+              {/* <CourseContentSidebar
                 course={course}
                 progress={progress}
                 activeModule={activeModule}
@@ -532,7 +539,7 @@ export default function CourseLearningPage() {
                 setNotes={setNotes}
                 setVideoError={setVideoError}
                 setIsVideoLoading={setIsVideoLoading}
-              />
+              /> */}
               {showNotes && (
                 <CourseNotes
                   course={course}

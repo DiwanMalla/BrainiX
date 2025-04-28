@@ -109,16 +109,16 @@ export default function CourseLearningPage() {
           (sum: number, module: Module) =>
             sum +
             module.lessons.filter(
-              (lesson: Lesson) => lesson.progress[0]?.completed
+              (lesson: Lesson) => lesson.progress?.completed
             ).length,
           0
         );
-        const newProgress =
-          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
-        setProgress(newProgress);
+        setProgress(
+          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0
+        );
         console.log("useEffect: Course fetched", {
           courseId: data.id,
-          progress: newProgress,
+          progress,
         });
       } catch (err: any) {
         console.error("useEffect: Course fetch error", {
@@ -218,20 +218,9 @@ export default function CourseLearningPage() {
       lessonId: currentLesson.id,
       activeModule,
       activeLesson,
-      isCompleted: currentLesson.progress[0]?.completed || false,
     });
 
-    // Check if lesson is already completed (client-side)
-    if (currentLesson.progress[0]?.completed) {
-      toast({
-        title: "Lesson Already Completed",
-        description: `${currentLesson.title} is already marked as complete.`,
-      });
-      return;
-    }
-
     try {
-      // Mark lesson as complete
       const res = await fetch("/api/courses/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -252,19 +241,9 @@ export default function CourseLearningPage() {
         throw new Error(errorData.error || "Failed to update progress");
       }
 
-      // Update local state
       const updatedLesson = {
         ...currentLesson,
-        progress: currentLesson.progress.length
-          ? [
-              {
-                ...currentLesson.progress[0],
-                completed: true,
-                completedAt: new Date(),
-              },
-            ]
-          : [{ completed: true, completedAt: new Date() }],
-        completed: true, // Sync lesson.completed if needed
+        progress: { ...currentLesson.progress, completed: true },
       };
 
       setCourse((prev) => {
@@ -286,7 +265,6 @@ export default function CourseLearningPage() {
         return { ...prev, modules: newModules };
       });
 
-      // Recalculate progress
       const totalLessons = course.modules.reduce(
         (sum, module) => sum + module.lessons.length,
         0
@@ -294,8 +272,7 @@ export default function CourseLearningPage() {
       const completedLessons = course.modules.reduce(
         (sum, module) =>
           sum +
-          module.lessons.filter((lesson) => lesson.progress[0]?.completed)
-            .length,
+          module.lessons.filter((lesson) => lesson.progress.completed).length,
         0
       );
       const newProgress =
@@ -377,6 +354,7 @@ export default function CourseLearningPage() {
           });
         } else {
           console.log("handleProgress: Success");
+          // Update local state with new progress
           setCourse((prev) => {
             if (!prev) return prev;
             const newModules = [...prev.modules];
@@ -386,15 +364,11 @@ export default function CourseLearningPage() {
                 lIdx === activeLesson
                   ? {
                       ...lesson,
-                      progress: lesson.progress.length
-                        ? [
-                            {
-                              ...lesson.progress[0],
-                              watchedSeconds,
-                              lastPosition,
-                            },
-                          ]
-                        : [{ watchedSeconds, lastPosition }],
+                      progress: {
+                        ...lesson.progress,
+                        watchedSeconds,
+                        lastPosition,
+                      },
                     }
                   : lesson
               ),
@@ -411,7 +385,7 @@ export default function CourseLearningPage() {
         });
       }
     },
-    15000
+    15000 // Debounce for 15 seconds
   );
 
   const sendChatMessage = async (e?: React.FormEvent) => {
@@ -471,7 +445,6 @@ export default function CourseLearningPage() {
   }
 
   const currentLesson = course.modules[activeModule]?.lessons[activeLesson];
-  console.log("CourseLearningPage: Current lesson", currentLesson);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -504,7 +477,7 @@ export default function CourseLearningPage() {
               normalizeYouTubeUrl={normalizeYouTubeUrl}
               isValidYouTubeUrl={isValidYouTubeUrl}
               handleProgress={handleProgress}
-              courseId={course.id}
+              courseId={course.id} // Pass courseId
             />
             <LessonContent
               course={course}
