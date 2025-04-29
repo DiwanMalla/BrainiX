@@ -165,9 +165,7 @@ export async function POST(req: NextRequest) {
               ? { category: { is: { name: categoryFilter } } }
               : {}),
             ...(maxPrice ? { price: { lte: maxPrice } } : {}),
-            ...(skillLevel
-              ? { level: { equals: skillLevel as CourseLevel } }
-              : {}),
+            ...(skillLevel ? { level: { equals: skillLevel as CourseLevel } } : {}),
             ...(topic
               ? { title: { contains: topic, mode: "insensitive" } }
               : {}),
@@ -201,7 +199,7 @@ export async function POST(req: NextRequest) {
                   course.rating?.toFixed(1) || "N/A"
                 }/5</p>
                 <p class="text-sm text-gray-600">Category: ${
-                  course.category.name
+                  course.category
                 }</p>
                 <a href="/courses/${
                   course.slug
@@ -213,7 +211,7 @@ export async function POST(req: NextRequest) {
                 - Price: $${course.price.toFixed(2)}
                 - Duration: ${course.duration} hours
                 - Rating: ${course.rating?.toFixed(1) || "N/A"}/5
-                - Category: ${course.category.name}
+                - Category: ${course.category}
                 - Enroll: /courses/${course.slug}
             `;
             return {
@@ -221,7 +219,7 @@ export async function POST(req: NextRequest) {
               price: course.price,
               duration: course.duration,
               rating: course.rating,
-              category: course.category.name,
+              category: course.category,
               slug: course.slug,
               html,
             };
