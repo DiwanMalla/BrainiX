@@ -1,8 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
-import prisma from "@/lib/db"; // Reuse singleton Prisma client
+import { PrismaClient } from "@prisma/client";
 import Pusher from "pusher";
 
+const prisma = new PrismaClient();
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID!,
   key: process.env.PUSHER_KEY!,
@@ -12,15 +13,15 @@ const pusher = new Pusher({
 });
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { [key: string]: string | string[] } }
+  request: Request,
+  { params }: { params: { slug: string } }
 ) {
-  const { userId } = getAuth(request);
+  const { userId } = getAuth(request as NextRequest);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const slug = params.slug as string; // Assert slug as string
+  const { slug } = await params;
   const { searchParams } = new URL(request.url);
   const intake = searchParams.get("intake") || "current";
 
@@ -31,7 +32,6 @@ export async function GET(
         course: { slug },
       },
     });
-
     if (!enrollment) {
       return NextResponse.json(
         { error: "Not enrolled in course" },
@@ -66,17 +66,17 @@ export async function GET(
 }
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { [key: string]: string | string[] } }
+  request: Request,
+  { params }: { params: { slug: string } }
 ) {
-  const { userId } = getAuth(request);
+  const { userId } = getAuth(request as NextRequest);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const slug = params.slug as string; // Assert slug as string
+  const { slug } = await params;
   const { content } = await request.json();
-
+  console.log("Received content:", content);
   if (!content || typeof content !== "string" || content.trim().length === 0) {
     return NextResponse.json(
       { error: "Invalid message content" },
@@ -91,7 +91,6 @@ export async function POST(
         course: { slug },
       },
     });
-
     if (!enrollment) {
       return NextResponse.json(
         { error: "Not enrolled in course" },
@@ -104,7 +103,6 @@ export async function POST(
         content: content.trim().slice(0, 1000),
         sender: { connect: { clerkId: userId } },
         course: { connect: { slug } },
-        courseSlug: slug, // Ensure courseSlug is set
       },
       include: {
         sender: { select: { name: true, image: true, role: true } },
@@ -113,13 +111,13 @@ export async function POST(
 
     await pusher.trigger(`course-${slug}`, "new-message", {
       id: message.id,
-      user: message.sender.name ?? "Anonymous",
+      user: message.sender.name,
       avatar:
         message.sender.image ||
         (message.sender.name?.slice(0, 2).toUpperCase() ?? "NA"),
       message: message.content,
       time: message.createdAt.toISOString(),
-      likes: message.likes ?? 0, // Fallback for null likes
+      likes: message.likes,
       isInstructor: message.sender.role === "INSTRUCTOR",
     });
 
