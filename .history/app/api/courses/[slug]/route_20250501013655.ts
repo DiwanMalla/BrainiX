@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
-type Params = Promise<{ slug: string }>;
-export async function GET({ params }: { params: Params }) {
-  const { slug } = await params;
+export async function GET(
+  req: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
+    const { slug } = params;
+
     if (!slug) {
       return NextResponse.json(
         { error: "Missing course slug" },

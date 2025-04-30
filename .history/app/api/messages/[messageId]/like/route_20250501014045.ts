@@ -15,6 +15,8 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { messageId } = params;
+
   try {
     const message = await prisma.message.update({
       where: { id: messageId },

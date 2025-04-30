@@ -27,12 +27,6 @@ declare global {
     };
   }
 }
-type SyllabusItem = {
-  title: string;
-  lectures: number;
-  duration: string;
-};
-
 export type Course = {
   id: string;
   title: string;
@@ -41,8 +35,6 @@ export type Course = {
   shortDescription?: string | null;
   price: number;
   discountPrice?: number | null;
-  discount?: number | null;
-  students: number | null;
   thumbnail?: string | null;
   previewVideo?: string | null;
   level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
@@ -53,7 +45,7 @@ export type Course = {
   publishedAt?: Date | null;
   language: string;
   subtitlesLanguages: string[];
-  duration: number | string;
+  duration: number|string;
   totalLessons: number;
   totalModules: number;
   requirements: string[];
@@ -65,13 +57,11 @@ export type Course = {
   topCompanies: string[];
   createdAt: Date;
   updatedAt: Date;
-  lastUpdated?: string | null;
+
   // Relations
   instructorId: string;
-  category?: string | null;
   categoryId: string;
-  whatYoullLearn?: string[] | null;
-  syllabus?: SyllabusItem[] | number | null;
+
   // Optional relations (when using includes)
   instructor?: User;
   category?: Category;

@@ -27,12 +27,6 @@ declare global {
     };
   }
 }
-type SyllabusItem = {
-  title: string;
-  lectures: number;
-  duration: string;
-};
-
 export type Course = {
   id: string;
   title: string;
@@ -68,10 +62,8 @@ export type Course = {
   lastUpdated?: string | null;
   // Relations
   instructorId: string;
-  category?: string | null;
   categoryId: string;
   whatYoullLearn?: string[] | null;
-  syllabus?: SyllabusItem[] | number | null;
   // Optional relations (when using includes)
   instructor?: User;
   category?: Category;

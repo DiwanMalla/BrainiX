@@ -4,16 +4,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-type Params = Promise<{ messageId: string }>;
+type Parama = Promise<{ messageId: string }>;
 export async function POST(
   request: NextRequest,
   { params }: { params: Params }
 ) {
-  const { messageId } = await params;
   const { userId } = getAuth(request);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const { messageId } = params;
 
   try {
     const message = await prisma.message.update({

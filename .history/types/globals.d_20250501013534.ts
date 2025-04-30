@@ -68,7 +68,6 @@ export type Course = {
   lastUpdated?: string | null;
   // Relations
   instructorId: string;
-  category?: string | null;
   categoryId: string;
   whatYoullLearn?: string[] | null;
   syllabus?: SyllabusItem[] | number | null;

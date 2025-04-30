@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { Course } from "@/types/globals";
-
+import { Course } from "@prisma/client";
 type Params = Promise<{ slug: string }>;
-export async function GET({ params }: { params: Params }) {
-  const { slug } = await params;
+
+type ExtendedCourse = Course & {
+  discount?: number;
+};
+export async function GET(req: Request, { params }: { params: Params }) {
   try {
+    const { slug } = params;
+
     if (!slug) {
       return NextResponse.json(
         { error: "Missing course slug" },
@@ -35,7 +39,7 @@ export async function GET({ params }: { params: Params }) {
     const discount =
       course.discountPrice && course.price > 0
         ? Math.round(
-            ((course.price - course.discountPrice) / course.price) * 100
+    const formattedCourse: ExtendedCourse = {
           )
         : undefined;
 
@@ -47,13 +51,14 @@ export async function GET({ params }: { params: Params }) {
       shortDescription: course.shortDescription || "",
       price: course.price,
       discount,
-      discountPrice: course.discountPrice || undefined,
+      discountPrice: course.discountPrice ?? null,
       thumbnail: course.thumbnail || "/placeholder.svg",
       rating: course.rating || 0,
       students: course.totalStudents || 0,
       category: course.category?.name || "Uncategorized",
-      level: course.level === "ALL_LEVELS" ? "BEGINNER" : course.level,
-      duration: course.duration
+      level: course.level,
+      duration: course.duration,
+      formattedDuration: course.duration
         ? `${Math.floor(course.duration / 3600)}h ${Math.floor(
             (course.duration % 3600) / 60
           )}m`
@@ -96,21 +101,6 @@ export async function GET({ params }: { params: Params }) {
           : "Unknown",
       })),
       topCompanies: course.topCompanies || [],
-      status: "DRAFT",
-      featured: false,
-      bestseller: false,
-      published: false,
-      subtitlesLanguages: [],
-      totalLessons: 0,
-      totalModules: 0,
-      requirements: [],
-      learningObjectives: [],
-      targetAudience: [],
-      tags: [],
-      createdAt: course.createdAt || new Date(),
-      updatedAt: course.updatedAt,
-      instructorId: "",
-      categoryId: "",
     };
 
     return NextResponse.json(formattedCourse);

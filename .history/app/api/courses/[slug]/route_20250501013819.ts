@@ -4,7 +4,6 @@ import { Course } from "@/types/globals";
 
 type Params = Promise<{ slug: string }>;
 export async function GET({ params }: { params: Params }) {
-  const { slug } = await params;
   try {
     if (!slug) {
       return NextResponse.json(

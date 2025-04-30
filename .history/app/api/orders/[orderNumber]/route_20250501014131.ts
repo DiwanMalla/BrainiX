@@ -10,6 +10,8 @@ export async function GET({ params }: { params: Params }) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { orderNumber } = params;
+
   try {
     const order = await prisma.order.findUnique({
       where: { orderNumber },

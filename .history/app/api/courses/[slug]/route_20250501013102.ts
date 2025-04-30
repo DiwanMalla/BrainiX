@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
-type Params = Promise<{ slug: string }>;
-export async function GET({ params }: { params: Params }) {
-  const { slug } = await params;
+export async function GET(
+  req: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
+    const { slug } = params;
+
     if (!slug) {
       return NextResponse.json(
         { error: "Missing course slug" },
@@ -96,21 +99,6 @@ export async function GET({ params }: { params: Params }) {
           : "Unknown",
       })),
       topCompanies: course.topCompanies || [],
-      status: "DRAFT",
-      featured: false,
-      bestseller: false,
-      published: false,
-      subtitlesLanguages: [],
-      totalLessons: 0,
-      totalModules: 0,
-      requirements: [],
-      learningObjectives: [],
-      targetAudience: [],
-      tags: [],
-      createdAt: course.createdAt || new Date(),
-      updatedAt: course.updatedAt,
-      instructorId: "",
-      categoryId: "",
     };
 
     return NextResponse.json(formattedCourse);
