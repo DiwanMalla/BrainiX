@@ -166,10 +166,7 @@ export async function POST(req: Request) {
       console.error("Quiz Generate: Error", {
         message: error.message,
         stack: error.stack,
-        status:
-          axios.isAxiosError(error) && error.response
-            ? error.response.status
-            : undefined,
+        status: (error as unknown)?.response?.status,
       });
     } else {
       console.error("Quiz Generate: Unknown error", { error });
