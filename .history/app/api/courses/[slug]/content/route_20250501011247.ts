@@ -1,11 +1,14 @@
+// app/api/courses/[slug]/content/route.ts
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/db";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
   const { userId } = await auth();
-  const slug = request.nextUrl.pathname.split("/").pop(); // Extract slug from URL path
-
+  const { slug } = await params; // Await params to access slug
   console.log("Auth Details:", { userId, slug });
 
   if (!userId) {
@@ -48,6 +51,7 @@ export async function GET(request: NextRequest) {
                   },
                 },
                 notes: {
+                  // Query Note model
                   where: {
                     enrollment: {
                       userId,

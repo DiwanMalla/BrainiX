@@ -3,7 +3,6 @@ import prisma from "@/lib/db";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const { userId } = await auth();
   const slug = request.nextUrl.pathname.split("/").pop(); // Extract slug from URL path
 
   console.log("Auth Details:", { userId, slug });

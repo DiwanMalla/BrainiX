@@ -1,13 +1,13 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const slug = request.nextUrl.pathname.split("/").pop(); // Extract slug from the URL path
-
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { slug: string } }
+) {
   try {
     const category = await prisma.category.findUnique({
-      where: { slug },
+      where: { slug: params.slug },
       include: {
         courses: {
           where: { published: true },
