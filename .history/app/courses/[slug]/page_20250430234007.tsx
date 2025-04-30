@@ -150,14 +150,12 @@ export default function CoursePage({ params }: CoursePageProps) {
 
       if (wishlistRes.ok) {
         const wishlist = await wishlistRes.json();
-        setIsFavorite(
-          !!wishlist.find((item: { id: string }) => item.id === course?.id)
-        );
+        setIsFavorite(!!wishlist.find((item: any) => item.id === course?.id));
       }
       if (enrollmentRes.ok) {
         const enrollments = await enrollmentRes.json();
         setIsPurchased(
-          !!enrollments.find((item: { id: string }) => item.id === course?.id)
+          !!enrollments.find((item: any) => item.id === course?.id)
         );
       }
     } catch (error) {
@@ -559,7 +557,7 @@ export default function CoursePage({ params }: CoursePageProps) {
 
           {/* What You&apos;ll Learn Section */}
           <section className="mt-12 bg-muted/30 p-6 rounded-lg">
-            <h2 className="mb-4 text-2xl font-bold">What You&apos;ll Learn</h2>
+            <h2 className="mb-4 text-2xl font-bold">What You'll Learn</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {course.whatYoullLearn.map((item, index) => (
                 <div key={index} className="flex items-start">

@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Course, Note } from "@/types/my-learning";
-
+import { debounce } from "lodash";
 import { Dispatch, SetStateAction } from "react";
 
 interface CourseContentSidebarProps {

@@ -166,7 +166,7 @@ const CheckoutForm = ({
         router.push(`/thank-you?orderNumber=${data.order.orderNumber}`);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Unexpected error");
+      setError(err.message || "Unexpected error");
       toast({
         title: "Error",
         description:

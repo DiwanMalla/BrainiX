@@ -5,13 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 interface Params {
   params: { slug: string };
 }
-interface ModuleInput {
-  id?: string;
-  title: string;
-  description: string;
-  lessons: LessonInput[];
-  position?: number;
-}
+
 interface LessonInput {
   id?: string;
   title: string;
@@ -23,6 +17,24 @@ interface LessonInput {
   isPreview: boolean;
   position?: number;
 }
+
+interface ModuleInput {
+  id?: string;
+  title: string;
+  description: string;
+  lessons: LessonInput[];
+  position?: number;
+}
+
+interface UpdateCourseInput {
+  title: string;
+  shortDescription: string;
+  description: string;
+  price: string;
+  discountPrice?: string | null;
+  modules?: ModuleInput[];
+}
+
 export async function GET(_req: Request, { params }: Params) {
   if (!params || !params.slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
@@ -82,7 +94,7 @@ export async function PUT(req: Request, { params }: Params) {
     price,
     discountPrice,
     modules,
-  } = await req.json();
+  } = (await req.json()) as UpdateCourseInput;
 
   try {
     const course = await prisma.course.findUnique({ where: { slug } });
@@ -147,7 +159,9 @@ export async function PUT(req: Request, { params }: Params) {
                     ),
                     deleteMany: {
                       id: {
-                        notIn: module.lessons.map((l: LessonInput) => l.id),
+                        notIn: module.lessons
+                          .map((l: LessonInput) => l.id)
+                          .filter((id): id is string => !!id),
                       },
                     },
                   },
@@ -175,7 +189,11 @@ export async function PUT(req: Request, { params }: Params) {
                 },
               })),
               deleteMany: {
-                id: { notIn: modules.map((m: ModuleInput) => m.id) },
+                id: {
+                  notIn: modules
+                    .map((m: ModuleInput) => m.id)
+                    .filter((id): id is string => !!id),
+                },
               },
             }
           : undefined,

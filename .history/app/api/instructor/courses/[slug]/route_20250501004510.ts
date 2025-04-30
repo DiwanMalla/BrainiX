@@ -146,9 +146,7 @@ export async function PUT(req: Request, { params }: Params) {
                       })
                     ),
                     deleteMany: {
-                      id: {
-                        notIn: module.lessons.map((l: LessonInput) => l.id),
-                      },
+                      id: { notIn: module.lessons.map((l: any) => l.id) },
                     },
                   },
                 },
@@ -159,7 +157,7 @@ export async function PUT(req: Request, { params }: Params) {
                   position: index,
                   lessons: {
                     create: module.lessons.map(
-                      (lesson: LessonInput, lessonIndex: number) => ({
+                      (lesson: any, lessonIndex: number) => ({
                         id: lesson.id,
                         title: lesson.title,
                         description: lesson.description,
@@ -175,7 +173,7 @@ export async function PUT(req: Request, { params }: Params) {
                 },
               })),
               deleteMany: {
-                id: { notIn: modules.map((m: ModuleInput) => m.id) },
+                id: { notIn: modules.map((m: any) => m.id) },
               },
             }
           : undefined,

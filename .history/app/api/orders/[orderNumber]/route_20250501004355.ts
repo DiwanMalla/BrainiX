@@ -56,10 +56,7 @@ export async function GET({ params }: { params: { orderNumber: string } }) {
       console.error("Error fetching order:", { error });
     }
     return NextResponse.json(
-      {
-        error: "Failed to fetch order",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch order", details: error.message },
       { status: 500 }
     );
   }

@@ -46,20 +46,13 @@ export async function GET({ params }: { params: { orderNumber: string } }) {
     }
 
     return NextResponse.json(order, { status: 200 });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error fetching order:", {
-        error: error.message,
-        stack: error.stack,
-      });
-    } else {
-      console.error("Error fetching order:", { error });
-    }
+  } catch (error: any) {
+    console.error("Error fetching order:", {
+      error: error.message,
+      stack: error.stack,
+    });
     return NextResponse.json(
-      {
-        error: "Failed to fetch order",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch order", details: error.message },
       { status: 500 }
     );
   }
