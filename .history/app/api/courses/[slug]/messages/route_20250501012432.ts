@@ -13,7 +13,7 @@ const pusher = new Pusher({
 });
 type Params = Promise<{ slug: string }>;
 export async function GET(request: Request, { params }: { params: Params }) {
-  // Removed redundant declaration of slug
+  const { slug } = await params;
   const { userId } = getAuth(request as NextRequest);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

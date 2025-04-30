@@ -11,9 +11,11 @@ const pusher = new Pusher({
   cluster: process.env.PUSHER_CLUSTER!,
   useTLS: true,
 });
-type Params = Promise<{ slug: string }>;
-export async function GET(request: Request, { params }: { params: Params }) {
-  // Removed redundant declaration of slug
+type Params = Promise,{slug: string}>;
+export async function GET(
+  request: Request,
+  { params }: { params: { slug: string } }
+) {
   const { userId } = getAuth(request as NextRequest);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
