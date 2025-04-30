@@ -12,17 +12,6 @@ interface ModuleInput {
   lessons: LessonInput[];
   position?: number;
 }
-interface LessonInput {
-  id?: string;
-  title: string;
-  description: string;
-  content: string;
-  type: string;
-  videoUrl: string | null;
-  duration: number;
-  isPreview: boolean;
-  position?: number;
-}
 export async function GET(_req: Request, { params }: Params) {
   if (!params || !params.slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });

@@ -64,11 +64,10 @@ export default function MyLearningPage() {
           throw new Error(data.error || "Failed to fetch courses");
         }
         setPurchasedCourses(data);
-      } catch (err: unknown) {
+      } catch (err: any) {
         toast({
           title: "Error",
-          description:
-            err instanceof Error ? err.message : "Unable to load your courses.",
+          description: err.message || "Unable to load your courses.",
           variant: "destructive",
         });
       } finally {

@@ -5,24 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 interface Params {
   params: { slug: string };
 }
-interface ModuleInput {
-  id?: string;
-  title: string;
-  description: string;
-  lessons: LessonInput[];
-  position?: number;
-}
-interface LessonInput {
-  id?: string;
-  title: string;
-  description: string;
-  content: string;
-  type: string;
-  videoUrl: string | null;
-  duration: number;
-  isPreview: boolean;
-  position?: number;
-}
+
 export async function GET(_req: Request, { params }: Params) {
   if (!params || !params.slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
@@ -112,7 +95,7 @@ export async function PUT(req: Request, { params }: Params) {
         discountPrice: discountPrice ? parseFloat(discountPrice) : null,
         modules: modules
           ? {
-              upsert: modules.map((module: ModuleInput, index: number) => ({
+              upsert: modules.map((module: any, index: number) => ({
                 where: { id: module.id || "" },
                 update: {
                   title: module.title,

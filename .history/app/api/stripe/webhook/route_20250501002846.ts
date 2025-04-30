@@ -23,11 +23,7 @@ export async function POST(request: Request) {
     const body = await request.text();
     event = stripe.webhooks.constructEvent(body, sig!, webhookSecret);
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("Webhook signature verification failed:", err.message);
-    } else {
-      console.error("Webhook signature verification failed:", err);
-    }
+    console.error("Webhook signature verification failed:", err.message);
     return NextResponse.json(
       { error: "Webhook verification failed" },
       { status: 400 }
@@ -146,15 +142,11 @@ export async function POST(request: Request) {
       await prisma.cart.deleteMany({ where: { userId } });
 
       return NextResponse.json({ received: true }, { status: 200 });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error processing webhook:", {
-          error: error.message,
-          stack: error.stack,
-        });
-      } else {
-        console.error("Error processing webhook:", { error });
-      }
+    } catch (error: any) {
+      console.error("Error processing webhook:", {
+        error: error.message,
+        stack: error.stack,
+      });
       return NextResponse.json(
         { error: "Failed to process webhook" },
         { status: 500 }

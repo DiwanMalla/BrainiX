@@ -22,7 +22,7 @@ import {
 interface CreateNewCourseDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: unknown) => void; // Replace `any` with the specific type of `formData` if known
+  onSubmit: (formData: any) => void; // Replace `any` with the specific type of `formData` if known
 }
 
 const CreateNewCourseDialog: React.FC<CreateNewCourseDialogProps> = ({

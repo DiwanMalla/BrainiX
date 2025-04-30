@@ -41,6 +41,7 @@ export default function LessonContent({
   lesson,
   normalizeYouTubeUrl,
   isValidYouTubeUrl,
+  handleProgress,
 }: LessonContentProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);

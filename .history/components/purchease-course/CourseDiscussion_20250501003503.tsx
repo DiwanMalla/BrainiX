@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface CourseDiscussionProps {
   slug: string;
+  showChat: boolean;
   setShowChat: (value: boolean) => void;
   chatMessage: string;
   setChatMessage: (value: string) => void;
@@ -30,20 +31,9 @@ interface ChatMessage {
   isInstructor?: boolean;
 }
 
-interface ApiMessage {
-  id: string;
-  content: string;
-  createdAt: string;
-  likes: number;
-  sender: {
-    name: string;
-    image?: string | null;
-    role: string;
-  };
-}
-
 export default function CourseDiscussion({
   slug,
+
   setShowChat,
   chatMessage,
   setChatMessage,
@@ -56,7 +46,6 @@ export default function CourseDiscussion({
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   console.log(slug);
-
   // Fetch messages
   useEffect(() => {
     async function fetchMessages() {
@@ -71,9 +60,9 @@ export default function CourseDiscussion({
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to fetch messages");
         }
-        const data: ApiMessage[] = await response.json();
+        const data = await response.json();
         setMessages(
-          data.map((msg) => ({
+          data.map((msg: any) => ({
             id: msg.id,
             user: msg.sender.name,
             avatar:
@@ -82,19 +71,22 @@ export default function CourseDiscussion({
             time: new Intl.DateTimeFormat("en-US", {
               hour: "2-digit",
               minute: "2-digit",
-              hour12: true,
+              hour12: true, // Change to false for 24-hour format
             }).format(new Date(msg.createdAt)),
             likes: msg.likes,
             isInstructor: msg.sender.role === "INSTRUCTOR",
           }))
         );
       } catch (err: unknown) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Error loading messages";
-        setError(errorMessage);
+        if (err instanceof Error) {
+          setError(err.message || "Error loading messages");
+        } else {
+          setError("Error loading messages");
+        }
         toast({
           title: "Error",
-          description: errorMessage,
+          description:
+            err instanceof Error ? err.message : "Unable to load messages.",
           variant: "destructive",
         });
       } finally {
@@ -147,11 +139,10 @@ export default function CourseDiscussion({
         )
       );
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unable to like message";
       toast({
         title: "Error",
-        description: errorMessage,
+        description:
+          err instanceof Error ? err.message : "Unable to like message.",
         variant: "destructive",
       });
     }

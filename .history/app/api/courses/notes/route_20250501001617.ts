@@ -133,19 +133,16 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json(notes, { status: 200 });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Error fetching notes:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       userId,
       courseId,
       lessonId,
     });
     return NextResponse.json(
-      {
-        error: "Failed to fetch notes",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch notes", details: error.message },
       { status: 500 }
     );
   }
@@ -183,10 +180,10 @@ export async function PUT(request: Request) {
     });
 
     return NextResponse.json(updatedNote, { status: 200 });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Error updating note:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       userId,
       requestBody: await request.json().catch(() => "Invalid JSON"),
     });
@@ -197,10 +194,7 @@ export async function PUT(request: Request) {
       );
     }
     return NextResponse.json(
-      {
-        error: "Failed to update note",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to update note", details: error.message },
       { status: 500 }
     );
   }
@@ -234,10 +228,10 @@ export async function DELETE(request: Request) {
     });
 
     return NextResponse.json({ message: "Note deleted" }, { status: 200 });
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error("Error deleting note:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+      error: error.message,
+      stack: error.stack,
       userId,
       requestBody: await request.json().catch(() => "Invalid JSON"),
     });
@@ -248,10 +242,7 @@ export async function DELETE(request: Request) {
       );
     }
     return NextResponse.json(
-      {
-        error: "Failed to delete note",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to delete note", details: error.message },
       { status: 500 }
     );
   }

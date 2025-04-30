@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import { CourseLevel } from "@/types/globals";
 
 interface Filters {
   search?: string;
@@ -24,13 +23,6 @@ export async function GET(request: Request) {
     subtitles: searchParams.get("subtitles") === "true" || undefined,
     certificate: searchParams.get("certificate") === "true" || undefined,
   };
-
-  // Validate and normalize level filter
-  const validLevels: CourseLevel[] = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
-  const normalizedLevel = filters.level
-    ? (filters.level.toUpperCase() as CourseLevel)
-    : undefined;
-  const isValidLevel = normalizedLevel && validLevels.includes(normalizedLevel);
 
   try {
     const courses = await prisma.course.findMany({
@@ -62,9 +54,10 @@ export async function GET(request: Request) {
               name: { equals: filters.category, mode: "insensitive" },
             },
           }),
-        ...(isValidLevel && {
-          level: { equals: normalizedLevel },
-        }),
+        ...(filters.level &&
+          filters.level !== "all" && {
+            level: { equals: filters.level.toUpperCase() as any },
+          }),
         ...(filters.priceRange && {
           price: {
             gte: filters.priceRange[0],
