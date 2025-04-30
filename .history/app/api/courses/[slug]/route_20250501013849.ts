@@ -1,13 +1,10 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { [key: string]: string | string[] } }
-) {
-  const slug = params.slug as string; // Assert slug as string
-
+type Params = Promise<{ slug: string }>;
+export async function GET({ params }: { params: Params }) {
+  const { slug } = await params;
   try {
     if (!slug) {
       return NextResponse.json(
@@ -21,7 +18,7 @@ export async function GET(
       include: {
         instructor: {
           include: {
-            instructorProfile: true,
+            instructorProfile: true, // Include instructorProfile
           },
         },
         category: true,
@@ -70,7 +67,7 @@ export async function GET(
         id: course.instructor?.id, // Include instructor ID for fallback fetch
         name: course.instructor?.name || "Unknown Instructor",
         image: course.instructor?.image || "/placeholder.svg",
-        bio: course.instructor?.instructorProfile?.biography || "",
+        bio: course.instructor?.instructorProfile?.biography || "", // Use biography from instructorProfile
         instructorProfile: course.instructor?.instructorProfile
           ? {
               title: course.instructor.instructorProfile.title,

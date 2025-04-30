@@ -3,8 +3,8 @@ import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
 export async function GET(
-  _request: NextRequest,
-  { params }: { params: { [key: string]: string | string[] } }
+  request: NextRequest,
+ { params: { [key: string]: string | string[] } }
 ) {
   const slug = params.slug as string; // Assert slug as string
 
