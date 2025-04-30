@@ -158,7 +158,7 @@ export default function LessonContent({
     } catch (error) {
       toast({
         title: "Submission Failed",
-        description: `Failed to submit assignment. Please try again. ${error}`,
+        description: "Failed to submit assignment. Please try again.",
         variant: "destructive",
       });
     }
@@ -264,7 +264,7 @@ export default function LessonContent({
                     controls
                     playing={true}
                     onProgress={undefined}
-                    onError={(e: unknown, data: unknown) => {
+                    onError={(e: any, data: any) => {
                       console.error("Video playback error:", {
                         error: e,
                         data,

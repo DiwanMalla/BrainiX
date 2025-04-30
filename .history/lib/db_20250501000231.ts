@@ -5,8 +5,13 @@ const prismaClientSingleton = () => {
     log: ["query", "info", "warn", "error"],
   });
 };
-
+// eslint-disable-next-line no-var
 declare global {
+  namespace Node JS {
+    interface Global {
+      prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
+    }
+  }
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
