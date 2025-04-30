@@ -63,7 +63,10 @@ export async function GET(request: Request, { params }: { params: Params }) {
   }
 }
 
-export async function POST(request: Request, { params }: { params: Params }) {
+export async function POST(
+  request: Request,
+  { params }: { params: { slug: string } }
+) {
   const { userId } = getAuth(request as NextRequest);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
