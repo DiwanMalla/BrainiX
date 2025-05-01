@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,10 @@ import {
   dispatchCartUpdate,
 } from "@/lib/event";
 import { useCart } from "@/lib/cart-context";
+
+interface CoursePageProps {
+  params: Promise<{ slug: string }>;
+}
 
 interface InstructorProfile {
   title?: string;
@@ -90,12 +94,8 @@ type RecommendedCourse = {
   level: string;
 };
 
-interface CoursePageProps {
-  params: Promise<{ slug: string }>;
-}
-
-// Child Client Component to handle client-side logic
-function CoursePageContent({ slug }: { slug: string }) {
+export default async function CoursePage({ params }: CoursePageProps) {
+  const { slug } = await params;
   const router = useRouter();
   const { user } = useClerk();
   const { toast } = useToast();
@@ -108,7 +108,7 @@ function CoursePageContent({ slug }: { slug: string }) {
   const [isPurchased, setIsPurchased] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
 
-  const fetchCourseData = useCallback(async () => {
+  const fetchCourseData = async () => {
     try {
       const res = await fetch(`/api/courses/${slug}`, {
         cache: "no-store",
@@ -120,9 +120,9 @@ function CoursePageContent({ slug }: { slug: string }) {
       console.error("Error fetching course:", error);
       toast({ title: "Error", description: "Failed to load course data" });
     }
-  }, [slug, toast]);
+  };
 
-  const fetchRecommendedCourses = useCallback(async () => {
+  const fetchRecommendedCourses = async () => {
     try {
       const res = await fetch(`/api/courses/recommended?excludeSlug=${slug}`, {
         cache: "no-store",
@@ -133,9 +133,9 @@ function CoursePageContent({ slug }: { slug: string }) {
     } catch (error) {
       console.error("Error fetching recommended courses:", error);
     }
-  }, [slug]);
+  };
 
-  const fetchUserData = useCallback(async () => {
+  const fetchUserData = async () => {
     if (!user) {
       setIsFavorite(false);
       setIsPurchased(false);
@@ -163,7 +163,7 @@ function CoursePageContent({ slug }: { slug: string }) {
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  }, [user, course?.id]);
+  };
 
   useEffect(() => {
     fetchCourseData();
@@ -171,7 +171,14 @@ function CoursePageContent({ slug }: { slug: string }) {
     fetchUserData();
     const unsubscribeWishlist = listenToWishlistUpdate(fetchUserData);
     return () => unsubscribeWishlist();
-  }, [fetchCourseData, fetchRecommendedCourses, fetchUserData]);
+  }, [
+    slug,
+    user,
+    course?.id,
+    fetchCourseData,
+    fetchRecommendedCourses,
+    fetchUserData,
+  ]);
 
   if (!course) {
     return <div>Loading...</div>;
@@ -550,9 +557,9 @@ function CoursePageContent({ slug }: { slug: string }) {
             </div>
           </div>
 
-          {/* What You'll Learn Section */}
+          {/* What You&apos;ll Learn Section */}
           <section className="mt-12 bg-muted/30 p-6 rounded-lg">
-            <h2 className="mb-4 text-2xl font-bold">What You'll Learn</h2>
+            <h2 className="mb-4 text-2xl font-bold">What You&apos;ll Learn</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {course.whatYoullLearn.map((item, index) => (
                 <div key={index} className="flex items-start">
@@ -583,7 +590,7 @@ function CoursePageContent({ slug }: { slug: string }) {
                       {module.title.toLowerCase()}.
                     </p>
                     <p className="text-sm text-muted-foreground mt-2">
-                      You'll complete hands-on exercises and projects to
+                      You&apos;ll complete hands-on exercises and projects to
                       reinforce your learning.
                     </p>
                   </AccordionContent>
@@ -857,10 +864,4 @@ function CoursePageContent({ slug }: { slug: string }) {
       <Footer />
     </div>
   );
-}
-
-// Wrapper component to handle params Promise
-export default async function CoursePage({ params }: CoursePageProps) {
-  const { slug } = await params; // Resolve the params Promise
-  return <CoursePageContent slug={slug} />;
 }

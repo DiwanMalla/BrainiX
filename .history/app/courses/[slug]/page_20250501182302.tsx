@@ -91,11 +91,11 @@ type RecommendedCourse = {
 };
 
 interface CoursePageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
-// Child Client Component to handle client-side logic
-function CoursePageContent({ slug }: { slug: string }) {
+export default function CoursePage({ params }: CoursePageProps) {
+  const { slug } = params;
   const router = useRouter();
   const { user } = useClerk();
   const { toast } = useToast();
@@ -857,10 +857,4 @@ function CoursePageContent({ slug }: { slug: string }) {
       <Footer />
     </div>
   );
-}
-
-// Wrapper component to handle params Promise
-export default async function CoursePage({ params }: CoursePageProps) {
-  const { slug } = await params; // Resolve the params Promise
-  return <CoursePageContent slug={slug} />;
 }
