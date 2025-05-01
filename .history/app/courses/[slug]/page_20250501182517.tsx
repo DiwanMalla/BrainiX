@@ -552,7 +552,7 @@ function CoursePageContent({ slug }: { slug: string }) {
 
           {/* What You'll Learn Section */}
           <section className="mt-12 bg-muted/30 p-6 rounded-lg">
-            <h2 className="mb-4 text-2xl font-bold">What You&apos;ll Learn</h2>
+            <h2 className="mb-4 text-2xl font-bold">What You'll Learn</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {course.whatYoullLearn.map((item, index) => (
                 <div key={index} className="flex items-start">
@@ -583,7 +583,7 @@ function CoursePageContent({ slug }: { slug: string }) {
                       {module.title.toLowerCase()}.
                     </p>
                     <p className="text-sm text-muted-foreground mt-2">
-                      You&apos;ll complete hands-on exercises and projects to
+                      You'll complete hands-on exercises and projects to
                       reinforce your learning.
                     </p>
                   </AccordionContent>
