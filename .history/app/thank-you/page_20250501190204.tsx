@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import ThankYouContent from "@/components/ThankYouContent";
+import ThankYouContent from "./ThankYouContent";
 
 export default function ThankYouPage() {
   return (
