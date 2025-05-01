@@ -1,14 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 
-interface Params {
-  params: {
-    slug: string;
-  };
-}
-
-export async function GET(_: Request, { params }: Params) {
-  const { slug } = params;
+export async function GET(request: NextRequest) {
+  const slug = request.nextUrl.pathname.split("/").pop(); // Extract slug from the URL path
 
   try {
     const category = await prisma.category.findUnique({
@@ -85,9 +79,9 @@ export async function GET(_: Request, { params }: Params) {
         discountPrice: course.discountPrice || undefined,
         instructor: course.instructor.name || "Unknown Instructor",
         duration: course.duration
-          ? `${Math.floor(course.duration / 3600)}h ${Math.floor(
+          ? `${Math.floor(course.duration / 3600)}:${Math.floor(
               (course.duration % 3600) / 60
-            )}m`
+            )} hrs`
           : "N/A",
         studentsCount: course.totalStudents || 0,
         rating: course.rating || 0,

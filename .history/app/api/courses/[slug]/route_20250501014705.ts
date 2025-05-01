@@ -1,16 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get("slug");
-
-  if (!slug) {
-    return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
-  }
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { [key: string]: string | string[] } }
+) {
+  const slug = params.slug as string; // Assert slug as string
 
   try {
+    if (!slug) {
+      return NextResponse.json(
+        { error: "Missing course slug" },
+        { status: 400 }
+      );
+    }
+
     const course = await prisma.course.findFirst({
       where: { slug, published: true },
       include: {
@@ -62,7 +67,7 @@ export async function GET(req: NextRequest) {
         year: "numeric",
       }),
       instructor: {
-        id: course.instructor?.id,
+        id: course.instructor?.id, // Include instructor ID for fallback fetch
         name: course.instructor?.name || "Unknown Instructor",
         image: course.instructor?.image || "/placeholder.svg",
         bio: course.instructor?.instructorProfile?.biography || "",

@@ -1,22 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get("slug");
-
-  if (!slug) {
-    return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
-  }
-
+type Params = Promise<{ slug: string }>;
+export async function GET(NextRequest, { params }: { params: Params }) {
+  const { slug } = await params;
   try {
+    if (!slug) {
+      return NextResponse.json(
+        { error: "Missing course slug" },
+        { status: 400 }
+      );
+    }
+
     const course = await prisma.course.findFirst({
       where: { slug, published: true },
       include: {
         instructor: {
           include: {
-            instructorProfile: true,
+            instructorProfile: true, // Include instructorProfile
           },
         },
         category: true,
@@ -62,10 +64,10 @@ export async function GET(req: NextRequest) {
         year: "numeric",
       }),
       instructor: {
-        id: course.instructor?.id,
+        id: course.instructor?.id, // Include instructor ID for fallback fetch
         name: course.instructor?.name || "Unknown Instructor",
         image: course.instructor?.image || "/placeholder.svg",
-        bio: course.instructor?.instructorProfile?.biography || "",
+        bio: course.instructor?.instructorProfile?.biography || "", // Use biography from instructorProfile
         instructorProfile: course.instructor?.instructorProfile
           ? {
               title: course.instructor.instructorProfile.title,
