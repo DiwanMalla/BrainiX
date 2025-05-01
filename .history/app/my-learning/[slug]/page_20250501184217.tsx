@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth, useClerk } from "@clerk/nextjs";
-import CourseHeader from "@/components/purchased-course/CourseHeader";
-import VideoPlayer from "@/components/purchased-course/VideoPlayer";
-import LessonContent from "@/components/purchased-course/LessonContent";
-import CourseContentSidebar from "@/components/purchased-course/CourseContentSidebar";
-import CourseNotes from "@/components/purchased-course/CourseNotes";
-import CourseDiscussion from "@/components/purchased-course/CourseDiscussion";
+import CourseHeader from "@/components/purchease-course/CourseHeader";
+import VideoPlayer from "@/components/purchease-course/VideoPlayer";
+import LessonContent from "@/components/purchease-course/LessonContent";
+import CourseContentSidebar from "@/components/purchease-course/CourseContentSidebar";
+import CourseNotes from "@/components/purchease-course/CourseNotes";
+import CourseDiscussion from "@/components/purchease-course/CourseDiscussion";
 import { Course, Lesson, Module, Note } from "@/types/my-learning";
 import { debounce } from "lodash";
 

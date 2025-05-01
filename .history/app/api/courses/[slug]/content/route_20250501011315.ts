@@ -4,13 +4,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const { userId } = await auth();
-  // Extract the pathname from the URL
-  const pathname = request.nextUrl.pathname;
-
-  // Split the pathname and get the slug (the segment before 'content')
-  const pathSegments = pathname.split("/");
-  const slugIndex = pathSegments.indexOf("courses") + 1; // Find index after 'courses'
-  const slug = pathSegments[slugIndex]; // Get the slug (e.g., 'math101')
+  const slug = request.nextUrl.pathname.split("/").pop(); // Extract slug from URL path
 
   console.log("Auth Details:", { userId, slug });
 
