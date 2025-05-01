@@ -4,31 +4,22 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function POST(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const messageId = searchParams.get("id");
+type Params = Promise<{ messageId: string }>;
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Params }
+) {
+  const { messageId } = await params;
   const { userId } = getAuth(request);
-
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (!messageId) {
-    return NextResponse.json(
-      { error: "Message ID is required" },
-      { status: 400 }
-    );
   }
 
   try {
     const message = await prisma.message.update({
       where: { id: messageId },
       data: { likes: { increment: 1 } },
-      include: {
-        sender: {
-          select: { name: true, image: true, role: true },
-        },
-      },
+      include: { sender: { select: { name: true, image: true, role: true } } },
     });
 
     return NextResponse.json(message);

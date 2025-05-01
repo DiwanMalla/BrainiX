@@ -1,9 +1,3 @@
-import { NextResponse, NextRequest } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const messageId = searchParams.get("id");

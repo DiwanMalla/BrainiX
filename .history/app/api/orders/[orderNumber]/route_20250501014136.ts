@@ -2,22 +2,12 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET(request: Request) {
+type Params = Promise<{ orderNumber: string }>;
+export async function GET({ params }: { params: Params }) {
+  const { orderNumber } = await params;
   const { userId } = await auth();
-
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Extract orderNumber from the query string
-  const { searchParams } = new URL(request.url);
-  const orderNumber = searchParams.get("orderNumber");
-
-  if (!orderNumber) {
-    return NextResponse.json(
-      { error: "Missing orderNumber in query" },
-      { status: 400 }
-    );
   }
 
   try {
@@ -47,7 +37,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    if (order.user.id !== userId) {
+    // Ensure the order belongs to the authenticated user
+    if (order.userId !== userId) {
       return NextResponse.json(
         { error: "Access denied to this order" },
         { status: 403 }
@@ -56,7 +47,14 @@ export async function GET(request: Request) {
 
     return NextResponse.json(order, { status: 200 });
   } catch (error: unknown) {
-    console.error("Error fetching order:", error);
+    if (error instanceof Error) {
+      console.error("Error fetching order:", {
+        error: error.message,
+        stack: error.stack,
+      });
+    } else {
+      console.error("Error fetching order:", { error });
+    }
     return NextResponse.json(
       {
         error: "Failed to fetch order",

@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+type Params = Promise<{ messageId: string }>;
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const messageId = searchParams.get("id");
