@@ -23,8 +23,8 @@ interface LessonInput {
 }
 
 export async function GET(req: Request) {
-  const url = new URL(req.url); // Extract URL from the request
-  const slug = url.pathname.split("/")[4]; // Assuming slug is at this position in the path (e.g. /api/instructor/courses/:slug)
+  const url = new URL(req.url);
+  const slug = url.pathname.split("/")[4]; // assuming '/slug' is in the path
 
   if (!slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
@@ -68,8 +68,8 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const url = new URL(req.url); // Extract URL from the request
-  const slug = url.pathname.split("/")[4]; // Extract the slug
+  const url = new URL(req.url);
+  const slug = url.pathname.split("/")[4]; // assuming '/slug' is in the path
 
   if (!slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
