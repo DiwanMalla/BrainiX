@@ -49,28 +49,21 @@ export async function GET(req: NextRequest) {
 }
 
 // ✅ PUT: Update a course by ID
-export async function PUT(req: NextRequest) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const url = new URL(req.url);
-    const courseId = url.pathname.split("/").pop(); // Extract course ID from URL path
-
-    if (!courseId) {
-      return NextResponse.json(
-        { error: "Course ID is required" },
-        { status: 400 }
-      );
-    }
-
     const courseData = await req.json();
 
     // Update the course data in the database
     const updatedCourse = await prisma.course.update({
-      where: { id: courseId, instructorId: userId },
+      where: { id: params.id, instructorId: userId },
       data: {
         ...courseData,
         publishedAt:
@@ -91,26 +84,19 @@ export async function PUT(req: NextRequest) {
 }
 
 // ✅ DELETE: Remove a course by ID
-export async function DELETE(req: NextRequest) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const url = new URL(req.url);
-    const courseId = url.pathname.split("/").pop(); // Extract course ID from URL path
-
-    if (!courseId) {
-      return NextResponse.json(
-        { error: "Course ID is required" },
-        { status: 400 }
-      );
-    }
-
     // Delete the course from the database
     await prisma.course.delete({
-      where: { id: courseId, instructorId: userId },
+      where: { id: params.id, instructorId: userId },
     });
 
     return NextResponse.json(
