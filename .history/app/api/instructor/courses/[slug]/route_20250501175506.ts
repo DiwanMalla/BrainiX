@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
+// Adjusted typing for Params and request context
+interface Params {
+  slug: string;
+}
+
 interface ModuleInput {
   id?: string;
   title: string;
@@ -22,9 +27,8 @@ interface LessonInput {
   position?: number;
 }
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const slug = url.pathname.split("/")[4]; // assuming '/slug' is in the path
+export async function GET(req: Request, { params }: { params: Params }) {
+  const { slug } = params; // Destructure slug from params
 
   if (!slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
@@ -67,9 +71,8 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PUT(req: Request) {
-  const url = new URL(req.url);
-  const slug = url.pathname.split("/")[4]; // assuming '/slug' is in the path
+export async function PUT(req: Request, { params }: { params: Params }) {
+  const { slug } = params;
 
   if (!slug) {
     return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
