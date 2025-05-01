@@ -94,7 +94,7 @@ type RecommendedCourse = {
   level: string;
 };
 
-export default async function CoursePage({ params }: CoursePageProps) {
+export default function CoursePage({ params }: CoursePageProps) {
   const { slug } = await params;
   const router = useRouter();
   const { user } = useClerk();
@@ -110,7 +110,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const fetchCourseData = async () => {
     try {
-      const res = await fetch(`/api/courses/${slug}`, {
+      const res = await fetch(`/api/courses/${params.slug}`, {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("Failed to fetch course");
@@ -124,9 +124,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const fetchRecommendedCourses = async () => {
     try {
-      const res = await fetch(`/api/courses/recommended?excludeSlug=${slug}`, {
-        cache: "no-store",
-      });
+      const res = await fetch(
+        `/api/courses/recommended?excludeSlug=${params.slug}`,
+        { cache: "no-store" }
+      );
       if (!res.ok) throw new Error("Failed to fetch recommended courses");
       const data = await res.json();
       setRecommendedCourses(data);
@@ -172,7 +173,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     const unsubscribeWishlist = listenToWishlistUpdate(fetchUserData);
     return () => unsubscribeWishlist();
   }, [
-    slug,
+    params.slug,
     user,
     course?.id,
     fetchCourseData,
