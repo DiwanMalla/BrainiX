@@ -2,9 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CreateNewCourseDialog, {
-  CourseFormData,
-} from "@/components/dialog/CreateNewDialog";
+import CreateNewCourseDialog from "@/components/dialog/CreateNewDialog";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 

@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import CreateNewCourseDialog, {
   CourseFormData,
-} from "@/components/dialog/CreateNewDialog";
+} from "@/components/CreateNewCourseDialog";
 import {
   BookOpen,
   DollarSign,

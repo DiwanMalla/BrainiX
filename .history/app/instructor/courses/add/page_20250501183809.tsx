@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import CreateNewCourseDialog, {
-  CourseFormData,
+  create,
 } from "@/components/dialog/CreateNewDialog";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
