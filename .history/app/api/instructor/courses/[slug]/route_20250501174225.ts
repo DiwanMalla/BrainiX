@@ -58,10 +58,7 @@ export async function GET(_req: Request, { params }: Params) {
   } catch (error) {
     console.error("Error fetching course:", error);
     return NextResponse.json(
-      {
-        error: "Failed to fetch course",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch course", details: error.message },
       { status: 500 }
     );
   }
