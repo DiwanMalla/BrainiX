@@ -567,7 +567,7 @@ export default function CourseLearningPage() {
               {showChat && (
                 <CourseDiscussion
                   slug={course?.slug || String(params.slug || "")}
-                  // showChat={showChat} // Removed as it's not part of CourseDiscussionProps
+                  showChat={showChat}
                   setShowChat={setShowChat}
                   chatMessage={chatMessage}
                   setChatMessage={setChatMessage}
