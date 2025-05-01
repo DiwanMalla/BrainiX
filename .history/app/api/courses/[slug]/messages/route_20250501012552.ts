@@ -11,24 +11,17 @@ const pusher = new Pusher({
   cluster: process.env.PUSHER_CLUSTER!,
   useTLS: true,
 });
-
-function extractSlugFromPath(pathname: string) {
-  const parts = pathname.split("/");
-  const index = parts.indexOf("courses");
-  return index !== -1 ? parts[index + 1] : null;
-}
-
-// GET handler
-export async function GET(request: NextRequest) {
-  const { userId } = getAuth(request);
-  if (!userId)
+type Params = Promise<{ slug: string }>;
+export async function GET(request: Request, { params }: { params: Params }) {
+  // Removed redundant declaration of slug
+  const { userId } = getAuth(request as NextRequest);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const slug = extractSlugFromPath(request.nextUrl.pathname);
-  if (!slug)
-    return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
-
-  const intake = request.nextUrl.searchParams.get("intake") || "current";
+  const { slug } = await params;
+  const { searchParams } = new URL(request.url);
+  const intake = searchParams.get("intake") || "current";
 
   try {
     const enrollment = await prisma.enrollment.findFirst({
@@ -37,7 +30,6 @@ export async function GET(request: NextRequest) {
         course: { slug },
       },
     });
-
     if (!enrollment) {
       return NextResponse.json(
         { error: "Not enrolled in course" },
@@ -71,17 +63,15 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST handler
-export async function POST(request: NextRequest) {
-  const { userId } = getAuth(request);
-  if (!userId)
+export async function POST(request: Request, { params }: { params: Params }) {
+  const { userId } = getAuth(request as NextRequest);
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const slug = extractSlugFromPath(request.nextUrl.pathname);
-  if (!slug)
-    return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
-
+  const { slug } = await params;
   const { content } = await request.json();
+  console.log("Received content:", content);
   if (!content || typeof content !== "string" || content.trim().length === 0) {
     return NextResponse.json(
       { error: "Invalid message content" },
@@ -96,7 +86,6 @@ export async function POST(request: NextRequest) {
         course: { slug },
       },
     });
-
     if (!enrollment) {
       return NextResponse.json(
         { error: "Not enrolled in course" },

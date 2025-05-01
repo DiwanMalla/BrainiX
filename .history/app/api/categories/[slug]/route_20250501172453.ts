@@ -1,15 +1,14 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 
-export async function GET(request: NextRequest) {
-  const slug = request.nextUrl.pathname.split("/").pop();
+interface Params {
+  params: {
+    slug: string;
+  };
+}
 
-  if (!slug) {
-    return NextResponse.json(
-      { error: "Missing category slug" },
-      { status: 400 }
-    );
-  }
+export async function GET(_: Request, { params }: Params) {
+  const { slug } = params;
 
   try {
     const category = await prisma.category.findUnique({
