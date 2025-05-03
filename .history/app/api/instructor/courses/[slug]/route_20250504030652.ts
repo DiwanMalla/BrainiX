@@ -107,7 +107,7 @@ export async function PUT(req: Request) {
         { status: 403 }
       );
     }
-    console.log(course.instructorId, user.id, user.role);
+
     const updatedCourse = await prisma.course.update({
       where: { slug },
       data: {

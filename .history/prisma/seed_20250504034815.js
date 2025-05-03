@@ -7,7 +7,7 @@ async function main() {
 
   // Fetch the Full-Stack Web Development course
   const course = await prisma.course.findUnique({
-    where: { slug: "full-stack-web-development-bootcamp" },
+    where: { slug: "full-stack-web-development" },
   });
 
   if (!course) {

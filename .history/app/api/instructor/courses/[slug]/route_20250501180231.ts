@@ -76,7 +76,7 @@ export async function PUT(req: Request) {
   }
 
   const { userId } = await auth();
-  console.log("userId", userId);
+
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -107,7 +107,7 @@ export async function PUT(req: Request) {
         { status: 403 }
       );
     }
-    console.log(course.instructorId, user.id, user.role);
+
     const updatedCourse = await prisma.course.update({
       where: { slug },
       data: {

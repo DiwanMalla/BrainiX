@@ -145,7 +145,7 @@ const StudentProfileForm = ({ isSignup = false }: { isSignup?: boolean }) => {
         title: "Success",
         description: "Your profile has been saved.",
       });
-      router.push(isSignup ? "/" : "/");
+      router.push(isSignup ? "/dashboard" : "/");
     } catch (error) {
       console.error("Error saving profile:", error);
       form.setError("root", {
