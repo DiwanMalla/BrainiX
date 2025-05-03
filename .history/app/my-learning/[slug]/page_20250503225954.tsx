@@ -154,7 +154,7 @@ export default function CourseLearningPage() {
     };
 
     fetchCourse();
-  }, [isLoaded, isSignedIn, params.slug, router, toast]);
+  }, [isLoaded, isSignedIn, userId, user, params.slug, router, toast]);
 
   useEffect(() => {
     if (!course || !course.modules[activeModule]?.lessons[activeLesson]) {
@@ -519,13 +519,13 @@ export default function CourseLearningPage() {
                 Loading video...
               </div>
             )}
-            <VideoPlayer
+            {/* <VideoPlayer
               lesson={currentLesson}
               normalizeYouTubeUrl={normalizeYouTubeUrl}
               isValidYouTubeUrl={isValidYouTubeUrl}
               handleProgress={handleProgress}
               courseId={course.id}
-            />
+            /> */}
             <LessonContent
               course={course}
               lesson={currentLesson}

@@ -154,7 +154,7 @@ export default function CourseLearningPage() {
     };
 
     fetchCourse();
-  }, [isLoaded, isSignedIn, params.slug, router, toast]);
+  }, [isLoaded, isSignedIn, userId, user, params.slug, router, toast]);
 
   useEffect(() => {
     if (!course || !course.modules[activeModule]?.lessons[activeLesson]) {
@@ -502,7 +502,7 @@ export default function CourseLearningPage() {
 
       <main className="flex-1 container py-6 px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div
+          {/* <div
             className={
               showSidebar
                 ? "lg:col-span-8 space-y-6"
@@ -539,7 +539,7 @@ export default function CourseLearningPage() {
               setIsVideoLoading={setIsVideoLoading}
               markLessonComplete={markLessonComplete}
             />
-          </div>
+          </div> */}
 
           {showSidebar && (
             <div className="lg:col-span-4 space-y-6">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useMemo } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import ReactPlayer from "react-player";
 import { useToast } from "@/hooks/use-toast";
@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { debounce } from "lodash"; // Ensure lodash is installed: npm install lodash
 
 interface LessonContentProps {
   lesson: Lesson;
@@ -23,11 +22,25 @@ interface LessonContentProps {
   courseId?: string;
 }
 
+// interface QuizQuestion {
+//   id: string;
+//   question: string;
+//   options: string[];
+//   correctAnswer: string;
+// }
+
+// interface Assignment {
+//   instructions: string;
+//   submissionDetails?: {
+//     maxFileSize?: number;
+//     allowedFileTypes?: string[];
+//   };
+// }
+
 export default function LessonContent({
   lesson,
   normalizeYouTubeUrl,
   isValidYouTubeUrl,
-  handleProgress,
 }: LessonContentProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
@@ -40,20 +53,12 @@ export default function LessonContent({
   const playerRef = useRef<ReactPlayer | null>(null);
   const { toast } = useToast();
 
-  // Re-enable debounced progress handling
-  const debouncedHandleProgress = useCallback(
-    debounce((state: { playedSeconds: number; played: number }) => {
-      console.log("Progress update:", state);
-      handleProgress(state);
-    }, 15000), // Debounce for 15 seconds
-    [handleProgress]
-  );
-
-  // Memoize lesson to prevent unnecessary re-renders
-  const memoizedLesson = useMemo(
-    () => lesson,
-    [lesson.id, lesson.videoUrl, lesson.progress]
-  );
+  // const debouncedHandleProgress = useCallback(
+  //   debounce((state: { playedSeconds: number; played: number }) => {
+  //     handleProgress(state);
+  //   }, 15000), // Debounce for 15 seconds
+  //   [handleProgress]
+  // );
 
   // Initialize markdown-it
   const md = new MarkdownIt({
@@ -63,8 +68,7 @@ export default function LessonContent({
   });
 
   const toggleFullscreen = (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Toggling fullscreen, current state:", isFullscreen);
+    e.preventDefault(); // Prevent default behavior
     if (!document.fullscreenElement && videoContainerRef.current) {
       videoContainerRef.current.requestFullscreen().catch((err) => {
         console.error(`Error enabling fullscreen: ${err.message}`);
@@ -77,8 +81,7 @@ export default function LessonContent({
   };
 
   const retryVideoLoad = (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Retrying video load");
+    e.preventDefault(); // Prevent default behavior
     setVideoError(null);
     setIsVideoLoading(true);
     if (playerRef.current) {
@@ -91,11 +94,11 @@ export default function LessonContent({
   };
 
   const submitQuiz = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!memoizedLesson?.quiz) return;
+    e.preventDefault(); // Prevent default behavior
+    if (!lesson?.quiz) return;
 
     let score = 0;
-    memoizedLesson.quiz.forEach((question) => {
+    lesson.quiz.forEach((question) => {
       if (quizAnswers[question.id] === question.correctAnswer) {
         score += 1;
       }
@@ -104,12 +107,12 @@ export default function LessonContent({
     setQuizSubmitted(true);
     toast({
       title: "Quiz Submitted",
-      description: `You scored ${score} out of ${memoizedLesson.quiz.length}!`,
+      description: `You scored ${score} out of ${lesson.quiz.length}!`,
     });
   };
 
   const handleAssignmentSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default behavior
     if (!assignmentFile) {
       toast({
         title: "No File Selected",
@@ -120,9 +123,8 @@ export default function LessonContent({
     }
 
     const maxFileSize =
-      memoizedLesson?.assignment?.submissionDetails?.maxFileSize ||
-      5 * 1024 * 1024; // 5MB default
-    const allowedFileTypes = memoizedLesson?.assignment?.submissionDetails
+      lesson?.assignment?.submissionDetails?.maxFileSize || 5 * 1024 * 1024; // 5MB default
+    const allowedFileTypes = lesson?.assignment?.submissionDetails
       ?.allowedFileTypes || ["application/pdf", "text/plain"];
 
     if (assignmentFile.size > maxFileSize) {
@@ -161,16 +163,14 @@ export default function LessonContent({
   };
 
   const handleBookmark = (e: React.MouseEvent) => {
-    e.preventDefault();
-    console.log("Bookmark clicked");
+    e.preventDefault(); // Prevent default behavior
     toast({
       title: "Bookmark Saved",
       description: "This lesson has been bookmarked.",
     });
   };
 
-  const normalizedVideoUrl = normalizeYouTubeUrl(memoizedLesson?.videoUrl);
-  console.log("Normalized video URL:", normalizedVideoUrl);
+  const normalizedVideoUrl = normalizeYouTubeUrl(lesson?.videoUrl);
 
   return (
     <div
@@ -178,8 +178,8 @@ export default function LessonContent({
       className="relative bg-white rounded-lg overflow-hidden shadow-lg max-w-4xl mx-auto"
     >
       <div className="p-6">
-        {memoizedLesson?.type === "VIDEO" ? (
-          memoizedLesson.videoUrl ? (
+        {lesson?.type === "VIDEO" ? (
+          lesson.videoUrl ? (
             <>
               {isVideoLoading && !videoError && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50">
@@ -198,7 +198,7 @@ export default function LessonContent({
                     aria-hidden="true"
                   />
                   <p className="text-lg font-medium mb-4">{videoError}</p>
-                  {isValidYouTubeUrl(memoizedLesson.videoUrl) && (
+                  {isValidYouTubeUrl(lesson.videoUrl) && (
                     <p className="text-sm text-gray-300 mb-4">
                       The video plays on YouTube but not here, likely due to
                       embedding restrictions. If you own the video,{" "}
@@ -218,19 +218,19 @@ export default function LessonContent({
                       onClick={retryVideoLoad}
                       variant="outline"
                       className="text-white border-white/50 hover:bg-white/20"
-                      type="button"
+                      type="button" // Prevent form submission
                     >
                       Retry
                     </Button>
-                    {isValidYouTubeUrl(memoizedLesson.videoUrl) && (
+                    {isValidYouTubeUrl(lesson.videoUrl) && (
                       <Button
                         asChild
                         variant="outline"
                         className="text-white border-white/50 hover:bg-white/20"
-                        type="button"
+                        type="button" // Prevent form submission
                       >
                         <a
-                          href={memoizedLesson.videoUrl}
+                          href={lesson.videoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -242,7 +242,7 @@ export default function LessonContent({
                       asChild
                       variant="outline"
                       className="text-white border-white/50 hover:bg-white/20"
-                      type="button"
+                      type="button" // Prevent form submission
                     >
                       <Link href="/support">Contact Support</Link>
                     </Button>
@@ -255,25 +255,25 @@ export default function LessonContent({
                 >
                   <ReactPlayer
                     ref={playerRef}
-                    url={normalizedVideoUrl || memoizedLesson.videoUrl}
+                    url={normalizedVideoUrl || lesson.videoUrl}
                     width="100%"
                     height="100%"
                     style={{ position: "absolute", top: 0, left: 0 }}
                     controls
                     playing={true}
-                    onProgress={debouncedHandleProgress} // Enable progress tracking
+                    onProgress={undefined}
                     onError={(e: unknown, data: unknown) => {
                       console.error("Video playback error:", {
                         error: e,
                         data,
-                        originalUrl: memoizedLesson.videoUrl,
+                        originalUrl: lesson.videoUrl,
                         normalizedUrl: normalizedVideoUrl,
                       });
                       setIsVideoLoading(false);
                       setVideoError(
-                        isValidYouTubeUrl(memoizedLesson.videoUrl)
-                          ? "Cannot play YouTube video. Embedding may be disabled."
-                          : "Failed to load video."
+                        isValidYouTubeUrl(lesson.videoUrl)
+                          ? "Cannot play YouTube video. Embedding may be disabled by the video owner or the video is restricted."
+                          : "Failed to load video. The link may be broken or unsupported."
                       );
                       toast({
                         title: "Video Error",
@@ -283,26 +283,35 @@ export default function LessonContent({
                       });
                     }}
                     onReady={() => {
-                      console.log("Video ready:", normalizedVideoUrl);
+                      console.log(
+                        "Video ready:",
+                        normalizedVideoUrl || lesson.videoUrl
+                      );
                       setIsVideoLoading(false);
                       if (
                         playerRef.current &&
-                        Array.isArray(memoizedLesson.progress) &&
-                        memoizedLesson.progress.length > 0 &&
-                        memoizedLesson.progress[0].lastPosition
+                        Array.isArray(lesson.progress) &&
+                        lesson.progress.length > 0 &&
+                        lesson.progress[0].lastPosition
                       ) {
                         playerRef.current.seekTo(
-                          memoizedLesson.progress[0].lastPosition,
+                          lesson.progress[0].lastPosition,
                           "seconds"
                         );
                       }
                     }}
                     onBuffer={() => {
-                      console.log("Video buffering:", normalizedVideoUrl);
+                      console.log(
+                        "Video buffering:",
+                        normalizedVideoUrl || lesson.videoUrl
+                      );
                       setIsVideoLoading(true);
                     }}
                     onBufferEnd={() => {
-                      console.log("Video buffer ended:", normalizedVideoUrl);
+                      console.log(
+                        "Video buffer ended:",
+                        normalizedVideoUrl || lesson.videoUrl
+                      );
                       setIsVideoLoading(false);
                     }}
                     config={{
@@ -340,18 +349,18 @@ export default function LessonContent({
                 asChild
                 variant="outline"
                 className="border-gray-300 hover:bg-gray-100"
-                type="button"
+                type="button" // Prevent form submission
               >
                 <Link href="#content">View Lesson Content</Link>
               </Button>
             </div>
           )
-        ) : memoizedLesson?.type === "TEXT" ? (
+        ) : lesson?.type === "TEXT" ? (
           <div className="prose max-w-none">
-            {memoizedLesson.content ? (
+            {lesson.content ? (
               <div className="text-gray-800 prose-headings:font-semibold prose-p:mb-4 prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4">
                 <MdEditor
-                  value={memoizedLesson.content}
+                  value={lesson.content}
                   style={{ height: "auto", minHeight: "200px" }}
                   renderHTML={(text) => md.render(text)}
                   view={{ menu: false, md: false, html: true }}
@@ -364,12 +373,12 @@ export default function LessonContent({
               </p>
             )}
           </div>
-        ) : memoizedLesson?.type === "QUIZ" ? (
+        ) : lesson?.type === "QUIZ" ? (
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold">Quiz</h2>
-            {memoizedLesson.quiz && memoizedLesson.quiz.length > 0 ? (
+            {lesson.quiz && lesson.quiz.length > 0 ? (
               <>
-                {memoizedLesson.quiz.map((question) => (
+                {lesson.quiz.map((question) => (
                   <div key={question.id} className="space-y-4">
                     <h3 className="text-lg font-medium">{question.question}</h3>
                     <RadioGroup
@@ -411,16 +420,15 @@ export default function LessonContent({
                   <Button
                     onClick={submitQuiz}
                     disabled={
-                      Object.keys(quizAnswers).length !==
-                      memoizedLesson.quiz.length
+                      Object.keys(quizAnswers).length !== lesson.quiz.length
                     }
-                    type="button"
+                    type="button" // Prevent form submission
                   >
                     Submit Quiz
                   </Button>
                 ) : (
                   <p className="text-lg font-semibold">
-                    Your score: {quizScore} / {memoizedLesson.quiz.length}
+                    Your score: {quizScore} / {lesson.quiz.length}
                   </p>
                 )}
               </>
@@ -430,14 +438,14 @@ export default function LessonContent({
               </p>
             )}
           </div>
-        ) : memoizedLesson?.type === "ASSIGNMENT" ? (
+        ) : lesson?.type === "ASSIGNMENT" ? (
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold">Assignment</h2>
-            {memoizedLesson.assignment ? (
+            {lesson.assignment ? (
               <>
                 <div className="prose max-w-none text-gray-800 prose-headings:font-semibold prose-p:mb-4 prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4">
                   <MdEditor
-                    value={memoizedLesson.assignment.instructions}
+                    value={lesson.assignment.instructions}
                     style={{ height: "auto", minHeight: "200px" }}
                     renderHTML={(text) => md.render(text)}
                     view={{ menu: false, md: false, html: true }}
@@ -454,17 +462,17 @@ export default function LessonContent({
                     }
                     disabled={false}
                   />
-                  {memoizedLesson.assignment.submissionDetails && (
+                  {lesson.assignment.submissionDetails && (
                     <p className="text-sm text-gray-600">
                       Max file size:{" "}
-                      {(memoizedLesson.assignment.submissionDetails
-                        .maxFileSize || 5 * 1024 * 1024) /
+                      {(lesson.assignment.submissionDetails.maxFileSize ||
+                        5 * 1024 * 1024) /
                         (1024 * 1024)}
                       MB
                       <br />
                       Allowed file types:{" "}
                       {(
-                        memoizedLesson.assignment.submissionDetails
+                        lesson.assignment.submissionDetails
                           .allowedFileTypes || ["application/pdf", "text/plain"]
                       ).join(", ")}
                     </p>
@@ -472,7 +480,7 @@ export default function LessonContent({
                   <Button
                     onClick={handleAssignmentSubmit}
                     disabled={!assignmentFile}
-                    type="button"
+                    type="button" // Prevent form submission
                   >
                     <Send className="h-5 w-5 mr-2" />
                     Submit Assignment
@@ -494,14 +502,14 @@ export default function LessonContent({
         )}
       </div>
 
-      {memoizedLesson?.type === "VIDEO" && !videoError && (
+      {lesson?.type === "VIDEO" && !videoError && (
         <div className="absolute bottom-4 right-4 flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
             className="text-white bg-black/50 hover:bg-black/70"
             onClick={handleBookmark}
-            type="button"
+            type="button" // Prevent form submission
           >
             <Bookmark className="h-5 w-5" />
           </Button>
@@ -510,7 +518,7 @@ export default function LessonContent({
             size="icon"
             className="text-white bg-black/50 hover:bg-black/70"
             onClick={toggleFullscreen}
-            type="button"
+            type="button" // Prevent form submission
           >
             {isFullscreen ? (
               <Minimize2 className="h-5 w-5" />

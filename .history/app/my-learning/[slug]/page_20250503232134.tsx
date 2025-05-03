@@ -154,7 +154,7 @@ export default function CourseLearningPage() {
     };
 
     fetchCourse();
-  }, [isLoaded, isSignedIn, params.slug, router, toast]);
+  });
 
   useEffect(() => {
     if (!course || !course.modules[activeModule]?.lessons[activeLesson]) {

@@ -154,7 +154,7 @@ export default function CourseLearningPage() {
     };
 
     fetchCourse();
-  }, [isLoaded, isSignedIn, params.slug, router, toast]);
+  }, [isLoaded, isSignedIn, userId, user, params.slug, router, toast]);
 
   useEffect(() => {
     if (!course || !course.modules[activeModule]?.lessons[activeLesson]) {
@@ -500,7 +500,7 @@ export default function CourseLearningPage() {
         setNotes={setNotes}
       />
 
-      <main className="flex-1 container py-6 px-4 md:px-6">
+      {/* <main className="flex-1 container py-6 px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div
             className={
@@ -577,7 +577,7 @@ export default function CourseLearningPage() {
             </div>
           )}
         </div>
-      </main>
+      </main> */}
     </div>
   );
 }
