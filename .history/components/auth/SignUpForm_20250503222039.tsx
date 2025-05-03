@@ -145,11 +145,9 @@ export default function SignUpForm({
       }
     } catch (err: unknown) {
       console.error("Verification error:", err);
-      if (err instanceof Error) {
-        setError(err.message || "Invalid or expired verification code.");
-      } else {
-        setError("Invalid or expired verification code.");
-      }
+      setError(
+        err.errors?.[0]?.message || "Invalid or expired verification code."
+      );
     } finally {
       setIsSubmitting(false);
     }
