@@ -2,16 +2,16 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ orderNumber: string }> }
-) {
-  const orderNumber = (await params).orderNumber; // Access the dynamic orderNumber directly from params
+export async function GET(request: Request) {
   const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Extract orderNumber from the query string
+  const { searchParams } = new URL(request.url);
+  const orderNumber = searchParams.get("orderNumber");
 
   if (!orderNumber) {
     return NextResponse.json(

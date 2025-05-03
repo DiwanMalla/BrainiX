@@ -3,15 +3,19 @@ import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ orderNumber: string }> }
+  req: Request,
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const orderNumber = (await params).orderNumber; // Access the dynamic orderNumber directly from params
+  const slug = (await params).slug;
   const { userId } = await auth();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Extract orderNumber from the query string
+  const { searchParams } = new URL(request.url);
+  const orderNumber = searchParams.get("orderNumber");
 
   if (!orderNumber) {
     return NextResponse.json(
