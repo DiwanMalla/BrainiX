@@ -5,9 +5,9 @@ import { Course } from "@/types/globals";
 // Use dynamic route parameters for the slug
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: { slug: string } }
 ) {
-  const slug = (await params).slug; // Access slug directly from params
+  const { slug } = params; // Access slug directly from params
 
   if (!slug) {
     return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
