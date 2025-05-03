@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useSignIn, useSignUp, useClerk } from "@clerk/nextjs";
 import { SignInData, SignUpData } from "@/types/auth";
 import { useSearchParams } from "next/navigation";
-import { createPrismaUser } from "@/lib/actions/createUser";
-import { isDisposableEmail } from "@/lib/utils/emailValidator";
+import prisma from "@/lib/db";
 
 export default function useAuth() {
   const { signIn } = useSignIn();
@@ -25,28 +24,27 @@ export default function useAuth() {
     password: "",
   });
 
-  const validateSignUpData = (data: SignUpData) => {
-    if (!data.firstName) throw new Error("First name is required.");
-    if (!data.lastName) throw new Error("Last name is required.");
-    if (!data.email) throw new Error("Email is required.");
-    if (isDisposableEmail(data.email))
-      throw new Error("Disposable emails are not allowed.");
-    if (data.password.length < 8)
-      throw new Error("Password must be at least 8 characters long.");
-  };
-
-  const handleCreateUser = async (clerkUser: {
+  const createPrismaUser = async (clerkUser: {
     id: string;
     email: string;
     firstName: string;
     lastName: string;
   }) => {
-    console.log("Creating Prisma user with data:", clerkUser);
-    await createPrismaUser({
-      ...clerkUser,
-      role: role === "instructor" ? "INSTRUCTOR" : "STUDENT",
-    });
-    console.log("Prisma user creation completed");
+    try {
+      const name = `${clerkUser.firstName} ${clerkUser.lastName}`.trim();
+      await prisma.user.create({
+        data: {
+          id: clerkUser.id,
+          clerkId: clerkUser.id,
+          email: clerkUser.email,
+          name,
+          role: role === "instructor" ? "INSTRUCTOR" : "STUDENT",
+        },
+      });
+    } catch (error: any) {
+      console.error("Prisma error details:", error);
+      throw new Error(error.message || "Failed to create user in database.");
+    }
   };
 
   return {
@@ -57,7 +55,6 @@ export default function useAuth() {
     setIsSubmitting,
     useSignInState: () => [signInData, setSignInData] as const,
     useSignUpState: () => [signUpData, setSignUpData] as const,
-    createPrismaUser: handleCreateUser,
-    validateSignUpData, // Explicitly included in the return object
+    createPrismaUser,
   };
 }

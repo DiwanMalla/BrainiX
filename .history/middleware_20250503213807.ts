@@ -12,7 +12,7 @@ const isPublicRoute = createRouteMatcher([
   "/courses/:path*",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/courses(.*)",
+  "/courses",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

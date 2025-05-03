@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { Course } from "@/types/globals";
 
-// Use dynamic route parameters for the slug
 export async function GET(
   req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
-  const { slug } = params; // Access slug directly from params
+  const { slug } = params; // Access the dynamic 'slug' parameter directly from params
 
   if (!slug) {
     return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
