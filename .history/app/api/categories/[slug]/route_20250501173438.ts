@@ -1,11 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { slug: string } }
-) {
-  const { slug } = params; // Access the dynamic slug directly from params
+export async function GET(request: NextRequest) {
+  const slug = request.nextUrl.pathname.split("/").pop();
 
   if (!slug) {
     return NextResponse.json(
@@ -15,7 +12,6 @@ export async function GET(
   }
 
   try {
-    // Query the database for the category based on the slug
     const category = await prisma.category.findUnique({
       where: { slug },
       include: {
@@ -60,7 +56,6 @@ export async function GET(
       );
     }
 
-    // Format the response data
     const formattedCategory = {
       id: category.id,
       name: category.name,

@@ -1,0 +1,122 @@
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/db";
+import { Course } from "@/types/globals";
+
+// Use dynamic route parameters for the slug
+export async function GET(req: NextRequest) {
+  const { slug } = await req.body; // Access slug directly from params
+
+  if (!slug) {
+    return NextResponse.json({ error: "Missing course slug" }, { status: 400 });
+  }
+
+  try {
+    const course = await prisma.course.findFirst({
+      where: { slug, published: true },
+      include: {
+        instructor: {
+          include: {
+            instructorProfile: true,
+          },
+        },
+        category: true,
+        modules: {
+          include: { lessons: true },
+        },
+      },
+    });
+
+    if (!course) {
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
+    }
+
+    const discount =
+      course.discountPrice && course.price > 0
+        ? Math.round(
+            ((course.price - course.discountPrice) / course.price) * 100
+          )
+        : undefined;
+
+    const formattedCourse: Course = {
+      id: course.id,
+      title: course.title,
+      slug: course.slug,
+      description: course.description,
+      shortDescription: course.shortDescription || "",
+      price: course.price,
+      discount,
+      discountPrice: course.discountPrice || undefined,
+      thumbnail: course.thumbnail || "/placeholder.svg",
+      rating: course.rating || 0,
+      students: course.totalStudents || 0,
+      category: course.category?.name || "Uncategorized",
+      level: course.level === "ALL_LEVELS" ? "BEGINNER" : course.level,
+      duration: course.duration
+        ? `${Math.floor(course.duration / 3600)}h ${Math.floor(
+            (course.duration % 3600) / 60
+          )}m`
+        : "Unknown",
+      language: course.language,
+      lastUpdated: course.updatedAt.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
+      instructor: {
+        id: course.instructor?.id,
+        name: course.instructor?.name || "Unknown Instructor",
+        image: course.instructor?.image || "/placeholder.svg",
+        bio: course.instructor?.instructorProfile?.biography || "",
+        instructorProfile: course.instructor?.instructorProfile
+          ? {
+              title: course.instructor.instructorProfile.title,
+              specialization:
+                course.instructor.instructorProfile.specialization,
+              biography: course.instructor.instructorProfile.biography,
+              averageRating: course.instructor.instructorProfile.averageRating,
+              totalStudents: course.instructor.instructorProfile.totalStudents,
+              socialLinks: course.instructor.instructorProfile.socialLinks,
+            }
+          : undefined,
+      },
+      whatYoullLearn: Array.isArray(course.learningObjectives)
+        ? course.learningObjectives
+        : [],
+      syllabus: course.modules.map((module) => ({
+        title: module.title,
+        lectures: module.lessons?.length || 0,
+        duration: module.lessons?.length
+          ? `${Math.floor(
+              module.lessons.reduce(
+                (total, lesson) => total + (lesson.duration || 0),
+                0
+              ) / 60
+            )}m`
+          : "Unknown",
+      })),
+      topCompanies: course.topCompanies || [],
+      status: "DRAFT",
+      featured: false,
+      bestseller: false,
+      published: false,
+      subtitlesLanguages: [],
+      totalLessons: 0,
+      totalModules: 0,
+      requirements: [],
+      learningObjectives: [],
+      targetAudience: [],
+      tags: [],
+      createdAt: course.createdAt || new Date(),
+      updatedAt: course.updatedAt,
+      instructorId: "",
+      categoryId: "",
+    };
+
+    return NextResponse.json(formattedCourse);
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch course" },
+      { status: 500 }
+    );
+  }
+}
