@@ -3,9 +3,9 @@ import prisma from "@/lib/db";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: { slug: string } }
 ) {
-  const slug = (await params).slug; // Access the dynamic slug directly from params
+  const { slug } = params; // Access the dynamic slug directly from params
 
   if (!slug) {
     return NextResponse.json(

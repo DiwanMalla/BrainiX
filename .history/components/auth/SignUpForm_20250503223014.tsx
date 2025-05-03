@@ -93,7 +93,9 @@ export default function SignUpForm({
       console.error("Sign-up error:", {
         message: err instanceof Error ? err.message : "Unknown error",
       });
-      setError("Failed to sign up. Please try again.");
+      } else {
+        setError("Failed to sign up. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

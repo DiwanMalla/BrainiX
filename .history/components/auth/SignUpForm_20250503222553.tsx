@@ -90,10 +90,19 @@ export default function SignUpForm({
         setIsVerifying(true);
       }
     } catch (err: unknown) {
-      console.error("Sign-up error:", {
-        message: err instanceof Error ? err.message : "Unknown error",
-      });
-      setError("Failed to sign up. Please try again.");
+      console.error("Sign-up error:", err);
+      if (
+        err instanceof Error &&
+        "errors" in err &&
+        Array.isArray((err as any).errors)
+      ) {
+        setError(
+          (err as any).errors?.[0]?.message ||
+            "Failed to sign up. Please try again."
+        );
+      } else {
+        setError("Failed to sign up. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -134,10 +143,11 @@ export default function SignUpForm({
       } else {
         setError("Verification failed. Please try again.");
       }
-    } catch (err: unknown) {
-      console.error("Verification error:", {
-        message: err instanceof Error ? err.message : "Unknown error",
-      });
+    } catch (err: any) {
+      console.error("Verification error:", err);
+      setError(
+        err.errors?.[0]?.message || "Invalid or expired verification code."
+      );
     } finally {
       setIsSubmitting(false);
     }
