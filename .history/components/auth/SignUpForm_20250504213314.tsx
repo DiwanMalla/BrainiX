@@ -96,8 +96,8 @@ export default function SignUpForm({
       setError(
         `${
           err instanceof Error
-            ? ` ${err.message} `
-            : "Failed to sign up. Please try again,"
+            ? ` Error: ${err.message} Failed to sign up. Please try again,`
+            : ""
         }`
       );
     } finally {

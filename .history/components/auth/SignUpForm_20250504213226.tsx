@@ -94,10 +94,8 @@ export default function SignUpForm({
         message: err instanceof Error ? err.message : "Unknown error",
       });
       setError(
-        `${
-          err instanceof Error
-            ? ` ${err.message} `
-            : "Failed to sign up. Please try again,"
+        `Failed to sign up. Please try again,${
+          err instanceof Error ? ` Error: ${err.message}` : ""
         }`
       );
     } finally {
