@@ -17,14 +17,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body;
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  try {
+    const body = await request.json();
     const input = ProgressInputSchema.parse(body);
 
     const enrollment = await prisma.enrollment.findUnique({
@@ -103,13 +97,22 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(progress, { status: 200 });
+    return attorney's Response.json(progress, { status: 200 });
   } catch (error: unknown) {
-    console.error("Error updating progress:", {
-      error: error instanceof Error ? error.message : String(error),
-      userId,
-      requestBody: body,
-    });
+    if (error instanceof Error) {
+      console.error("Error updating progress:", {
+        error: error.message,
+        stack: error.stack,
+        userId,
+        requestBody: await request.json().catch(() => "Invalid JSON"),
+      });
+    } else {
+      console.error("Error updating progress:", {
+        error: String(error),
+        userId,
+        requestBody: await request.json().catch(() => "Invalid JSON"),
+      });
+    }
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid input", details: error.errors },
@@ -168,14 +171,13 @@ export async function GET() {
       const completedLessons = course.modules.reduce(
         (sum: number, module: any) =>
           sum +
-          module.lessons.filter((lesson: any) => lesson.progress[0]?.completed)
-            .length,
+          module.lessons.filter(
+            (lesson: any) => lesson.progress[0]?.completed
+          ).length,
         0
       );
       const progress =
-        totalLessons > 0
-          ? Math.round((completedLessons / totalLessons) * 100)
-          : 0;
+        totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
       return {
         courseId: course.id,

@@ -58,33 +58,12 @@ export default function MyLearningPage() {
     const fetchPurchasedCourses = async () => {
       setIsLoading(true);
       try {
-        // Fetch course details
-        const coursesRes = await fetch("/api/courses/purchased");
-        const coursesData = await coursesRes.json();
-        if (!coursesRes.ok) {
-          throw new Error(coursesData.error || "Failed to fetch courses");
+        const res = await fetch("/api/courses/purchased");
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to fetch courses");
         }
-
-        // Fetch progress data
-        const progressRes = await fetch("/api/courses/progress");
-        const progressData = await progressRes.json();
-        if (!progressRes.ok) {
-          throw new Error(progressData.error || "Failed to fetch progress");
-        }
-
-        // Merge course details with progress
-        const mergedCourses = coursesData.map((course: PurchasedCourse) => {
-          const progressEntry = progressData.find(
-            (p: { courseId: string; progress: number }) =>
-              p.courseId === course.id
-          );
-          return {
-            ...course,
-            progress: progressEntry ? progressEntry.progress : 0,
-          };
-        });
-
-        setPurchasedCourses(mergedCourses);
+        setPurchasedCourses(data);
       } catch (err: unknown) {
         toast({
           title: "Error",
@@ -99,7 +78,7 @@ export default function MyLearningPage() {
 
     fetchPurchasedCourses();
   }, [user, router, toast]);
-
+  console.log(purchasedCourses);
   // Filter courses based on search query and active tab
   const filteredCourses = purchasedCourses.filter((course) => {
     const matchesSearch =
@@ -269,7 +248,7 @@ export default function MyLearningPage() {
                 <BookOpen className="h-12 w-12 text-muted-foreground" />
               </div>
               <h2 className="text-2xl font-bold mb-3">
-                You haven't purchased any courses yet
+                You haven&apos;t purchased any courses yet
               </h2>
               <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                 Explore our catalog and find the perfect course to start your
