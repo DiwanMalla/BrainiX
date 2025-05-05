@@ -69,7 +69,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/info/instructor"
+                  href="/instructors"
                   className="text-muted-foreground hover:text-primary"
                 >
                   Instructors

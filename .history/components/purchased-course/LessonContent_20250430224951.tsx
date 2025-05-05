@@ -202,6 +202,7 @@ export default function LessonContent({
           <TabsTrigger value="resources">Resources</TabsTrigger>
           <TabsTrigger value="transcript">Transcript</TabsTrigger>
           <TabsTrigger value="ai-quiz">AI Quiz</TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
         <TabsContent value="content" className="p-4 border rounded-md mt-4">
