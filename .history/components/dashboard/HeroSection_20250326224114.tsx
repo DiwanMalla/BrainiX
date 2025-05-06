@@ -25,8 +25,8 @@ export default function HeroSection({ isSignedIn }: HeroSectionProps) {
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
               <Button size="lg" asChild>
-                <Link href={isSignedIn ? "/my-learning" : "/auth?tab=signup"}>
-                  {isSignedIn ? "My Learning" : "Join for Free"}
+                <Link href={isSignedIn ? "/dashboard" : "/auth?tab=signup"}>
+                  {isSignedIn ? "Go to Dashboard" : "Join for Free"}
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
