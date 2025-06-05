@@ -201,14 +201,7 @@ export default function CategoriesPage() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-2xl font-semibold flex items-center gap-2">
                         {category.icon && (
-                          <span className="text-xl">
-                            <Image
-                              src={category.icon}
-                              alt={category.name}
-                              width={24}
-                              height={24}
-                            />
-                          </span>
+                          <span className="text-xl">{category.icon}</span>
                         )}
                         {category.name}
                       </CardTitle>

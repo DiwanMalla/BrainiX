@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import * as fs from "fs";
 
 const prisma = new PrismaClient();
-const seedDataPath = "prisma/seed-data.json";
+const seedDataPath = "seed-data.json";
 
 async function main() {
   const rawData = fs.readFileSync(seedDataPath, "utf-8");

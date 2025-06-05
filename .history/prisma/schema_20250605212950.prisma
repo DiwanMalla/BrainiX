@@ -519,7 +519,7 @@ model Blog {
   authorId    String
   author      User          @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: NoAction)
   tags        String[]
-  comments    BlogComment[] @relation("BlogComments")
+  comments    BlogComment[]
   likes       BlogLike[]
   totalViews  Int           @default(0)
   createdAt   DateTime      @default(now())
@@ -536,7 +536,6 @@ model BlogComment {
   id          String        @id @default(cuid())
   content     String        @db.Text
   blogId      String
-  blog        Blog          @relation("BlogComments", fields: [blogId], references: [id], onDelete: Cascade)
   userId      String
   user        User          @relation("BlogCommentUser", fields: [userId], references: [id], onDelete: NoAction)
   parentId    String?

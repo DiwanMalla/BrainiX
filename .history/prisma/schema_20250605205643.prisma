@@ -39,8 +39,8 @@ model User {
   Cart Cart[]
 
   blogs             Blog[]             @relation("BlogAuthor")
-  blogLikes         BlogLike[]         // Added for BlogLike relation
   blogComments      BlogComment[]      @relation("BlogCommentUser")
+  blogLikes         BlogLike[]
 }
 
 enum UserRole {
@@ -517,9 +517,9 @@ model Blog {
   status      BlogStatus    @default(DRAFT)
   publishedAt DateTime?
   authorId    String
-  author      User          @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: NoAction)
+  author      User          @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: Restrict)
   tags        String[]
-  comments    BlogComment[] @relation("BlogComments")
+  comments    BlogComment[] @relation("comments")
   likes       BlogLike[]
   totalViews  Int           @default(0)
   createdAt   DateTime      @default(now())
@@ -536,11 +536,10 @@ model BlogComment {
   id          String        @id @default(cuid())
   content     String        @db.Text
   blogId      String
-  blog        Blog          @relation("BlogComments", fields: [blogId], references: [id], onDelete: Cascade)
+  blog        Blog          @relation("comments", fields: [blogId], references: [id], onDelete: Cascade)
   userId      String
-  user        User          @relation("BlogCommentUser", fields: [userId], references: [id], onDelete: NoAction)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Restrict)
   parentId    String?
-  
   parent      BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies     BlogComment[] @relation("CommentReplies")
   createdAt   DateTime      @default(now())
@@ -554,7 +553,7 @@ model BlogLike {
   blogId    String
   blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
   createdAt DateTime @default(now())
 
   @@unique([blogId, userId])

@@ -203,7 +203,7 @@ export default function CategoriesPage() {
                         {category.icon && (
                           <span className="text-xl">
                             <Image
-                              src={category.icon}
+                              ref={category.icon}
                               alt={category.name}
                               width={24}
                               height={24}

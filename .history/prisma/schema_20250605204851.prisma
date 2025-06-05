@@ -35,12 +35,10 @@ model User {
   receivedMessages  Message[]          @relation("MessageReceiver")
   notifications     Notification[]
   quizAttempts      QuizAttempt[]      @relation("UserQuizAttempts")
-
-  Cart Cart[]
-
   blogs             Blog[]             @relation("BlogAuthor")
-  blogLikes         BlogLike[]         // Added for BlogLike relation
-  blogComments      BlogComment[]      @relation("BlogCommentUser")
+  blogComments      BlogComment[]
+  blogLikes         BlogLike[]
+  Cart              Cart[]
 }
 
 enum UserRole {
@@ -101,7 +99,7 @@ model Course {
   publishedAt        DateTime?
   language           String       @default("English")
   subtitlesLanguages String[]
-  certificateAvailable Boolean    @default(true) // Added for certificate filter
+  certificateAvailable Boolean    @default(true)
   duration           Int          @default(0)
   totalLessons       Int          @default(0)
   totalModules       Int          @default(0)
@@ -125,10 +123,8 @@ model Course {
   wishlist      Wishlist[]
   orderItems    OrderItem[]
   announcements Announcement[]
-
-  Cart Cart[]
-
-  Message Message[]
+  Cart          Cart[]
+  Message       Message[]
 }
 
 enum CourseLevel {
@@ -162,8 +158,6 @@ model Category {
   updatedAt   DateTime   @updatedAt
 }
 
-
-// Module model - represents a section/chapter in a course
 model Module {
   id          String   @id @default(cuid())
   title       String
@@ -176,7 +170,6 @@ model Module {
   updatedAt   DateTime @updatedAt
 }
 
-// Lesson model - represents individual lessons within a module
 model Lesson {
   id          String     @id @default(cuid())
   title       String
@@ -192,11 +185,10 @@ model Lesson {
   resources   Resource[]
   progress    Progress[]
   quizzes     Quiz[]
-  notes       Note[]     // Added relation to Note
+  notes       Note[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
-
 
 enum LessonType {
   VIDEO
@@ -206,27 +198,25 @@ enum LessonType {
   LIVE_SESSION
 }
 
-// Resource model - represents downloadable resources for lessons
 model Resource {
   id          String   @id @default(cuid())
   title       String
   description String?
-  type        String // PDF, ZIP, etc.
+  type        String
   url         String
-  size        Int? // Size in bytes
+  size        Int?
   lessonId    String
   lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-// Quiz model - represents quizzes attached to lessons
 model Quiz {
   id           String        @id @default(cuid())
   title        String
   description  String?
-  passingScore Int           @default(70) // Percentage needed to pass
-  timeLimit    Int? // Time limit in minutes, null for no limit
+  passingScore Int           @default(70)
+  timeLimit    Int?
   lessonId     String
   lesson       Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   questions    Question[]
@@ -235,13 +225,12 @@ model Quiz {
   updatedAt    DateTime      @updatedAt
 }
 
-// Question model - represents questions in a quiz
 model Question {
   id            String       @id @default(cuid())
   text          String
   type          QuestionType
-  options       Json? // Array of options for multiple choice
-  correctAnswer String? // For text answers or index/id of correct option
+  options       Json?
+  correctAnswer String?
   explanation   String?
   points        Int          @default(1)
   quizId        String
@@ -258,7 +247,6 @@ enum QuestionType {
   MATCHING
 }
 
-// QuizAttempt model - represents a student's attempt at a quiz
 model QuizAttempt {
   id          String    @id @default(cuid())
   score       Float
@@ -268,7 +256,7 @@ model QuizAttempt {
   quizId      String
   quiz        Quiz      @relation(fields: [quizId], references: [id])
   userId      String
-  user        User      @relation("UserQuizAttempts", fields: [userId], references: [id]) // Named relation
+  user        User      @relation("UserQuizAttempts", fields: [userId], references: [id])
   answers     Answer[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -276,7 +264,6 @@ model QuizAttempt {
   @@unique([quizId, userId, startedAt])
 }
 
-// Answer model - represents a student's answer to a question
 model Answer {
   id            String      @id @default(cuid())
   answer        String
@@ -289,7 +276,6 @@ model Answer {
   updatedAt     DateTime    @updatedAt
 }
 
-// Enrollment model - represents a student's enrollment in a course
 model Enrollment {
   id           String           @id @default(cuid())
   userId       String
@@ -301,13 +287,12 @@ model Enrollment {
   expiresAt    DateTime?
   progress     Progress[]
   certificates Certificate[]
-  notes        Note[]           // Added relation to Note
+  notes        Note[]
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
   @@unique([userId, courseId])
 }
-
 
 enum EnrollmentStatus {
   ACTIVE
@@ -316,7 +301,6 @@ enum EnrollmentStatus {
   REFUNDED
 }
 
-// Progress model - tracks a student's progress through lessons
 model Progress {
   id             String     @id @default(cuid())
   enrollmentId   String
@@ -332,7 +316,7 @@ model Progress {
 
   @@unique([enrollmentId, lessonId])
 }
-// Note model - represents notes made by students on lessons
+
 model Note {
   id           String     @id @default(cuid())
   enrollmentId String
@@ -346,7 +330,6 @@ model Note {
   @@index([enrollmentId, lessonId])
 }
 
-// Certificate model - represents completion certificates
 model Certificate {
   id           String     @id @default(cuid())
   enrollmentId String
@@ -357,22 +340,22 @@ model Certificate {
   updatedAt    DateTime   @updatedAt
 }
 
-// Review model - represents course reviews
 model Review {
   id        String   @id @default(cuid())
-  rating    Int // 1-5 stars
+  rating    Int
   comment   String?  @db.Text
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   courseId  String
   course    Course   @relation(fields: [courseId], references: [id])
-  helpful   Int      @default(0) // Number of users who found this review helpful
+  helpful   Int      @default(0)
   featured  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([userId, courseId])
 }
+
 model Cart {
   id        String   @id @default(cuid())
   userId    String
@@ -383,9 +366,9 @@ model Cart {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, courseId]) // Prevent duplicates
+  @@unique([userId, courseId])
 }
-// Wishlist model - represents courses in a user's wishlist
+
 model Wishlist {
   id        String   @id @default(cuid())
   userId    String
@@ -393,13 +376,12 @@ model Wishlist {
   courseId  String
   course    Course   @relation(fields: [courseId], references: [id])
   addedAt   DateTime @default(now())
-  createdAt DateTime @default(now()) // Added for consistency
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([userId, courseId])
 }
 
-// Order model - represents a purchase transaction
 model Order {
   id             String      @id @default(cuid())
   orderNumber    String      @unique
@@ -411,7 +393,7 @@ model Order {
   tax            Float       @default(0)
   currency       String      @default("USD")
   paymentMethod  String?
-  paymentId      String? // ID from payment processor
+  paymentId      String?
   items          OrderItem[]
   couponId       String?
   coupon         Coupon?     @relation(fields: [couponId], references: [id])
@@ -427,7 +409,6 @@ enum OrderStatus {
   REFUNDED
 }
 
-// OrderItem model - represents individual items in an order
 model OrderItem {
   id        String   @id @default(cuid())
   orderId   String
@@ -439,7 +420,6 @@ model OrderItem {
   updatedAt DateTime @updatedAt
 }
 
-// Coupon model - represents discount coupons
 model Coupon {
   id                String       @id @default(cuid())
   code              String       @unique
@@ -463,7 +443,6 @@ enum DiscountType {
   FIXED_AMOUNT
 }
 
-// Announcement model - represents course announcements
 model Announcement {
   id        String   @id @default(cuid())
   title     String
@@ -474,7 +453,6 @@ model Announcement {
   updatedAt DateTime @updatedAt
 }
 
-// Message model - represents messages between users
 model Message {
   id         String    @id @default(cuid())
   content    String    @db.Text
@@ -493,7 +471,7 @@ model Message {
   @@index([courseSlug])
   @@index([createdAt])
 }
-// Notification model - represents user notifications
+
 model Notification {
   id        String    @id @default(cuid())
   userId    String
@@ -507,6 +485,7 @@ model Notification {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
+
 model Blog {
   id          String        @id @default(cuid())
   title       String
@@ -517,9 +496,9 @@ model Blog {
   status      BlogStatus    @default(DRAFT)
   publishedAt DateTime?
   authorId    String
-  author      User          @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: NoAction)
+  author      User          @relation("BlogAuthor", fields: [authorId], references: [id])
   tags        String[]
-  comments    BlogComment[] @relation("BlogComments")
+  comments    BlogComment[]
   likes       BlogLike[]
   totalViews  Int           @default(0)
   createdAt   DateTime      @default(now())
@@ -536,17 +515,14 @@ model BlogComment {
   id          String        @id @default(cuid())
   content     String        @db.Text
   blogId      String
-  blog        Blog          @relation("BlogComments", fields: [blogId], references: [id], onDelete: Cascade)
+  blog        Blog          @relation(fields: [blogId], references: [id], onDelete: Cascade)
   userId      String
-  user        User          @relation("BlogCommentUser", fields: [userId], references: [id], onDelete: NoAction)
+  user        User          @relation(fields: [userId], references: [id])
   parentId    String?
-  
   parent      BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies     BlogComment[] @relation("CommentReplies")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-
-  @@index([blogId])
 }
 
 model BlogLike {
@@ -554,7 +530,7 @@ model BlogLike {
   blogId    String
   blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 
   @@unique([blogId, userId])

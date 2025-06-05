@@ -108,6 +108,16 @@ export default function CourseContentSidebar({
               (lesson) => lesson.progress[0]?.completed === true
             );
 
+            // Log lesson details for debugging
+            module.lessons.forEach((lesson, index) => {
+              console.log(`Lesson ${index}:`, {
+                id: lesson.id,
+                title: lesson.title,
+                progress: lesson.progress,
+                completed: lesson.progress[0]?.completed,
+              });
+            });
+
             return (
               <AccordionItem key={module.id} value={module.id}>
                 <AccordionTrigger

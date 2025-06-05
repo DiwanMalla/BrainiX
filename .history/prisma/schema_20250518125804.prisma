@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("NEW_DATABASE_URL")
 }
 
 model User {
@@ -37,10 +37,6 @@ model User {
   quizAttempts      QuizAttempt[]      @relation("UserQuizAttempts")
 
   Cart Cart[]
-
-  blogs             Blog[]             @relation("BlogAuthor")
-  blogLikes         BlogLike[]         // Added for BlogLike relation
-  blogComments      BlogComment[]      @relation("BlogCommentUser")
 }
 
 enum UserRole {
@@ -506,56 +502,4 @@ model Notification {
   readAt    DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-}
-model Blog {
-  id          String        @id @default(cuid())
-  title       String
-  slug        String        @unique
-  content     String        @db.Text
-  excerpt     String?       @db.Text
-  thumbnail   String?
-  status      BlogStatus    @default(DRAFT)
-  publishedAt DateTime?
-  authorId    String
-  author      User          @relation("BlogAuthor", fields: [authorId], references: [id], onDelete: NoAction)
-  tags        String[]
-  comments    BlogComment[] @relation("BlogComments")
-  likes       BlogLike[]
-  totalViews  Int           @default(0)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-}
-
-enum BlogStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-model BlogComment {
-  id          String        @id @default(cuid())
-  content     String        @db.Text
-  blogId      String
-  blog        Blog          @relation("BlogComments", fields: [blogId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User          @relation("BlogCommentUser", fields: [userId], references: [id], onDelete: NoAction)
-  parentId    String?
-  
-  parent      BlogComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies     BlogComment[] @relation("CommentReplies")
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  @@index([blogId])
-}
-
-model BlogLike {
-  id        String   @id @default(cuid())
-  blogId    String
-  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction)
-  createdAt DateTime @default(now())
-
-  @@unique([blogId, userId])
 }
