@@ -175,6 +175,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           <Separator />
           {/* Comments Section */}
           <CommentSection blogId={post.id} comments={post.comments} />
+          {console.log(post.id)}
         </article>
       </div>
     </div>

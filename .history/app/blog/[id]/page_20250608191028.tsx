@@ -163,7 +163,9 @@ export default async function PostPage({ params }: { params: { id: string } }) {
               )}
             </div>
           </header>
+
           <Separator />
+
           {/* Article Content */}
           <div className="prose prose-lg dark:prose-invert max-w-none">
             {post.content.split("\n\n").map((paragraph, i) => (
@@ -172,7 +174,9 @@ export default async function PostPage({ params }: { params: { id: string } }) {
               </p>
             ))}
           </div>
+
           <Separator />
+
           {/* Comments Section */}
           <CommentSection blogId={post.id} comments={post.comments} />
         </article>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import cuid from "cuid";
+import { cuid } from "@paralleldrive/cuid2";
 
 export async function POST(
   request: Request,
