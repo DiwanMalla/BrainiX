@@ -158,24 +158,115 @@ export function CommentSection({
       {/* Add Comment Form */}
       <Card className="rounded-xl shadow-sm border border-border">
         <CardContent className="pt-6 space-y-4">
-          {/* Add Comment Input */}
-          <Textarea
-            placeholder={
-              isSignedIn ? "Write a comment..." : "Sign in to comment..."
-            }
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="min-h-20 resize-none"
-            disabled={!isSignedIn || isSubmitting}
-          />
-          <div className="flex justify-end">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage
+                  src={comment.author?.profileImageUrl || "/placeholder.svg"}
+                  alt={comment.author?.name || "User"}
+                />
+                <AvatarFallback>
+                  {comment.author?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("") || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold text-sm">
+                  {comment.author?.name || "Anonymous"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {formatDate(comment.createdAt)}
+                </p>
+              </div>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              #{comments.indexOf(comment) + 1}
+            </Badge>
+          </div>
+
+          <p className="pl-1 text-base leading-relaxed text-foreground">
+            {comment.content}
+          </p>
+
+          <div className="pl-1">
             <Button
-              onClick={handleAddComment}
-              disabled={!newComment.trim() || isSubmitting || !isSignedIn}
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                setReplyingTo(replyingTo === comment.id ? null : comment.id)
+              }
+              className="h-8 px-2 text-xs"
             >
-              {isSubmitting ? "Posting..." : "Post Comment"}
+              <Reply className="mr-1 h-3 w-3" />
+              Reply
             </Button>
           </div>
+
+          {/* Reply Form */}
+          {replyingTo === comment.id && (
+            <div className="border-t pt-4 space-y-3 ml-3">
+              <Textarea
+                placeholder={
+                  isSignedIn ? "Write a reply..." : "Sign in to reply..."
+                }
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                className="min-h-20 resize-none"
+                disabled={!isSignedIn}
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReplyingTo(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => handleAddReply(comment.id)}
+                  disabled={!replyContent.trim() || isSubmitting || !isSignedIn}
+                >
+                  {isSubmitting ? "Replying..." : "Reply"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Replies */}
+          {replies.length > 0 && (
+            <div className="space-y-4 border-t pt-4 ml-4 pl-4 border-l-2 border-muted">
+              {replies.map((reply) => (
+                <div key={reply.id} className="flex items-start gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={reply.author?.profileImageUrl || "/placeholder.svg"}
+                      alt={reply.author?.name || "User"}
+                    />
+                    <AvatarFallback className="text-xs">
+                      {reply.author?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("") || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-sm">
+                        {reply.author?.name || "Anonymous"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(reply.createdAt)}
+                      </p>
+                    </div>
+                    <p className="text-sm text-foreground">{reply.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 

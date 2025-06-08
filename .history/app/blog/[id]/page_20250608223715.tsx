@@ -79,12 +79,11 @@ export default async function PostPage({ params }: { params: { id: string } }) {
         <article className="space-y-8">
           <header className="space-y-6">
             {post.thumbnail && (
-              <img
-                src={post.thumbnail ?? "/placeholder.jpg"}
+              <Image
+                src={post.thumbnail}
                 alt={post.title}
                 width={800}
                 height={400}
-                loading="lazy"
                 className="w-full h-64 object-cover rounded-lg"
               />
             )}
