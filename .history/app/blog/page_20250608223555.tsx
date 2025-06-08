@@ -143,13 +143,7 @@ export default async function BlogPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {posts.map((post) => (
-              <BlogPostCard
-                key={post.id}
-                post={{
-                  ...post,
-                  createdAt: new Date(post.createdAt),
-                }}
-              />
+              <BlogPostCard key={post.id} post={post} />
             ))}
           </div>
         )}

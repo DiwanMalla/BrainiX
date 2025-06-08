@@ -174,22 +174,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           </div>
           <Separator />
           {/* Comments Section */}
-          <CommentSection
-            blogId={post.id}
-            comments={post.comments.map((comment) => ({
-              id: comment.id,
-              content: comment.content,
-              author: {
-                id: comment.id, // Use comment.id as a fallback for user id
-                name: comment.user.name || "Anonymous",
-                avatar: "/placeholder.svg", // Provide a default avatar or fetch if available
-                profileImageUrl: null, // Add profileImageUrl as required by User type
-              },
-              createdAt: new Date(comment.createdAt),
-              parentId: null, // Add parentId as required by Comment type
-              replies: [],
-            }))}
-          />
+          <CommentSection blogId={post.id} comments={post.comments} />
         </article>
       </div>
     </div>

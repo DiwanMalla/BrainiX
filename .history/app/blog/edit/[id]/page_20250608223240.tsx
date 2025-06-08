@@ -13,13 +13,12 @@ export default async function EditPostPage({
     notFound();
   }
 
-  return (
-    <BlogPostForm
-      post={{
-        ...post,
-        excerpt: post.excerpt ?? undefined,
-        thumbnail: post.thumbnail ?? undefined,
-      }}
-    />
-  );
+  // Ensure 'content' property exists for BlogPostForm and convert null excerpt to undefined
+  const postWithContent = {
+    content: "",
+    ...post,
+    excerpt: post?.excerpt ?? undefined,
+  };
+
+  return <BlogPostForm post={postWithContent} />;
 }

@@ -2,7 +2,6 @@ export interface User {
   id: string;
   name: string;
   avatar: string;
-  profileImageUrl: string | null;
 }
 
 export interface Reply {
@@ -31,6 +30,4 @@ export interface Post {
   likes: { id: string }[];
   totalViews: number;
   tags: string[];
-  content: string;
-  createdAt: Date;
 }

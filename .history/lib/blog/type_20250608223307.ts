@@ -32,5 +32,4 @@ export interface Post {
   totalViews: number;
   tags: string[];
   content: string;
-  createdAt: Date;
 }

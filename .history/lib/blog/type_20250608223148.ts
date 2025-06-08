@@ -31,6 +31,4 @@ export interface Post {
   likes: { id: string }[];
   totalViews: number;
   tags: string[];
-  content: string;
-  createdAt: Date;
 }

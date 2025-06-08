@@ -24,7 +24,7 @@ export interface Comment {
 export interface Post {
   id: string;
   title: string;
-  excerpt: string | null;
+  excerpt: string | null | undefined;
   thumbnail: string | null;
   author: { name: string | null; image: string | null };
   comments: { id: string }[];
@@ -32,5 +32,4 @@ export interface Post {
   totalViews: number;
   tags: string[];
   content: string;
-  createdAt: Date;
 }

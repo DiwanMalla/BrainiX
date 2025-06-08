@@ -17,8 +17,7 @@ export default async function EditPostPage({
     <BlogPostForm
       post={{
         ...post,
-        excerpt: post.excerpt ?? undefined,
-        thumbnail: post.thumbnail ?? undefined,
+        excerpt: post.excerpt === null ? undefined : post.excerpt,
       }}
     />
   );

@@ -13,13 +13,5 @@ export default async function EditPostPage({
     notFound();
   }
 
-  return (
-    <BlogPostForm
-      post={{
-        ...post,
-        excerpt: post.excerpt ?? undefined,
-        thumbnail: post.thumbnail ?? undefined,
-      }}
-    />
-  );
+  return <BlogPostForm post={post} />;
 }

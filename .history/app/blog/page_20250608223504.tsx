@@ -16,7 +16,6 @@ interface BlogPost {
   totalViews: number;
   tags: string[];
   content: string; // Added to match Post type
-  createdAt: string; // ISO string from API, will be converted to Date if needed
 }
 
 async function getPosts(): Promise<BlogPost[]> {
@@ -34,12 +33,7 @@ async function getPosts(): Promise<BlogPost[]> {
     if (!response.ok) {
       throw new Error(`Failed to fetch posts: ${response.statusText}`);
     }
-    // Ensure createdAt is present and is a string (ISO date)
-    const data = await response.json();
-    return data.map((post: any) => ({
-      ...post,
-      createdAt: post.createdAt ?? new Date().toISOString(),
-    }));
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -143,13 +137,7 @@ export default async function BlogPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {posts.map((post) => (
-              <BlogPostCard
-                key={post.id}
-                post={{
-                  ...post,
-                  createdAt: new Date(post.createdAt),
-                }}
-              />
+              <BlogPostCard key={post.id} post={post} />
             ))}
           </div>
         )}
