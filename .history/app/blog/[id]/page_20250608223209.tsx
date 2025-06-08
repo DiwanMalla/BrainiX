@@ -9,6 +9,7 @@ import { CommentSection } from "@/components/blog/comment-section";
 import { DeletePostButton } from "@/components/blog/delete-post-button";
 import { ArrowLeft, Edit, Clock, Eye, Share2, Bookmark } from "lucide-react";
 import Image from "next/image";
+import { auth } from "@clerk/nextjs/server";
 
 interface Post {
   id: string;
