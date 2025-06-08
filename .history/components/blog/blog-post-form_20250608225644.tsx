@@ -49,6 +49,11 @@ export function BlogPostForm({ post }: { post?: Post }) {
   const [thumbnail, setThumbnail] = useState(post?.thumbnail || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [showImageDialog, setShowImageDialog] = useState(false);
+
+  const handleUploadClick = () => {
+    setShowImageDialog(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

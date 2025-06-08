@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatDate } from "@/lib/blog/utils";
+import { formatDate, getReadingTime } from "@/lib/blog/utils";
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Eye } from "lucide-react";
+import { MessageSquare, Clock, Eye } from "lucide-react";
 
 import type { Post } from "@/lib/blog/type";
 

@@ -110,7 +110,6 @@ export function CommentSection({
         description: "Could not post reply",
         variant: "destructive",
       });
-      console.error("Error posting reply:", error);
     } finally {
       setIsSubmitting(false);
     }

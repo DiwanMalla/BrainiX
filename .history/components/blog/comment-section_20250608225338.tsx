@@ -77,10 +77,9 @@ export function CommentSection({
     } catch (error) {
       toast({
         title: "Error",
-        description: "Could not post comment",
+        description: "Could not add comment",
         variant: "destructive",
       });
-      console.error("Error posting comment:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +109,6 @@ export function CommentSection({
         description: "Could not post reply",
         variant: "destructive",
       });
-      console.error("Error posting reply:", error);
     } finally {
       setIsSubmitting(false);
     }
