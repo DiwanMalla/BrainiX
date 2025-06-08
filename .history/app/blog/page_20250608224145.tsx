@@ -5,37 +5,28 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/BackButton";
 
-// Post type as used in the app
 interface BlogPost {
   id: string;
   title: string;
-  excerpt: string | null;
+  excerpt: string | null; // Matches schema
   thumbnail: string | null;
-  author: {
-    name: string | null;
-    image: string | null;
-  };
+  author: { name: string | null; image: string | null };
   comments: { id: string }[];
   likes: { id: string }[];
   totalViews: number;
   tags: string[];
-  content: string;
-  createdAt: string;
+  content: string; // Added to match Post type
+  createdAt: string; // ISO string from API, will be converted to Date if needed
 }
-
-// Type used for parsing API response
-type RawBlogPost = Omit<BlogPost, "createdAt"> & {
-  createdAt?: string;
-};
 
 async function getPosts(): Promise<BlogPost[]> {
   try {
+    // Dynamically determine base URL
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL ||
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
-
     const response = await fetch(`${baseUrl}/api/blog`, {
       next: { revalidate: 60 },
     });
@@ -43,15 +34,12 @@ async function getPosts(): Promise<BlogPost[]> {
     if (!response.ok) {
       throw new Error(`Failed to fetch posts: ${response.statusText}`);
     }
-
-    const data: RawBlogPost[] = await response.json();
-
-    return data.map(
-      (post): BlogPost => ({
-        ...post,
-        createdAt: post.createdAt ?? new Date().toISOString(),
-      })
-    );
+    // Ensure createdAt is present and is a string (ISO date)
+    const data = await response.json();
+    return data.map((post: any) => ({
+      ...post,
+      createdAt: post.createdAt ?? new Date().toISOString(),
+    }));
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];
