@@ -8,6 +8,7 @@ import { formatDate, getReadingTime } from "@/lib/blog/utils";
 import { CommentSection } from "@/components/blog/comment-section";
 import { DeletePostButton } from "@/components/blog/delete-post-button";
 import { ArrowLeft, Edit, Clock, Eye, Share2, Bookmark } from "lucide-react";
+import Image from "next/image";
 
 interface Post {
   id: string;
