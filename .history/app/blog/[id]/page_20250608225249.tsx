@@ -9,7 +9,23 @@ import { CommentSection } from "@/components/blog/comment-section";
 import { DeletePostButton } from "@/components/blog/delete-post-button";
 import { ArrowLeft, Edit, Clock, Eye, Share2, Bookmark } from "lucide-react";
 
-import type { Post } from "@/lib/blog/type";
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string | null;
+  thumbnail: string | null;
+  tags: string[];
+  totalViews: number;
+  publishedAt: string;
+  author: { name: string | null; image: string | null };
+  comments: {
+    id: string;
+    content: string;
+    user: { name: string | null };
+    createdAt: string;
+  }[];
+}
 
 async function getPostById(
   id: string
@@ -120,9 +136,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                     {post.author.name || "Anonymous"}
                   </p>
                   <div className="flex items-center text-sm text-muted-foreground space-x-4">
-                    <span>
-                      {formatDate(new Date(post.publishedAt ?? Date.now()))}
-                    </span>
+                    <span>{formatDate(new Date(post.publishedAt))}</span>
                     <span className="flex items-center">
                       <Clock className="mr-1 h-3 w-3" />
                       {readingTime} min read
@@ -159,7 +173,22 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           </div>
           <Separator />
           {/* Comments Section */}
-          <CommentSection blogId={post.id} comments={post.comments} />
+          <CommentSection
+            blogId={post.id}
+            comments={post.comments.map((comment) => ({
+              id: comment.id,
+              content: comment.content,
+              author: {
+                id: comment.id, // Use comment.id as a fallback for user id
+                name: comment.user.name || "Anonymous",
+                avatar: "/placeholder.svg", // Provide a default avatar or fetch if available
+                profileImageUrl: null, // Add profileImageUrl as required by User type
+              },
+              createdAt: new Date(comment.createdAt),
+              parentId: null, // Add parentId as required by Comment type
+              replies: [],
+            }))}
+          />
         </article>
       </div>
     </div>

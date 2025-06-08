@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -69,7 +69,7 @@ function CommentItem({
   maxNestingLevel = 5,
 }: CommentItemProps) {
   const isRepliesExpanded = expandedReplies.includes(comment.id);
-  const replyCount = comment.replies.length; // Safe since replies is always an array
+  const replyCount = comment.replies?.length || 0;
   const getCommentNumber = (id: string) =>
     comments.findIndex((c) => c.id === id) + 1;
   const canReply = level < maxNestingLevel;
@@ -99,7 +99,7 @@ function CommentItem({
           40 - level * 10
         } hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1 ml-${
           level * 6
-        }`}
+        }`} // Increased indentation
       >
         <CardContent className="pt-6 space-y-4">
           {/* Comment Header */}
@@ -252,14 +252,9 @@ export function CommentSection({
   blogId: string;
   comments: Comment[];
 }) {
-  // Deduplicate comments and ensure replies is an array
-  const normalizeComment = (c: Comment): Comment => ({
-    ...c,
-    replies: Array.isArray(c.replies) ? c.replies.map(normalizeComment) : [],
-  });
-
+  // Deduplicate comments
   const uniqueComments = Array.from(
-    new Map(initialComments.map((c) => [c.id, normalizeComment(c)])).values()
+    new Map(initialComments.map((c) => [c.id, c])).values()
   );
   const [comments, setComments] = useState<Comment[]>(uniqueComments);
   const [newComment, setNewComment] = useState("");
@@ -268,42 +263,19 @@ export function CommentSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFlatList, setShowFlatList] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<string[]>([]);
-
   const { toast } = useToast();
   const { user, isSignedIn } = useUser();
 
-  // Initialize expandedReplies to show all comments with replies
-  useEffect(() => {
-    const commentIdsWithReplies = comments.flatMap((c) => {
-      const ids: string[] = [];
-      const traverse = (comment: Comment) => {
-        if (comment.replies.length > 0) {
-          ids.push(comment.id);
-          comment.replies.forEach(traverse);
-        }
-      };
-      traverse(c);
-      return ids;
-    });
-    setExpandedReplies(commentIdsWithReplies);
-  }, [comments]);
-
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/blog/${blogId}?t=${Date.now()}`, {
-        cache: "no-store", // Prevent caching
-      });
+      const res = await fetch(`/api/blog/${blogId}`);
       if (!res.ok) throw new Error("Failed to fetch blog post");
       const { post } = await res.json();
-      console.log("API Response:", post.comments); // Debug log
-      // Deduplicate comments and ensure replies is an array
+      // Deduplicate comments
       const uniqueComments = Array.from(
-        new Map(
-          post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
-        ).values()
+        new Map(post.comments.map((c: Comment) => [c.id, c])).values()
       );
       setComments(uniqueComments);
-      console.log("Normalized Comments:", uniqueComments); // Debug log
     } catch (error) {
       toast({
         title: "Error",
@@ -453,7 +425,7 @@ export function CommentSection({
         `@${comment.user.name || "Anonymous"}`,
       ].join(" → ");
       chains.set(comment.id, currentChain);
-      comment.replies.forEach((reply) =>
+      comment.replies?.forEach((reply) =>
         traverse(reply, depth + 1, currentChain.split(" → "))
       );
     };

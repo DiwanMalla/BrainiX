@@ -15,7 +15,7 @@ export type BlogLike = {
   user: User;
 };
 
-export type Comment = {
+export type BlogComment = {
   id: string;
   content: string;
   blogId: string;
@@ -24,12 +24,12 @@ export type Comment = {
   createdAt: string;
   updatedAt: string;
   user: User;
-  replies: Comment[];
+  replies: BlogComment[];
   likes?: BlogLike[]; // if you're loading likes on comments too
   isAuthor?: boolean; // computed client-side
 };
 
-export type Post = {
+export type Blog = {
   id: string;
   title: string;
   slug: string;

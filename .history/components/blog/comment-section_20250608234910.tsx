@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/blog/utils";
+import type { Comment } from "@/lib/blog/type";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -18,27 +19,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export type User = {
-  id: string;
-  name: string;
-  image?: string;
-  profileImageUrl?: string | null;
-};
-
-export type Comment = {
-  id: string;
-  content: string;
-  blogId: string;
-  userId: string;
-  parentId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  user: User;
-  replies: Comment[];
-  likes?: any[];
-  isAuthor?: boolean;
-};
-
 interface CommentItemProps {
   comment: Comment;
   level?: number;
@@ -48,10 +28,9 @@ interface CommentItemProps {
   replyContent: string;
   setReplyContent: (content: string) => void;
   isSubmitting: boolean;
-  handleAddReply: (commentId: string, parentComment: Comment) => Promise<void>;
+  handleAddReply: (commentId: string) => Promise<void>;
   expandedReplies: string[];
   toggleReplies: (commentId: string) => void;
-  maxNestingLevel?: number;
 }
 
 function CommentItem({
@@ -66,39 +45,24 @@ function CommentItem({
   handleAddReply,
   expandedReplies,
   toggleReplies,
-  maxNestingLevel = 5,
 }: CommentItemProps) {
   const isRepliesExpanded = expandedReplies.includes(comment.id);
-  const replyCount = comment.replies.length; // Safe since replies is always an array
+  const replyCount = comment.replies?.length;
   const getCommentNumber = (id: string) =>
     comments.findIndex((c) => c.id === id) + 1;
-  const canReply = level < maxNestingLevel;
-
-  // Truncate content for reply form context
-  const truncatedContent =
-    comment.content.length > 30
-      ? `${comment.content.slice(0, 27)}...`
-      : comment.content;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="group relative"
+      className="group"
     >
-      {/* Connecting line for nested comments */}
-      {level > 0 && (
-        <div
-          className="absolute top-0 left-0 h-full border-l-2 border-primary/20"
-          style={{ marginLeft: `${level * 1.5}rem` }}
-        />
-      )}
       <Card
         className={`border-0 border-l-4 border-primary/${
           40 - level * 10
         } hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1 ml-${
-          level * 6
+          level * 4
         }`}
       >
         <CardContent className="pt-6 space-y-4">
@@ -106,20 +70,20 @@ function CommentItem({
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3">
               <Avatar className="w-12 h-12 ring-2 ring-background">
-                <AvatarImage src={comment.user.image || "/placeholder.svg"} />
+                <AvatarImage src={comment.user?.image || "/placeholder.svg"} />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  {comment.user.name
-                    .split(" ")
+                  {comment.user?.name
+                    ?.split(" ")
                     .map((n) => n[0])
                     .join("") || "U"}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-semibold text-lg">
-                  {comment.user.name || "Anonymous"}
+                  {comment.user?.name || "Anonymous"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {formatDate(new Date(comment.createdAt))}
+                  {formatDate(comment.createdAt)}
                 </p>
               </div>
             </div>
@@ -133,18 +97,16 @@ function CommentItem({
           </p>
 
           <div className="flex items-center gap-2 pl-2">
-            {canReply && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                }
-                className="text-primary hover:text-primary/80 hover:bg-primary/5"
-              >
-                <Reply className="h-4 w-4 mr-2" /> Reply
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                setReplyingTo(replyingTo === comment.id ? null : comment.id)
+              }
+              className="text-primary hover:text-primary/80 hover:bg-primary/5"
+            >
+              <Reply className="h-4 w-4 mr-2" /> Reply
+            </Button>
             {replyCount > 0 && (
               <Button
                 variant="ghost"
@@ -166,26 +128,24 @@ function CommentItem({
 
           {/* Reply Form */}
           <AnimatePresence>
-            {replyingTo === comment.id && canReply && (
+            {replyingTo === comment.id && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.2 }}
-                className="border-t pt-4 space-y-3 bg-muted/10 rounded-lg"
+                className="border-t pt-4 space-y-3"
               >
-                <div className="text-sm text-muted-foreground italic px-4">
-                  Replying to "{truncatedContent}" by @
-                  {comment.user.name || "Anonymous"}
-                </div>
                 <Textarea
-                  placeholder={`Your reply...`}
+                  placeholder={`Reply to @${
+                    comment.user?.name || "Anonymous"
+                  }...`}
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  className="min-h-[80px] resize-none rounded-lg border border-input bg-background/50 mx-4"
+                  className="min-h-[80px] resize-none rounded-lg border border-input bg-background/50"
                   disabled={isSubmitting}
                 />
-                <div className="flex justify-end gap-2 px-4">
+                <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -196,7 +156,7 @@ function CommentItem({
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => handleAddReply(comment.id, comment)}
+                    onClick={() => handleAddReply(comment.id)}
                     disabled={!replyContent.trim() || isSubmitting}
                     className="bg-primary hover:bg-primary/90"
                   >
@@ -232,7 +192,6 @@ function CommentItem({
                       handleAddReply={handleAddReply}
                       expandedReplies={expandedReplies}
                       toggleReplies={toggleReplies}
-                      maxNestingLevel={maxNestingLevel}
                     />
                   ))}
                 </motion.div>
@@ -252,58 +211,22 @@ export function CommentSection({
   blogId: string;
   comments: Comment[];
 }) {
-  // Deduplicate comments and ensure replies is an array
-  const normalizeComment = (c: Comment): Comment => ({
-    ...c,
-    replies: Array.isArray(c.replies) ? c.replies.map(normalizeComment) : [],
-  });
-
-  const uniqueComments = Array.from(
-    new Map(initialComments.map((c) => [c.id, normalizeComment(c)])).values()
-  );
-  const [comments, setComments] = useState<Comment[]>(uniqueComments);
+  const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFlatList, setShowFlatList] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<string[]>([]);
-
   const { toast } = useToast();
-  const { user, isSignedIn } = useUser();
-
-  // Initialize expandedReplies to show all comments with replies
-  useEffect(() => {
-    const commentIdsWithReplies = comments.flatMap((c) => {
-      const ids: string[] = [];
-      const traverse = (comment: Comment) => {
-        if (comment.replies.length > 0) {
-          ids.push(comment.id);
-          comment.replies.forEach(traverse);
-        }
-      };
-      traverse(c);
-      return ids;
-    });
-    setExpandedReplies(commentIdsWithReplies);
-  }, [comments]);
+  const { isSignedIn } = useUser();
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/blog/${blogId}?t=${Date.now()}`, {
-        cache: "no-store", // Prevent caching
-      });
+      const res = await fetch(`/api/blog/${blogId}`);
       if (!res.ok) throw new Error("Failed to fetch blog post");
       const { post } = await res.json();
-      console.log("API Response:", post.comments); // Debug log
-      // Deduplicate comments and ensure replies is an array
-      const uniqueComments = Array.from(
-        new Map(
-          post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
-        ).values()
-      );
-      setComments(uniqueComments);
-      console.log("Normalized Comments:", uniqueComments); // Debug log
+      setComments(post.comments);
     } catch (error) {
       toast({
         title: "Error",
@@ -355,39 +278,9 @@ export function CommentSection({
     }
   };
 
-  const handleAddReply = async (commentId: string, parentComment: Comment) => {
+  const handleAddReply = async (commentId: string) => {
     if (!isSignedIn || !replyContent.trim()) return;
     setIsSubmitting(true);
-
-    // Optimistic update
-    const optimisticReply: Comment = {
-      id: `temp-${Date.now()}`,
-      content: replyContent.trim(),
-      blogId,
-      userId: user?.id || "",
-      parentId: commentId,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      user: {
-        id: user?.id || "",
-        name: user?.fullName || "Anonymous",
-        image: user?.imageUrl,
-      },
-      replies: [],
-    };
-
-    setComments((prevComments) => {
-      const updateReplies = (comments: Comment[]): Comment[] => {
-        return comments.map((c) => {
-          if (c.id === commentId) {
-            return { ...c, replies: [...c.replies, optimisticReply] };
-          }
-          return { ...c, replies: updateReplies(c.replies) };
-        });
-      };
-      return updateReplies(prevComments);
-    });
-
     try {
       const res = await fetch(
         `/api/blog/${blogId}/comments/${commentId}/replies`,
@@ -407,16 +300,6 @@ export function CommentSection({
       );
       toast({ title: "Reply posted successfully" });
     } catch (error) {
-      // Rollback optimistic update
-      setComments((prevComments) => {
-        const removeOptimisticReply = (comments: Comment[]): Comment[] => {
-          return comments.map((c) => ({
-            ...c,
-            replies: c.replies.filter((r) => r.id !== optimisticReply.id),
-          }));
-        };
-        return removeOptimisticReply(prevComments);
-      });
       toast({
         title: "Error",
         description: "Could not post reply",
@@ -435,36 +318,15 @@ export function CommentSection({
     );
   };
 
-  // Memoize flattened comments and nesting levels
-  const { flattenedComments, nestingLevels, replyChains } = useMemo(() => {
+  const flattenComments = (comments: Comment[]): Comment[] => {
     const flattened: Comment[] = [];
-    const levels: Map<string, number> = new Map();
-    const chains: Map<string, string> = new Map();
-
-    const traverse = (
-      comment: Comment,
-      depth: number = 0,
-      chain: string[] = []
-    ) => {
+    const traverse = (comment: Comment) => {
       flattened.push(comment);
-      levels.set(comment.id, depth);
-      const currentChain = [
-        ...chain,
-        `@${comment.user.name || "Anonymous"}`,
-      ].join(" → ");
-      chains.set(comment.id, currentChain);
-      comment.replies.forEach((reply) =>
-        traverse(reply, depth + 1, currentChain.split(" → "))
-      );
+      comment.replies.forEach(traverse);
     };
-
-    comments.filter((c) => c.parentId === null).forEach((c) => traverse(c));
-    return {
-      flattenedComments: flattened,
-      nestingLevels: levels,
-      replyChains: chains,
-    };
-  }, [comments]);
+    comments.filter((c) => c.parentId === null).forEach(traverse);
+    return flattened;
+  };
 
   return (
     <section className="space-y-8 max-w-3xl mx-auto">
@@ -538,7 +400,6 @@ export function CommentSection({
                 handleAddReply={handleAddReply}
                 expandedReplies={expandedReplies}
                 toggleReplies={toggleReplies}
-                maxNestingLevel={5}
               />
             ))
         )}
@@ -567,56 +428,65 @@ export function CommentSection({
               transition={{ duration: 0.3 }}
               className="space-y-3 text-sm text-muted-foreground"
             >
-              {flattenedComments.map((c, index) => (
-                <motion.li
-                  key={c.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: index * 0.05 }}
-                  className="flex flex-col p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 shadow-sm"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground">
-                        {c.user.name || "Anonymous"}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        ({formatDate(new Date(c.createdAt))})
-                      </span>
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      #{comments.findIndex((com) => com.id === c.id) + 1}
-                    </Badge>
-                  </div>
-                  <p
-                    className="text-foreground mt-1"
-                    style={{
-                      marginLeft: `${nestingLevels.get(c.id)! * 1.5}rem`,
-                    }}
+              {flattenComments(comments).map((c, index) => {
+                const nestingLevel = comments.reduce((level, comment) => {
+                  let current = comment;
+                  let depth = 0;
+                  while (current.parentId) {
+                    depth++;
+                    current = comments.find((p) => p.id === current.parentId)!;
+                  }
+                  return c.id === comment.id ? Math.max(level, depth) : level;
+                }, 0);
+                return (
+                  <motion.li
+                    key={c.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
+                    className="flex flex-col p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 shadow-sm"
                   >
-                    {c.parentId && (
-                      <>
-                        <CornerDownRight className="inline h-4 w-4 text-primary/80 mr-1" />
-                        <span className="text-primary/80 font-medium">
-                          {replyChains.get(c.id)}:{" "}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-foreground">
+                          {c.user?.name || "Anonymous"}
                         </span>
-                      </>
-                    )}
-                    {c.content}
-                  </p>
-                  {c.parentId && (
-                    <span
-                      className="text-xs text-muted-foreground italic mt-1"
-                      style={{
-                        marginLeft: `${nestingLevels.get(c.id)! * 1.5}rem`,
-                      }}
+                        <span className="text-xs text-muted-foreground">
+                          ({formatDate(c.createdAt)})
+                        </span>
+                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        #{getCommentNumber(c.id)}
+                      </Badge>
+                    </div>
+                    <p
+                      className="text-foreground mt-1"
+                      style={{ marginLeft: `${nestingLevel * 1.5}rem` }}
                     >
-                      (in reply to #
-                      {comments.findIndex((com) => com.id === c.parentId) + 1})
-                    </span>
-                  )}
-                </motion.li>
-              ))}
+                      {c.parentId && (
+                        <>
+                          <CornerDownRight className="inline h-4 w-4 text-primary/80 mr-1" />
+                          <span className="text-primary/80 font-medium">
+                            @
+                            {comments.find((p) => p.id === c.parentId)?.user
+                              ?.name || "Anonymous"}
+                            :{" "}
+                          </span>
+                        </>
+                      )}
+                      {c.content}
+                    </p>
+                    {c.parentId && (
+                      <span
+                        className="text-xs text-muted-foreground italic mt-1"
+                        style={{ marginLeft: `${nestingLevel * 1.5}rem` }}
+                      >
+                        (in reply to #{getCommentNumber(c.parentId)})
+                      </span>
+                    )}
+                  </motion.li>
+                );
+              })}
             </motion.ul>
           )}
         </AnimatePresence>

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,55 @@ import { CommentSection } from "@/components/blog/comment-section";
 import { DeletePostButton } from "@/components/blog/delete-post-button";
 import { ArrowLeft, Edit, Clock, Eye, Share2, Bookmark } from "lucide-react";
 
-import type { Post } from "@/lib/blog/type";
+export type BlogStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+export type User = {
+  id: string;
+  name: string;
+  image?: string;
+  profileImageUrl?: string | null;
+};
+
+export type BlogLike = {
+  id: string;
+  blogId: string;
+  userId: string;
+  createdAt: string;
+  user: User;
+};
+
+export type Comment = {
+  id: string;
+  content: string;
+  blogId: string;
+  userId: string;
+  parentId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: User; // Made non-optional
+  replies: Comment[];
+  likes?: BlogLike[];
+  isAuthor?: boolean;
+};
+
+export type Post = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string | null;
+  thumbnail?: string | null;
+  status: BlogStatus;
+  publishedAt?: string | null;
+  authorId: string;
+  author: User;
+  tags: string[];
+  comments: Comment[];
+  likes: BlogLike[];
+  totalViews: number;
+  createdAt: string;
+  updatedAt: string;
+};
 
 async function getPostById(
   id: string
@@ -28,7 +78,13 @@ async function getPostById(
       return null;
     }
 
-    return await response.json();
+    const data = await response.json();
+    // Deduplicate comments by ID
+    const uniqueComments = Array.from(
+      new Map(data.post.comments.map((c: Comment) => [c.id, c])).values()
+    );
+    data.post.comments = uniqueComments;
+    return data;
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
@@ -81,11 +137,26 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                 ))}
               </div>
               <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    // Assuming useToast is available via context or prop
+                    // toast({ title: "Link copied to clipboard!" });
+                  }}
+                >
                   <Share2 className="h-4 w-4 mr-2" />
                   Share
                 </Button>
-                <Button variant="outline" size="sm" disabled>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // Placeholder for bookmark functionality
+                    // toast({ title: "Bookmarked!" });
+                  }}
+                >
                   <Bookmark className="h-4 w-4" />
                 </Button>
               </div>
@@ -151,11 +222,17 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           <Separator />
           {/* Article Content */}
           <div className="prose prose-lg dark:prose-invert max-w-none">
-            {post.content.split("\n\n").map((paragraph, i) => (
-              <p key={i} className="mb-6 leading-relaxed text-foreground">
-                {paragraph}
+            {post.content.trim() ? (
+              post.content.split("\n\n").map((paragraph, i) => (
+                <p key={i} className="mb-6 leading-relaxed text-foreground">
+                  {paragraph}
+                </p>
+              ))
+            ) : (
+              <p className="text-muted-foreground italic">
+                No content available for this post.
               </p>
-            ))}
+            )}
           </div>
           <Separator />
           {/* Comments Section */}

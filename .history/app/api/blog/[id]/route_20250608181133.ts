@@ -14,13 +14,8 @@ export async function GET(
       include: {
         author: { select: { name: true, image: true } },
         comments: {
-          include: {
-            user: { select: { name: true } },
-            replies: {
-              include: { user: { select: { name: true, image: true } } },
-              orderBy: { createdAt: "desc" },
-            },
-          },
+          include: { user: { select: { name: true } } },
+          orderBy: { createdAt: "desc" },
         },
         likes: true,
       },

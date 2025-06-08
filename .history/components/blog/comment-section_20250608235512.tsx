@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,7 +33,7 @@ export type Comment = {
   parentId?: string | null;
   createdAt: string;
   updatedAt: string;
-  user: User;
+  user: User; // Made non-optional
   replies: Comment[];
   likes?: any[];
   isAuthor?: boolean;
@@ -48,7 +48,7 @@ interface CommentItemProps {
   replyContent: string;
   setReplyContent: (content: string) => void;
   isSubmitting: boolean;
-  handleAddReply: (commentId: string, parentComment: Comment) => Promise<void>;
+  handleAddReply: (commentId: string) => Promise<void>;
   expandedReplies: string[];
   toggleReplies: (commentId: string) => void;
   maxNestingLevel?: number;
@@ -69,36 +69,23 @@ function CommentItem({
   maxNestingLevel = 5,
 }: CommentItemProps) {
   const isRepliesExpanded = expandedReplies.includes(comment.id);
-  const replyCount = comment.replies.length; // Safe since replies is always an array
+  const replyCount = comment.replies?.length || 0;
   const getCommentNumber = (id: string) =>
     comments.findIndex((c) => c.id === id) + 1;
-  const canReply = level < maxNestingLevel;
-
-  // Truncate content for reply form context
-  const truncatedContent =
-    comment.content.length > 30
-      ? `${comment.content.slice(0, 27)}...`
-      : comment.content;
+  const canReply = level < maxNestingLevel; // Limit nesting depth
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="group relative"
+      className="group"
     >
-      {/* Connecting line for nested comments */}
-      {level > 0 && (
-        <div
-          className="absolute top-0 left-0 h-full border-l-2 border-primary/20"
-          style={{ marginLeft: `${level * 1.5}rem` }}
-        />
-      )}
       <Card
         className={`border-0 border-l-4 border-primary/${
           40 - level * 10
         } hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1 ml-${
-          level * 6
+          level * 4
         }`}
       >
         <CardContent className="pt-6 space-y-4">
@@ -172,20 +159,18 @@ function CommentItem({
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.2 }}
-                className="border-t pt-4 space-y-3 bg-muted/10 rounded-lg"
+                className="border-t pt-4 space-y-3"
               >
-                <div className="text-sm text-muted-foreground italic px-4">
-                  Replying to "{truncatedContent}" by @
-                  {comment.user.name || "Anonymous"}
-                </div>
                 <Textarea
-                  placeholder={`Your reply...`}
+                  placeholder={`Reply to @${
+                    comment.user.name || "Anonymous"
+                  }...`}
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  className="min-h-[80px] resize-none rounded-lg border border-input bg-background/50 mx-4"
+                  className="min-h-[80px] resize-none rounded-lg border border-input bg-background/50"
                   disabled={isSubmitting}
                 />
-                <div className="flex justify-end gap-2 px-4">
+                <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -196,7 +181,7 @@ function CommentItem({
                   </Button>
                   <Button
                     size="sm"
-                    onClick={() => handleAddReply(comment.id, comment)}
+                    onClick={() => handleAddReply(comment.id)}
                     disabled={!replyContent.trim() || isSubmitting}
                     className="bg-primary hover:bg-primary/90"
                   >
@@ -252,14 +237,9 @@ export function CommentSection({
   blogId: string;
   comments: Comment[];
 }) {
-  // Deduplicate comments and ensure replies is an array
-  const normalizeComment = (c: Comment): Comment => ({
-    ...c,
-    replies: Array.isArray(c.replies) ? c.replies.map(normalizeComment) : [],
-  });
-
+  // Deduplicate comments
   const uniqueComments = Array.from(
-    new Map(initialComments.map((c) => [c.id, normalizeComment(c)])).values()
+    new Map(initialComments.map((c) => [c.id, c])).values()
   );
   const [comments, setComments] = useState<Comment[]>(uniqueComments);
   const [newComment, setNewComment] = useState("");
@@ -268,42 +248,19 @@ export function CommentSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFlatList, setShowFlatList] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<string[]>([]);
-
   const { toast } = useToast();
-  const { user, isSignedIn } = useUser();
-
-  // Initialize expandedReplies to show all comments with replies
-  useEffect(() => {
-    const commentIdsWithReplies = comments.flatMap((c) => {
-      const ids: string[] = [];
-      const traverse = (comment: Comment) => {
-        if (comment.replies.length > 0) {
-          ids.push(comment.id);
-          comment.replies.forEach(traverse);
-        }
-      };
-      traverse(c);
-      return ids;
-    });
-    setExpandedReplies(commentIdsWithReplies);
-  }, [comments]);
+  const { isSignedIn } = useUser();
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/blog/${blogId}?t=${Date.now()}`, {
-        cache: "no-store", // Prevent caching
-      });
+      const res = await fetch(`/api/blog/${blogId}`);
       if (!res.ok) throw new Error("Failed to fetch blog post");
       const { post } = await res.json();
-      console.log("API Response:", post.comments); // Debug log
-      // Deduplicate comments and ensure replies is an array
+      // Deduplicate comments
       const uniqueComments = Array.from(
-        new Map(
-          post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
-        ).values()
+        new Map(post.comments.map((c: Comment) => [c.id, c])).values()
       );
       setComments(uniqueComments);
-      console.log("Normalized Comments:", uniqueComments); // Debug log
     } catch (error) {
       toast({
         title: "Error",
@@ -355,39 +312,9 @@ export function CommentSection({
     }
   };
 
-  const handleAddReply = async (commentId: string, parentComment: Comment) => {
+  const handleAddReply = async (commentId: string) => {
     if (!isSignedIn || !replyContent.trim()) return;
     setIsSubmitting(true);
-
-    // Optimistic update
-    const optimisticReply: Comment = {
-      id: `temp-${Date.now()}`,
-      content: replyContent.trim(),
-      blogId,
-      userId: user?.id || "",
-      parentId: commentId,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      user: {
-        id: user?.id || "",
-        name: user?.fullName || "Anonymous",
-        image: user?.imageUrl,
-      },
-      replies: [],
-    };
-
-    setComments((prevComments) => {
-      const updateReplies = (comments: Comment[]): Comment[] => {
-        return comments.map((c) => {
-          if (c.id === commentId) {
-            return { ...c, replies: [...c.replies, optimisticReply] };
-          }
-          return { ...c, replies: updateReplies(c.replies) };
-        });
-      };
-      return updateReplies(prevComments);
-    });
-
     try {
       const res = await fetch(
         `/api/blog/${blogId}/comments/${commentId}/replies`,
@@ -406,17 +333,7 @@ export function CommentSection({
         prev.includes(commentId) ? prev : [...prev, commentId]
       );
       toast({ title: "Reply posted successfully" });
-    } catch (error) {
-      // Rollback optimistic update
-      setComments((prevComments) => {
-        const removeOptimisticReply = (comments: Comment[]): Comment[] => {
-          return comments.map((c) => ({
-            ...c,
-            replies: c.replies.filter((r) => r.id !== optimisticReply.id),
-          }));
-        };
-        return removeOptimisticReply(prevComments);
-      });
+    } catch (AbstractedError) {
       toast({
         title: "Error",
         description: "Could not post reply",
@@ -436,34 +353,18 @@ export function CommentSection({
   };
 
   // Memoize flattened comments and nesting levels
-  const { flattenedComments, nestingLevels, replyChains } = useMemo(() => {
+  const { flattenedComments, nestingLevels } = useMemo(() => {
     const flattened: Comment[] = [];
     const levels: Map<string, number> = new Map();
-    const chains: Map<string, string> = new Map();
 
-    const traverse = (
-      comment: Comment,
-      depth: number = 0,
-      chain: string[] = []
-    ) => {
+    const traverse = (comment: Comment, depth: number = 0) => {
       flattened.push(comment);
       levels.set(comment.id, depth);
-      const currentChain = [
-        ...chain,
-        `@${comment.user.name || "Anonymous"}`,
-      ].join(" → ");
-      chains.set(comment.id, currentChain);
-      comment.replies.forEach((reply) =>
-        traverse(reply, depth + 1, currentChain.split(" → "))
-      );
+      comment.replies?.forEach((reply) => traverse(reply, depth + 1));
     };
 
     comments.filter((c) => c.parentId === null).forEach((c) => traverse(c));
-    return {
-      flattenedComments: flattened,
-      nestingLevels: levels,
-      replyChains: chains,
-    };
+    return { flattenedComments: flattened, nestingLevels: levels };
   }, [comments]);
 
   return (
@@ -585,7 +486,7 @@ export function CommentSection({
                       </span>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      #{comments.findIndex((com) => com.id === c.id) + 1}
+                      #{getCommentNumber(c.id)}
                     </Badge>
                   </div>
                   <p
@@ -598,7 +499,10 @@ export function CommentSection({
                       <>
                         <CornerDownRight className="inline h-4 w-4 text-primary/80 mr-1" />
                         <span className="text-primary/80 font-medium">
-                          {replyChains.get(c.id)}:{" "}
+                          @
+                          {comments.find((p) => p.id === c.parentId)?.user
+                            .name || "Anonymous"}
+                          :{" "}
                         </span>
                       </>
                     )}
@@ -611,8 +515,7 @@ export function CommentSection({
                         marginLeft: `${nestingLevels.get(c.id)! * 1.5}rem`,
                       }}
                     >
-                      (in reply to #
-                      {comments.findIndex((com) => com.id === c.parentId) + 1})
+                      (in reply to #{getCommentNumber(c.parentId)})
                     </span>
                   )}
                 </motion.li>

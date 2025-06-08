@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,7 +34,7 @@ export type Comment = {
   createdAt: string;
   updatedAt: string;
   user: User;
-  replies: Comment[];
+  replies: Comment[]; // Ensured non-optional array
   likes?: any[];
   isAuthor?: boolean;
 };
@@ -95,7 +95,7 @@ function CommentItem({
         />
       )}
       <Card
-        className={`border-0 border-l-4 border-primary/${
+        className={`border-0 border-l-4 border部队primary/${
           40 - level * 10
         } hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1 ml-${
           level * 6
@@ -253,13 +253,13 @@ export function CommentSection({
   comments: Comment[];
 }) {
   // Deduplicate comments and ensure replies is an array
-  const normalizeComment = (c: Comment): Comment => ({
-    ...c,
-    replies: Array.isArray(c.replies) ? c.replies.map(normalizeComment) : [],
-  });
-
   const uniqueComments = Array.from(
-    new Map(initialComments.map((c) => [c.id, normalizeComment(c)])).values()
+    new Map(
+      initialComments.map((c) => [
+        c.id,
+        { ...c, replies: Array.isArray(c.replies) ? c.replies : [] },
+      ])
+    ).values()
   );
   const [comments, setComments] = useState<Comment[]>(uniqueComments);
   const [newComment, setNewComment] = useState("");
@@ -268,42 +268,24 @@ export function CommentSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFlatList, setShowFlatList] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<string[]>([]);
-
   const { toast } = useToast();
   const { user, isSignedIn } = useUser();
 
-  // Initialize expandedReplies to show all comments with replies
-  useEffect(() => {
-    const commentIdsWithReplies = comments.flatMap((c) => {
-      const ids: string[] = [];
-      const traverse = (comment: Comment) => {
-        if (comment.replies.length > 0) {
-          ids.push(comment.id);
-          comment.replies.forEach(traverse);
-        }
-      };
-      traverse(c);
-      return ids;
-    });
-    setExpandedReplies(commentIdsWithReplies);
-  }, [comments]);
-
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/blog/${blogId}?t=${Date.now()}`, {
-        cache: "no-store", // Prevent caching
-      });
+      const res = await fetch(`/api/blog/${blogId}`);
       if (!res.ok) throw new Error("Failed to fetch blog post");
       const { post } = await res.json();
-      console.log("API Response:", post.comments); // Debug log
       // Deduplicate comments and ensure replies is an array
       const uniqueComments = Array.from(
         new Map(
-          post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
+          post.comments.map((c: Comment) => [
+            c.id,
+            { ...c, replies: Array.isArray(c.replies) ? c.replies : [] },
+          ])
         ).values()
       );
       setComments(uniqueComments);
-      console.log("Normalized Comments:", uniqueComments); // Debug log
     } catch (error) {
       toast({
         title: "Error",
@@ -380,9 +362,9 @@ export function CommentSection({
       const updateReplies = (comments: Comment[]): Comment[] => {
         return comments.map((c) => {
           if (c.id === commentId) {
-            return { ...c, replies: [...c.replies, optimisticReply] };
+            return { ...c, replies: [...(c.replies || []), optimisticReply] };
           }
-          return { ...c, replies: updateReplies(c.replies) };
+          return { ...c, replies: updateReplies(c.replies || []) };
         });
       };
       return updateReplies(prevComments);
@@ -412,7 +394,9 @@ export function CommentSection({
         const removeOptimisticReply = (comments: Comment[]): Comment[] => {
           return comments.map((c) => ({
             ...c,
-            replies: c.replies.filter((r) => r.id !== optimisticReply.id),
+            replies: (c.replies || []).filter(
+              (r) => r.id !== optimisticReply.id
+            ),
           }));
         };
         return removeOptimisticReply(prevComments);
