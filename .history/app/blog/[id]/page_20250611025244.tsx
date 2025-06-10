@@ -35,13 +35,11 @@ async function getPostById(
     return null;
   }
 }
-
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+type PageProps = {
+  params: { id: string };
+};
+export default async function PostPage({ params }: PageProps) {
+  const { id } = params;
   if (!id) {
     notFound();
   }

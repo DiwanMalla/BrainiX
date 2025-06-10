@@ -41,7 +41,7 @@ export default async function PostPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const { id } = params;
   if (!id) {
     notFound();
   }
