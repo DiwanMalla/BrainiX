@@ -149,7 +149,7 @@ export default async function PostPage({ params }: PageParams) {
 
               {isAuthor && (
                 <div className="flex space-x-2">
-                  <Link href={`/blog/edit/${id}`}>
+                  <Link href="/edit/${id}">
                     <Button variant="outline" size="sm">
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
