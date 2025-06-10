@@ -292,8 +292,7 @@ export function CommentSection({
       );
       setComments([...uniqueComments] as Comment[]);
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to fetch comments";
+      const errorMessage = error instanceof Error ? error.message : "Failed to fetch comments";
       toast({
         title: "Error",
         description: errorMessage,
@@ -334,8 +333,7 @@ export function CommentSection({
       await fetchComments();
       toast({ title: "Comment posted successfully" });
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Could not add comment";
+      const errorMessage = error instanceof Error ? error.message : "Could not add comment";
       toast({
         title: "Error",
         description: errorMessage,
@@ -408,8 +406,7 @@ export function CommentSection({
         };
         return removeOptimisticReply([...prevComments]);
       });
-      const errorMessage =
-        error instanceof Error ? error.message : "Could not post reply";
+      const errorMessage = error instanceof Error ? error.message : "Could not post reply";
       toast({
         title: "Error",
         description: errorMessage,
