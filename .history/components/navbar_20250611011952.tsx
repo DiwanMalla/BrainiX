@@ -104,7 +104,7 @@ export default function Navbar() {
     fetchData();
     const unsubscribeWishlist = listenToWishlistUpdate(fetchData);
     return () => unsubscribeWishlist();
-  }, [user]);
+  }, [user, fetchData]);
 
   const totalCartPrice = cartItems.reduce(
     (sum, item) => sum + (item.discountPrice || item.price),

@@ -9,9 +9,8 @@ export default function CookiePolicyPage() {
         <h1 className="text-4xl font-bold text-primary mb-4">Cookie Policy</h1>
         <section className="space-y-4">
           <p>
-            This Cookie Policy explains how BrainiX (&quot;we&quot;,
-            &quot;us&quot;, or &quot;our&quot;) uses cookies and similar
-            technologies when you visit our website.
+            This Cookie Policy explains how BrainiX ("we", "us", or "our") uses
+            cookies and similar technologies when you visit our website.
           </p>
           <h2 className="text-2xl font-semibold mt-6">What Are Cookies?</h2>
           <p>

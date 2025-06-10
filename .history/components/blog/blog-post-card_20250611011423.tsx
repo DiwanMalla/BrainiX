@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { formatDate } from "@/lib/blog/utils";
 import {
   Card,
@@ -18,14 +17,12 @@ export function BlogPostCard({ post }: { post: Post }) {
     <Card className="group transition-all duration-300 border-0 shadow-md hover:shadow-xl hover:-translate-y-1">
       <CardHeader className="space-y-4 p-0">
         {post.thumbnail && (
-          <div className="relative h-[250px] w-full">
-            <Image
+          <div className="relative h-48 w-full">
+            <img
               src={post.thumbnail ?? "/placeholder.jpg"}
               alt={post.title}
-              className="object-cover rounded-t-lg"
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              priority={false}
+              className="object-cover rounded-t-lg w-full h-[250px]"
+              loading="lazy"
             />
           </div>
         )}

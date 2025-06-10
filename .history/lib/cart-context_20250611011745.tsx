@@ -9,6 +9,7 @@ export type CartItem = {
   title: string;
   thumbnail: string;
   price: number;
+  discount?: number;
   discountPrice: number | null;
   instructor: { name: string };
   rating: number;
@@ -59,7 +60,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     fetchCart();
     const unsubscribe = listenToCartUpdate(fetchCart);
     return () => unsubscribe();
-  }, []);
+  }, [fetchCart]);
 
   return (
     <CartContext.Provider value={{ cartItems, setCartItems, isLoading }}>

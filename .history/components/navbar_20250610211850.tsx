@@ -70,7 +70,7 @@ export default function Navbar() {
     null
   ) as React.RefObject<HTMLDivElement>;
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     if (!user) {
       setWishlistItems([]);
       setEnrolledCourses([]);
@@ -98,7 +98,7 @@ export default function Navbar() {
       console.error("Error fetching navbar data:", error);
       toast({ title: "Error", description: "Failed to load data" });
     }
-  }, [user, toast, setWishlistItems, setEnrolledCourses]);
+  };
 
   useEffect(() => {
     fetchData();

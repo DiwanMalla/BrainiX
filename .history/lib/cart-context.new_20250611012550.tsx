@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { listenToCartUpdate } from "@/lib/event";
 import { useClerk } from "@clerk/nextjs";
 
@@ -53,8 +47,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const fetchCart = useCallback(async () => {
     // Debounce requests to prevent rapid repeated calls
     const now = Date.now();
-    if (now - lastFetch < 1000) {
-      // 1 second debounce
+    if (now - lastFetch < 1000) { // 1 second debounce
       return;
     }
     setLastFetch(now);
@@ -67,10 +60,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/cart", {
-        cache: "no-store",
+      const res = await fetch("/api/cart", { 
+        cache: "no-store"
       });
-
+      
       if (res.ok) {
         const data = await res.json();
         setCartItems(data);

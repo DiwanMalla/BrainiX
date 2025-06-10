@@ -65,16 +65,14 @@ export default async function PostPage({ params }: { params: { id: string } }) {
         <article className="space-y-8">
           <header className="space-y-6">
             {post.thumbnail && (
-              <div className="relative w-full h-64">
-                <Image
-                  src={post.thumbnail ?? "/placeholder.jpg"}
-                  alt={post.title}
-                  fill
-                  className="object-cover rounded-lg"
-                  sizes="(max-width: 768px) 100vw, 800px"
-                  priority
-                />
-              </div>
+              <img
+                src={post.thumbnail ?? "/placeholder.jpg"}
+                alt={post.title}
+                width={800}
+                height={400}
+                loading="lazy"
+                className="w-full h-64 object-cover rounded-lg"
+              />
             )}
 
             <div className="flex items-center justify-between">

@@ -60,7 +60,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     fetchCart();
     const unsubscribe = listenToCartUpdate(fetchCart);
     return () => unsubscribe();
-  }, []);
+  }, [fetchCart]);
 
   return (
     <CartContext.Provider value={{ cartItems, setCartItems, isLoading }}>
