@@ -44,7 +44,7 @@ export type Post = {
   tags: string[];
   comments: Comment[];
   likes: BlogLike[];
-
+  category: string;
   totalViews: number;
   createdAt: string;
   updatedAt: string;

@@ -42,9 +42,8 @@ export type Post = {
   authorId: string;
   author: User;
   tags: string[];
-  comments: Comment[];
+  comments: BlogComment[];
   likes: BlogLike[];
-
   totalViews: number;
   createdAt: string;
   updatedAt: string;

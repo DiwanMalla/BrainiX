@@ -37,7 +37,7 @@ The rise of AI-powered development tools is also transforming our workflow. From
 
 Looking ahead, I believe we'll see even more integration between AI and development tools, better performance optimization techniques, and continued evolution in the React ecosystem. The future of web development is bright, and I'm excited to see what innovations emerge next.`,
     author: currentUser,
-    createdAt: new Date("2024-01-15"),
+    createdAt: "2024-01-15T00:00:00.000Z",
     category: "Technology",
     comments: [
       {
@@ -45,7 +45,7 @@ Looking ahead, I believe we'll see even more integration between AI and developm
         content:
           "Great insights! I'm particularly excited about edge computing. The performance improvements are game-changing for global applications.",
         author: users[1],
-        createdAt: new Date("2024-01-16"),
+        createdAt: "2024-01-16T00:00:00.000Z",
         replies: [
           {
             id: "reply-1",
@@ -61,7 +61,7 @@ Looking ahead, I believe we'll see even more integration between AI and developm
         content:
           "AI-powered development tools have been a productivity booster for our team. Curious about your thoughts on potential downsides?",
         author: users[2],
-        createdAt: new Date("2024-01-17"),
+        createdAt: "2024-01-17T00:00:00.000Z",
         replies: [],
       },
     ],
@@ -83,7 +83,7 @@ Remember, accessibility benefits everyone. Captions help users in noisy environm
 
 The investment in accessibility pays dividends in user satisfaction, legal compliance, and market reach. It's not just the right thing to do – it's good business.`,
     author: users[1],
-    createdAt: new Date("2024-01-10"),
+    createdAt: "2024-01-10T00:00:00.000Z",
     category: "Web Development",
     comments: [
       {
@@ -91,7 +91,7 @@ The investment in accessibility pays dividends in user satisfaction, legal compl
         content:
           "This is such an important topic! Do you have recommendations for accessibility testing tools that integrate well with CI/CD pipelines?",
         author: users[2],
-        createdAt: new Date("2024-01-11"),
+        createdAt: "2024-01-11T00:00:00.000Z",
         replies: [
           {
             id: "reply-2",
@@ -121,7 +121,7 @@ The journey from junior to senior isn't just about technical skills. Communicati
 
 To anyone considering a similar path: it's challenging but absolutely possible. The tech industry needs diverse perspectives and backgrounds. Your unique experience is an asset, not a liability.`,
     author: users[2],
-    createdAt: new Date("2024-01-05"),
+    createdAt: "2024-01-05T00:00:00.000Z",
     category: "Career",
     comments: [],
   },
@@ -132,7 +132,7 @@ export async function getPosts(): Promise<Post[]> {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 500));
   return [...posts].sort(
-    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 }
 
