@@ -324,16 +324,11 @@ export default function CategoryDetailPage() {
         <section className="relative">
           <div className="relative h-64 md:h-80 w-full overflow-hidden">
             <Image
-              src={category.image || "/backend-development.png"}
+              src={category.image}
               alt={category.name}
               fill
               className="object-cover"
               priority
-              onError={(e: any) => {
-                console.error(`Error loading image: ${category.image}`);
-                const imgElement = e.target as HTMLImageElement;
-                imgElement.src = "/backend-development.png";
-              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
           </div>

@@ -91,9 +91,7 @@ function CommentItem({
         />
       )}
       <Card
-        className={`border-0 border-l-4 border-primary/${
-          40 - level * 10
-        } hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1`}
+        className={`border-0 border-l-4 border-primary/${40 - level * 10} hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1`}
         style={{ marginLeft: `${level * 1.5}rem` }}
       >
         <CardContent className="pt-6 space-y-4">
@@ -296,7 +294,7 @@ export function CommentSection({
           post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
         ).values()
       );
-      setComments([...uniqueComments] as Comment[]);
+      setComments([...uniqueComments]);
     } catch (error) {
       toast({
         title: "Error",

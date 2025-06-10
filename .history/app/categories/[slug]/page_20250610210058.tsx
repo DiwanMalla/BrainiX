@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -90,10 +90,7 @@ interface CourseItem {
   instructor: { name: string };
 }
 
-const iconMap: Record<
-  string,
-  React.ComponentType<React.SVGProps<SVGSVGElement>>
-> = {
+const iconMap: Record<string, React.ComponentType> = {
   code: Code,
   design: PenTool,
   data: Database,
@@ -324,16 +321,11 @@ export default function CategoryDetailPage() {
         <section className="relative">
           <div className="relative h-64 md:h-80 w-full overflow-hidden">
             <Image
-              src={category.image || "/backend-development.png"}
+              src={category.image}
               alt={category.name}
               fill
               className="object-cover"
               priority
-              onError={(e: any) => {
-                console.error(`Error loading image: ${category.image}`);
-                const imgElement = e.target as HTMLImageElement;
-                imgElement.src = "/backend-development.png";
-              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
           </div>
@@ -352,11 +344,11 @@ export default function CategoryDetailPage() {
               <div className="flex flex-col md:flex-row gap-6 md:items-center">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    {category.icon && iconMap[category.icon]
-                      ? React.createElement(iconMap[category.icon], {
-                          className: "h-8 w-8 text-primary",
-                        })
-                      : null}
+                    {category.icon && iconMap[category.icon] ? (
+                      React.createElement(iconMap[category.icon], {
+                        className: "h-8 w-8 text-primary",
+                      })
+                    ) : null}
                     <h1 className="text-3xl md:text-4xl font-bold">
                       {category.name}
                     </h1>

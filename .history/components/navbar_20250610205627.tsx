@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useClerk, UserButton } from "@clerk/nextjs";
@@ -33,6 +33,24 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { listenToWishlistUpdate, dispatchCartUpdate } from "@/lib/event";
 import { useCart, CartItem } from "@/lib/cart-context";
+import { useOnClickOutside } from "@/hooks/use-on-click-outside";
+import { Badge } from "@/components/ui/badge";
+
+interface Course {
+  id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  thumbnail: string;
+  price: number;
+  discount?: number;
+  rating: number;
+  students: number;
+  bestseller: boolean;
+  category: { name: string };
+  level: string;
+  instructor: { name: string };
+}
 
 export default function Navbar() {
   const router = useRouter();
@@ -44,6 +62,10 @@ export default function Navbar() {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
   const fetchData = async () => {
     if (!user) {
@@ -104,6 +126,45 @@ export default function Navbar() {
       toast({ title: "Error", description: "Failed to remove from cart" });
     }
   };
+
+  useOnClickOutside<HTMLDivElement>(searchRef, () => {
+    setShowSearch(false);
+    setSearchQuery("");
+    setCourses([]);
+  });
+
+  const searchCourses = useCallback(
+    async (query: string) => {
+      if (!query.trim()) {
+        setCourses([]);
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+        const res = await fetch(`/api/courses`);
+        if (!res.ok) throw new Error("Failed to fetch courses");
+
+        const allCourses = await res.json();
+        const filtered = allCourses.filter(
+          (course: Course) =>
+            course.title.toLowerCase().includes(query.toLowerCase()) ||
+            course.shortDescription
+              .toLowerCase()
+              .includes(query.toLowerCase()) ||
+            course.category.name.toLowerCase().includes(query.toLowerCase())
+        );
+
+        setCourses(filtered);
+      } catch (error) {
+        console.error("Error searching courses:", error);
+        toast({ title: "Error", description: "Failed to search courses" });
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [toast]
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -200,10 +261,10 @@ export default function Navbar() {
               <NavigationMenuItem>
                 {user?.publicMetadata.role === "instructor" ? (
                   <Link
-                    href="/instructor/dashboard"
+                    href="/my-learning"
                     className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
                   >
-                    Dashboard
+                    My Learning
                   </Link>
                 ) : (
                   <Link
@@ -221,20 +282,122 @@ export default function Navbar() {
         {/* Right Section: Search, Icons, Auth */}
         <div className="flex items-center gap-3">
           {showSearch ? (
-            <div className="relative flex items-center">
+            <div ref={searchRef} className="relative flex items-center">
               <Input
                 type="search"
                 placeholder="Search courses..."
-                className="w-[200px] md:w-[250px] pr-10"
+                className="w-[300px] md:w-[400px] pr-10"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  searchCourses(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchQuery.trim()) {
+                    router.push(
+                      `/courses?search=${encodeURIComponent(
+                        searchQuery.trim()
+                      )}`
+                    );
+                    setShowSearch(false);
+                    setSearchQuery("");
+                    setCourses([]);
+                  }
+                }}
+                autoFocus
               />
               <Button
                 variant="ghost"
                 size="icon"
                 className="absolute right-0"
-                onClick={() => setShowSearch(false)}
+                onClick={() => {
+                  setShowSearch(false);
+                  setSearchQuery("");
+                  setCourses([]);
+                }}
               >
                 <X className="h-4 w-4" />
               </Button>
+
+              {/* Search Results Dropdown */}
+              {searchQuery.trim() && (
+                <div className="absolute top-full left-0 w-full mt-2 bg-background border rounded-lg shadow-lg max-h-[400px] overflow-y-auto z-50">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      Searching...
+                    </div>
+                  ) : courses.length > 0 ? (
+                    <div className="py-2">
+                      {courses.map((course) => (
+                        <Link
+                          key={course.id}
+                          href={`/courses/${course.slug}`}
+                          className="flex items-start gap-3 p-3 hover:bg-muted transition-colors"
+                          onClick={() => {
+                            setShowSearch(false);
+                            setSearchQuery("");
+                            setCourses([]);
+                          }}
+                        >
+                          <Image
+                            src={course.thumbnail || "/placeholder.svg"}
+                            alt={course.title}
+                            width={80}
+                            height={60}
+                            className="rounded object-cover flex-shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="font-medium text-sm line-clamp-1">
+                                {course.title}
+                              </h3>
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                <span className="text-sm font-bold">
+                                  $
+                                  {course.discount
+                                    ? (
+                                        course.price *
+                                        (1 - course.discount / 100)
+                                      ).toFixed(2)
+                                    : course.price.toFixed(2)}
+                                </span>
+                                {course.discount && (
+                                  <span className="text-xs text-muted-foreground line-through">
+                                    ${course.price.toFixed(2)}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                              {course.shortDescription}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant="secondary" className="text-xs">
+                                {course.category.name}
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                {course.level.replace(/_/g, " ")}
+                              </Badge>
+                              {course.bestseller && (
+                                <Badge
+                                  variant="default"
+                                  className="text-xs bg-yellow-500"
+                                >
+                                  Bestseller
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No courses found
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <Button

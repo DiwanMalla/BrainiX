@@ -50,7 +50,7 @@ interface CommentItemProps {
   isSubmitting: boolean;
   handleAddReply: (commentId: string, parentComment: Comment) => Promise<void>;
   expandedReplies: string[];
-  toggleReplies: (commentId: string) => void;
+  setExpandedReplies: (ids: string[]) => void;
   maxNestingLevel?: number;
 }
 
@@ -91,9 +91,7 @@ function CommentItem({
         />
       )}
       <Card
-        className={`border-0 border-l-4 border-primary/${
-          40 - level * 10
-        } hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1`}
+        className={`border-0 border-l-4 border-primary/${40 - level * 10} hover:border-primary transition-all duration-200 shadow-md hover:shadow-xl group-hover:-translate-y-1`}
         style={{ marginLeft: `${level * 1.5}rem` }}
       >
         <CardContent className="pt-6 space-y-4">
@@ -145,12 +143,8 @@ function CommentItem({
               >
                 <CornerDownRight className="h-4 w-4 mr-2" />
                 {isRepliesExpanded
-                  ? `Hide ${replyCount} ${
-                      replyCount === 1 ? "Reply" : "Replies"
-                    }`
-                  : `Show ${replyCount} ${
-                      replyCount === 1 ? "Reply" : "Replies"
-                    }`}
+                  ? `Hide ${replyCount} ${replyCount === 1 ? "Reply" : "Replies"}`
+                  : `Show ${replyCount} ${replyCount === 1 ? "Reply" : "Replies"}`}
               </Button>
             )}
           </div>
@@ -210,7 +204,7 @@ function CommentItem({
                   {(comment.replies || []).map((reply) => (
                     <CommentItem
                       key={reply.id}
-                      comment={{ ...reply, replies: reply.replies || [] }}
+                      comment={reply}
                       level={level + 1}
                       comments={comments}
                       replyingTo={replyingTo}
@@ -296,7 +290,7 @@ export function CommentSection({
           post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
         ).values()
       );
-      setComments([...uniqueComments] as Comment[]);
+      setComments([...uniqueComments]);
     } catch (error) {
       toast({
         title: "Error",
@@ -428,20 +422,12 @@ export function CommentSection({
     );
   };
 
-  const totalCommentCount = useMemo(
-    () => comments.filter((c) => c.parentId === null).length,
-    [comments]
-  );
-
   return (
     <section className="space-y-8 max-w-3xl mx-auto">
       <div className="flex items-center gap-3 border-b pb-4">
         <MessageSquare className="w-6 h-6 text-primary" />
         <h2 className="text-3xl font-bold tracking-tight">
-          Discussion{" "}
-          <span className="text-muted-foreground text-xl">
-            ({totalCommentCount})
-          </span>
+          Discussion
         </h2>
       </div>
 
@@ -492,7 +478,7 @@ export function CommentSection({
             .map((comment) => (
               <CommentItem
                 key={comment.id}
-                comment={{ ...comment, replies: comment.replies || [] }}
+                comment={comment}
                 comments={comments}
                 replyingTo={replyingTo}
                 setReplyingTo={setReplyingTo}

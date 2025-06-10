@@ -65,9 +65,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(
-    null
-  ) as React.RefObject<HTMLDivElement>;
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const fetchData = async () => {
     if (!user) {
@@ -132,7 +130,6 @@ export default function Navbar() {
   useOnClickOutside<HTMLDivElement>(searchRef, () => {
     setShowSearch(false);
     setSearchQuery("");
-    setCourses([]);
   });
 
   const searchCourses = useCallback(
@@ -302,8 +299,6 @@ export default function Navbar() {
                       )}`
                     );
                     setShowSearch(false);
-                    setSearchQuery("");
-                    setCourses([]);
                   }
                 }}
                 autoFocus

@@ -65,9 +65,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(
-    null
-  ) as React.RefObject<HTMLDivElement>;
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const fetchData = async () => {
     if (!user) {
@@ -129,10 +127,9 @@ export default function Navbar() {
     }
   };
 
-  useOnClickOutside<HTMLDivElement>(searchRef, () => {
+  useOnClickOutside(searchRef, () => {
     setShowSearch(false);
     setSearchQuery("");
-    setCourses([]);
   });
 
   const searchCourses = useCallback(
@@ -151,9 +148,7 @@ export default function Navbar() {
         const filtered = allCourses.filter(
           (course: Course) =>
             course.title.toLowerCase().includes(query.toLowerCase()) ||
-            course.shortDescription
-              .toLowerCase()
-              .includes(query.toLowerCase()) ||
+            course.shortDescription.toLowerCase().includes(query.toLowerCase()) ||
             course.category.name.toLowerCase().includes(query.toLowerCase())
         );
 
@@ -297,13 +292,9 @@ export default function Navbar() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && searchQuery.trim()) {
                     router.push(
-                      `/courses?search=${encodeURIComponent(
-                        searchQuery.trim()
-                      )}`
+                      `/courses?search=${encodeURIComponent(searchQuery.trim())}`
                     );
                     setShowSearch(false);
-                    setSearchQuery("");
-                    setCourses([]);
                   }
                 }}
                 autoFocus
@@ -355,12 +346,8 @@ export default function Navbar() {
                               </h3>
                               <div className="flex items-center gap-1 flex-shrink-0">
                                 <span className="text-sm font-bold">
-                                  $
-                                  {course.discount
-                                    ? (
-                                        course.price *
-                                        (1 - course.discount / 100)
-                                      ).toFixed(2)
+                                  ${course.discount
+                                    ? ((course.price * (1 - course.discount / 100)).toFixed(2))
                                     : course.price.toFixed(2)}
                                 </span>
                                 {course.discount && (
@@ -569,7 +556,9 @@ export default function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className={enrolledCourses.length > 0 ? "relative" : ""}
+            className={
+              enrolledCourses.length > 0 ? "relative" : ""
+            }
             onClick={() => router.push("/my-learning")}
           >
             <BookOpen className="h-5 w-5" />
