@@ -28,52 +28,52 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center space-x-8">
-          {/* Logo */}
+      <div className="container flex h-16 items-center">
+        {/* Logo Section */}
+        <div className="flex items-center mr-4">
           <Link href="/blog" className="flex items-center space-x-2">
             <BookOpen className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               BrainiXBlog
             </span>
           </Link>
-
-          {/* Navigation - Hidden on Mobile */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link
-              href="/blog"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/blog/categories"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/blog/trending"
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              Trending
-            </Link>
-          </nav>
         </div>
 
-        {/* Center Search Bar - Hidden on Mobile */}
-        <div className="hidden md:flex max-w-md w-full mx-6">
+        {/* Navigation Section - Hidden on Mobile */}
+        <nav className="hidden md:flex space-x-4 mr-4">
+          <Link
+            href="/blog"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Home
+          </Link>
+          <Link
+            href="/blog/categories"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Categories
+          </Link>
+          <Link
+            href="/blog/trending"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          ></Link>
+            Trending
+          </Link>
+        </nav>
+
+        {/* Search Bar - Hidden on Mobile */}
+        <div className="hidden md:flex flex-1 max-w-sm mx-4">
           <div className="relative w-full">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search articles..."
-              className="pl-8 w-full bg-muted/50 focus:bg-background"
+              className="pl-8 w-full bg-muted/50"
             />
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 ml-auto">
           <ThemeToggle />
 
           {/* Notification Bell - Only show if signed in */}
@@ -104,7 +104,7 @@ export function Header() {
             <PenTool className="h-4 w-4" />
           </Button>
 
-          {/* User Menu */}
+          {/* User Menu - Only show if signed in */}
           {isSignedIn && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -119,16 +119,20 @@ export function Header() {
                   />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem
                   onClick={() => router.push("/blog/dashboard")}
                 >
                   Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/blog/my-posts")}>
+                <DropdownMenuItem
+                  onClick={() => router.push("/blog/my-posts")}
+                >
                   My Posts
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/blog/drafts")}>
+                <DropdownMenuItem
+                  onClick={() => router.push("/blog/drafts")}
+                >
                   Drafts
                 </DropdownMenuItem>
               </DropdownMenuContent>

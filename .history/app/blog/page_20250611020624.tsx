@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { PenTool, TrendingUp, Clock, Users } from "lucide-react";
+import { BlogSearchCard } from "@/components/blog/blog-search-card";
+import { BlogFilter } from "@/components/blog/blog-filter";
+import { Badge, PenTool, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import prisma from "@/lib/db";
 import { BackButton } from "@/components/BackButton";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -14,7 +15,7 @@ type RawBlogPost = Omit<Post, "createdAt" | "updatedAt"> & {
   updatedAt?: string;
 };
 
-async function getPosts(): Promise<Post[]> {
+async function getPosts(filter: string = "recent"): Promise<Post[]> {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL ||
@@ -22,7 +23,7 @@ async function getPosts(): Promise<Post[]> {
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
 
-    const response = await fetch(`${baseUrl}/api/blog`, {
+    const response = await fetch(`${baseUrl}/api/blog?filter=${filter}`, {
       next: { revalidate: 60 },
     });
 
@@ -48,14 +49,60 @@ async function getPosts(): Promise<Post[]> {
   }
 }
 
-export default async function BlogPage() {
-  const posts = await getPosts();
+async function getBlogs(filter: string = "recent") {
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: {
+        status: "PUBLISHED",
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        comments: true,
+        likes: true,
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+      orderBy: [
+        ...(filter === "popular"
+          ? [{ totalViews: "desc" }]
+          : filter === "trending"
+          ? [{ likes: { _count: "desc" } }]
+          : filter === "discussed"
+          ? [{ comments: { _count: "desc" } }]
+          : [{ updatedAt: "desc" }]),
+      ],
+      take: 20,
+    });
 
-  const totalComments = posts.reduce(
-    (acc, post) => acc + post.comments.length,
+    return blogs;
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    return [];
+  }
+}
+
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: { filter?: string };
+}) {
+  const blogs = await getBlogs(searchParams.filter);
+
+  const totalComments = blogs.reduce(
+    (acc, blog) => acc + blog._count.comments,
     0
   );
-  const activeReaders = posts.reduce((acc, post) => acc + post.totalViews, 0);
+  const totalViews = blogs.reduce((acc, blog) => acc + blog.totalViews, 0);
 
   return (
     <div className="relative container mx-auto px-4 py-8 space-y-12">
@@ -120,13 +167,10 @@ export default async function BlogPage() {
               Discover the newest stories from our community
             </p>
           </div>
-          <Badge variant="outline" className="hidden sm:flex">
-            <Clock className="mr-1 h-3 w-3" />
-            Recently Updated
-          </Badge>
+          <BlogFilter />
         </div>
 
-        {posts.length === 0 ? (
+        {blogs.length === 0 ? (
           <div className="text-center py-16 space-y-4">
             <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center">
               <PenTool className="h-8 w-8 text-muted-foreground" />
@@ -136,19 +180,14 @@ export default async function BlogPage() {
               Be the first to share your story with the community. Your voice
               matters!
             </p>
-            <Link href="/create">
+            <Link href="/blog/create">
               <Button>Create First Post</Button>
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {posts.map((post) => (
-              <BlogPostCard
-                key={post.id}
-                post={{
-                  ...post,
-                }}
-              />
+            {blogs.map((blog) => (
+              <BlogSearchCard key={blog.id} blog={blog} />
             ))}
           </div>
         )}

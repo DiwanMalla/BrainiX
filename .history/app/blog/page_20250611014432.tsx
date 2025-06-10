@@ -59,7 +59,8 @@ export default async function BlogPage() {
 
   return (
     <div className="relative container mx-auto px-4 py-8 space-y-12">
-      <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
+      {/* Back Button */}
+      <div className="absolute top-4 left-4 z-10">
         <BackButton />
       </div>
 
@@ -81,7 +82,7 @@ export default async function BlogPage() {
             community of writers and readers.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/create">
             <Button size="lg" className="w-full sm:w-auto">
               <PenTool className="mr-2 h-4 w-4" />
@@ -92,6 +93,9 @@ export default async function BlogPage() {
             <Users className="mr-2 h-4 w-4" />
             Join Community
           </Button>
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
         </div>
       </section>
 

@@ -120,10 +120,39 @@ export default async function BlogPage() {
               Discover the newest stories from our community
             </p>
           </div>
-          <Badge variant="outline" className="hidden sm:flex">
-            <Clock className="mr-1 h-3 w-3" />
-            Recently Updated
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Select defaultValue="recent">
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Filter posts" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">
+                  <div className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    Recent
+                  </div>
+                </SelectItem>
+                <SelectItem value="popular">
+                  <div className="flex items-center">
+                    <Eye className="mr-2 h-4 w-4" />
+                    Popular
+                  </div>
+                </SelectItem>
+                <SelectItem value="trending">
+                  <div className="flex items-center">
+                    <TrendingUp className="mr-2 h-4 w-4" />
+                    Trending
+                  </div>
+                </SelectItem>
+                <SelectItem value="discussed">
+                  <div className="flex items-center">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Most Discussed
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {posts.length === 0 ? (

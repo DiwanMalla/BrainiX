@@ -59,8 +59,10 @@ export default async function BlogPage() {
 
   return (
     <div className="relative container mx-auto px-4 py-8 space-y-12">
+      {/* Header with Back Button and Theme Toggle */}
       <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
         <BackButton />
+        <ThemeToggle />
       </div>
 
       {/* Hero Section */}

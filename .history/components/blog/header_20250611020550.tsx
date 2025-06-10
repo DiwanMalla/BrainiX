@@ -68,6 +68,15 @@ export function Header() {
             <Input
               placeholder="Search articles..."
               className="pl-8 w-full bg-muted/50 focus:bg-background"
+              onKeyDown={async (e) => {
+                if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                  router.push(
+                    `/blog/search?q=${encodeURIComponent(
+                      e.currentTarget.value.trim()
+                    )}`
+                  );
+                }
+              }}
             />
           </div>
         </div>

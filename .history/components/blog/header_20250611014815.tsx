@@ -2,7 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/co              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link href="/blog/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/blog/my-posts">My Posts</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/blog/drafts">Drafts</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>/button";
 import { PenTool, BookOpen, Search, Bell } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -108,10 +118,7 @@ export function Header() {
           {isSignedIn && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <img
                     src={user.imageUrl}
                     alt={user.fullName || "User"}
@@ -120,9 +127,7 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem
-                  onClick={() => router.push("/blog/dashboard")}
-                >
+                <DropdownMenuItem onClick={() => router.push("/blog/dashboard")}>
                   Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/blog/my-posts")}>

@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { PenTool, TrendingUp, Clock, Users } from "lucide-react";
+import { PenTool, TrendingUp, Clock, Users, Eye, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { BackButton } from "@/components/BackButton";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -14,7 +21,7 @@ type RawBlogPost = Omit<Post, "createdAt" | "updatedAt"> & {
   updatedAt?: string;
 };
 
-async function getPosts(): Promise<Post[]> {
+async function getPosts(filter: string = 'recent'): Promise<Post[]> {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL ||
@@ -22,7 +29,7 @@ async function getPosts(): Promise<Post[]> {
         ? `https://${process.env.VERCEL_URL}`
         : "http://localhost:3000");
 
-    const response = await fetch(`${baseUrl}/api/blog`, {
+    const response = await fetch(`${baseUrl}/api/blog?filter=${filter}`, {
       next: { revalidate: 60 },
     });
 
@@ -120,10 +127,39 @@ export default async function BlogPage() {
               Discover the newest stories from our community
             </p>
           </div>
-          <Badge variant="outline" className="hidden sm:flex">
-            <Clock className="mr-1 h-3 w-3" />
-            Recently Updated
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Select defaultValue="recent">
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Filter posts" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">
+                  <div className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    Recent
+                  </div>
+                </SelectItem>
+                <SelectItem value="popular">
+                  <div className="flex items-center">
+                    <Eye className="mr-2 h-4 w-4" />
+                    Popular
+                  </div>
+                </SelectItem>
+                <SelectItem value="trending">
+                  <div className="flex items-center">
+                    <TrendingUp className="mr-2 h-4 w-4" />
+                    Trending
+                  </div>
+                </SelectItem>
+                <SelectItem value="discussed">
+                  <div className="flex items-center">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Most Discussed
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {posts.length === 0 ? (

@@ -108,10 +108,7 @@ export function Header() {
           {isSignedIn && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <img
                     src={user.imageUrl}
                     alt={user.fullName || "User"}
@@ -120,9 +117,7 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem
-                  onClick={() => router.push("/blog/dashboard")}
-                >
+                <DropdownMenuItem onClick={() => router.push("/blog/dashboard")}>
                   Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/blog/my-posts")}>
