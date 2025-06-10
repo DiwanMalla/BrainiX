@@ -56,23 +56,13 @@ export default async function PostPage({
   const readingTime = getReadingTime(post.content);
 
   // Transform comments to match CommentSection component's expected type
-  // Import the Comment type from the comment-section component
-  // import type { Comment as UIComment } from "@/components/blog/comment-section";
-  const transformedComments = post.comments.map((comment) => ({
+  const transformedComments = post.comments.map(comment => ({
     ...comment,
     likes: comment.likes?.length ?? 0,
-    replies:
-      comment.replies?.map((reply) => ({
-        ...reply,
-        likes: reply.likes?.length ?? 0,
-        // Ensure replies' replies are also mapped if nested replies exist
-        replies:
-          reply.replies?.map((nestedReply) => ({
-            ...nestedReply,
-            likes: nestedReply.likes?.length ?? 0,
-            replies: [], // or recursively map if you support deeper nesting
-          })) ?? [],
-      })) ?? [],
+    replies: comment.replies?.map(reply => ({
+      ...reply,
+      likes: reply.likes?.length ?? 0
+    })) ?? []
   }));
 
   return (

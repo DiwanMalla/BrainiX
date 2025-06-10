@@ -1,6 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useS    try {
+      await deletePost(id);
+      toast({
+        title: "Post deleted",
+        description: "Your blog post has been deleted successfully.",
+      });
+      setOpen(false);
+      router.push("/blog");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Could not delete post. Please try again later.";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      console.error("Error deleting post:", error);act";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
