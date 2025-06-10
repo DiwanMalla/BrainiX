@@ -19,16 +19,19 @@ async function getPostById(
       process.env.NEXT_PUBLIC_BASE_URL ||
       (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
+        : "http://localhost:8000");
     const response = await fetch(`${baseUrl}/api/blog/${id}`, {
-      next: { revalidate: 60 },
+      cache: "no-cache",
     });
 
     if (!response.ok) {
+      console.error("API response not OK:", response.status);
       return null;
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log("Fetched post data:", data.post.comments); // Debugging
+    return data;
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
@@ -36,19 +39,18 @@ async function getPostById(
 }
 
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const { id } = await params;
-  if (!id) {
-    notFound();
-  }
+  const { id } = params;
+  if (!id) notFound();
 
   const data = await getPostById(id);
-
   if (!data || !data.post) {
+    console.error("No post found for ID:", id);
     notFound();
   }
 
   const { post, isAuthor } = data;
   const readingTime = getReadingTime(post.content);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">

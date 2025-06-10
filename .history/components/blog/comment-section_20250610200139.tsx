@@ -79,14 +79,6 @@ function CommentItem({
       ? `${comment.content.slice(0, 27)}...`
       : comment.content;
 
-  console.log("Rendering CommentItem", {
-    commentId: comment.id,
-    content: comment.content,
-    level,
-    replyCount,
-    isRepliesExpanded,
-  });
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -278,13 +270,6 @@ export function CommentSection({
   const { toast } = useToast();
   const { user, isSignedIn } = useUser();
 
-  // Fetch comments on mount
-  useEffect(() => {
-    console.log("Initial comments:", initialComments);
-    fetchComments();
-  }, [blogId]);
-
-  // Update expandedReplies when comments change
   useEffect(() => {
     const commentIdsWithReplies = comments.flatMap((c) => {
       const ids: string[] = [];
@@ -297,8 +282,7 @@ export function CommentSection({
       traverse(c);
       return ids;
     });
-    setExpandedReplies([...new Set(commentIdsWithReplies)]);
-    console.log("Expanded replies:", commentIdsWithReplies);
+    setExpandedReplies([...new Set(commentIdsWithReplies)]); // Ensure unique IDs
   }, [comments]);
 
   const fetchComments = async () => {
@@ -306,18 +290,15 @@ export function CommentSection({
       const res = await fetch(`/api/blog/${blogId}?t=${Date.now()}`, {
         cache: "no-store",
       });
-      if (!res.ok) throw new Error(`Failed to fetch blog post: ${res.status}`);
+      if (!res.ok) throw new Error("Failed to fetch blog post");
       const { post } = await res.json();
-      console.log("Fetched post comments:", post.comments);
       const uniqueComments = Array.from(
         new Map(
           post.comments.map((c: Comment) => [c.id, normalizeComment(c)])
         ).values()
       );
-      setComments([...uniqueComments]);
-      console.log("Set comments state:", uniqueComments);
+      setComments([...uniqueComments]); // Deep copy to trigger re-render
     } catch (error) {
-      console.error("Fetch comments error:", error);
       toast({
         title: "Error",
         description: "Failed to fetch comments",
@@ -358,7 +339,6 @@ export function CommentSection({
       await fetchComments();
       toast({ title: "Comment posted successfully" });
     } catch (error) {
-      console.error("Add comment error:", error);
       toast({
         title: "Error",
         description: "Could not add comment",
@@ -420,7 +400,6 @@ export function CommentSection({
       );
       toast({ title: "Reply posted successfully" });
     } catch (error) {
-      console.error("Add reply error:", error);
       setComments((prevComments) => {
         const removeOptimisticReply = (comments: Comment[]): Comment[] => {
           return comments.map((c) => ({
@@ -448,40 +427,35 @@ export function CommentSection({
     );
   };
 
-  const { flattenedComments, nestingLevels, replyChains, totalCommentCount } =
-    useMemo(() => {
-      const flattened: Comment[] = [];
-      const levels: Map<string, number> = new Map();
-      const chains: Map<string, string> = new Map();
+  const { flattenedComments, nestingLevels, replyChains } = useMemo(() => {
+    const flattened: Comment[] = [];
+    const levels: Map<string, number> = new Map();
+    const chains: Map<string, string> = new Map();
 
-      let count = 0;
+    const traverse = (
+      comment: Comment,
+      depth: number = 0,
+      chain: string[] = []
+    ) => {
+      flattened.push(comment);
+      levels.set(comment.id, depth);
+      const currentChain = [
+        ...chain,
+        `@${comment.user.name || "Anonymous"}`,
+      ].join(" → ");
+      chains.set(comment.id, currentChain);
+      comment.replies.forEach((reply) =>
+        traverse(reply, depth + 1, currentChain.split(" → "))
+      );
+    };
 
-      const traverse = (
-        comment: Comment,
-        depth: number = 0,
-        chain: string[] = []
-      ) => {
-        flattened.push(comment);
-        levels.set(comment.id, depth);
-        count += 1;
-        const currentChain = [
-          ...chain,
-          `@${comment.user.name || "Anonymous"}`,
-        ].join(" → ");
-        chains.set(comment.id, currentChain);
-        comment.replies.forEach((reply) =>
-          traverse(reply, depth + 1, currentChain.split(" → "))
-        );
-      };
-
-      comments.filter((c) => c.parentId === null).forEach((c) => traverse(c));
-      return {
-        flattenedComments: flattened,
-        nestingLevels: levels,
-        replyChains: chains,
-        totalCommentCount: count,
-      };
-    }, [comments]);
+    comments.filter((c) => c.parentId === null).forEach((c) => traverse(c));
+    return {
+      flattenedComments: flattened,
+      nestingLevels: levels,
+      replyChains: chains,
+    };
+  }, [comments]);
 
   return (
     <section className="space-y-8 max-w-3xl mx-auto">
@@ -490,7 +464,7 @@ export function CommentSection({
         <h2 className="text-3xl font-bold tracking-tight">
           Discussion{" "}
           <span className="text-muted-foreground text-xl">
-            ({totalCommentCount})
+            ({comments.length})
           </span>
         </h2>
       </div>

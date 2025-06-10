@@ -36,12 +36,7 @@ async function getPostById(
 }
 
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const { id } = await params;
-  if (!id) {
-    notFound();
-  }
-
-  const data = await getPostById(id);
+  const data = await getPostById(params.id);
 
   if (!data || !data.post) {
     notFound();
@@ -49,11 +44,13 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
   const { post, isAuthor } = data;
   const readingTime = getReadingTime(post.content);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
+        {/* Navigation */}
         <div className="mb-8">
-          <Link href="/">
+          <Link href="/blog">
             <Button variant="ghost" size="sm" className="mb-6">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to posts
@@ -61,6 +58,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           </Link>
         </div>
 
+        {/* Article Header */}
         <article className="space-y-8">
           <header className="space-y-6">
             {post.thumbnail && (
@@ -76,8 +74,8 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
             <div className="flex items-center justify-between">
               <div className="flex flex-wrap gap-2">
-                {post.tags?.map((tag) => (
-                  <Badge key={tag} variant="outline">
+                {post.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary">
                     {tag}
                   </Badge>
                 ))}
@@ -107,11 +105,11 @@ export default async function PostPage({ params }: { params: { id: string } }) {
               <div className="flex items-center space-x-4">
                 <Avatar className="h-12 w-12 ring-2 ring-background">
                   <AvatarImage
-                    src={post.author?.image || "/placeholder.svg"}
-                    alt={post.author?.name || "Author"}
+                    src={post.author.image || "/placeholder.svg"}
+                    alt={post.author.name || "Author"}
                   />
                   <AvatarFallback>
-                    {post.author?.name
+                    {post.author.name
                       ?.split(" ")
                       .map((n) => n[0])
                       .join("") || "A"}
@@ -119,11 +117,11 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                 </Avatar>
                 <div>
                   <p className="font-semibold">
-                    {post.author?.name || "Anonymous"}
+                    {post.author.name || "Anonymous"}
                   </p>
                   <div className="flex items-center text-sm text-muted-foreground space-x-4">
                     <span>
-                      {formatDate(new Date(post.createdAt || Date.now()))}
+                      {formatDate(new Date(post.publishedAt ?? Date.now()))}
                     </span>
                     <span className="flex items-center">
                       <Clock className="mr-1 h-3 w-3" />
@@ -131,7 +129,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                     </span>
                     <span className="flex items-center">
                       <Eye className="mr-1 h-3 w-3" />
-                      {post.totalViews || 0}
+                      {post.totalViews}
                     </span>
                   </div>
                 </div>
@@ -139,18 +137,19 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
               {isAuthor && (
                 <div className="flex space-x-2">
-                  <Link href="/edit/${id}">
+                  <Link href={`/edit/${post.id}`}>
                     <Button variant="outline" size="sm">
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
                   </Link>
-                  <DeletePostButton id={id} />
+                  <DeletePostButton id={post.id} />
                 </div>
               )}
             </div>
           </header>
           <Separator />
+          {/* Article Content */}
           <div className="prose prose-lg dark:prose-invert max-w-none">
             {post.content.split("\n\n").map((paragraph, i) => (
               <p key={i} className="mb-6 leading-relaxed text-foreground">
@@ -159,7 +158,8 @@ export default async function PostPage({ params }: { params: { id: string } }) {
             ))}
           </div>
           <Separator />
-          <CommentSection blogId={post.id} comments={post.comments || []} />
+          {/* Comments Section */}
+          <CommentSection blogId={post.id} comments={post.comments} />
         </article>
       </div>
     </div>
