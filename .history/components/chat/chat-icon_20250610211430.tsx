@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 import { useAuth } from "@clerk/nextjs";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface ChatMessage {
   sender: "user" | "ai";
@@ -144,7 +145,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
         </button>
       )}
       {isOpen && (
-        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl flex flex-col h-[85vh] transition-all duration-300">
+        <div className="w-full max-w-md bg-background shadow-2xl rounded-2xl flex flex-col h-[85vh] transition-all duration-300">
           <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl">
             <h2 className="text-xl font-bold">BrainiX AI Assistant</h2>
             <button
@@ -232,7 +233,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                         className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
                       >
                         <div className="flex items-start space-x-4">
-                          <img
+                          <Image
                             src={
                               course.thumbnail ||
                               "https://via.placeholder.com/150"

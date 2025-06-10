@@ -2,7 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import axios, { AxiosError } from "axios";
 import { useAuth } from "@clerk/nextjs";
-import Link from "next/link";
+
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface ChatMessage {
   sender: "user" | "ai";
@@ -19,6 +21,7 @@ interface Course {
   instructor: string;
   enrollmentCount: number;
   slug: string;
+  thumbnail?: string;
 }
 
 interface ChatbotProps {
@@ -37,6 +40,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const { userId, isLoaded } = useAuth();
+  const router = useRouter();
 
   const sendMessage = async (): Promise<void> => {
     if (!message.trim() || !userId) return;
@@ -47,7 +51,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post<{ reply: string }>(
+      const response = await axios.post<{ reply: string; courses: Course[] }>(
         "/api/chat",
         { message, courseId },
         {
@@ -58,47 +62,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
         }
       );
 
-      // Parse courses from response
-      let courses: Course[] = [];
-      if (response.data.reply.includes("**")) {
-        const courseMatches = response.data.reply.match(
-          /- \*\*(.*?)\*\*([\s\S]*?)(?=- \*\*|$)/g
-        );
-        if (courseMatches) {
-          courses = courseMatches.map((match) => {
-            const title = match.match(/\*\*(.*?)\*\*/)?.[1] || "";
-            const price = parseFloat(
-              match.match(/Price: \$([\d.]+)/)?.[1] || "0"
-            );
-            const duration = parseFloat(
-              match.match(/Duration: ([\d.]+) hours/)?.[1] || "0"
-            );
-            const rating = parseFloat(
-              match.match(/Rating: ([\d.]+)\/5/)?.[1] || "0"
-            );
-            const category = match.match(/Category: (.*?)\n/)?.[1] || "";
-            const instructor = match.match(/Instructor: (.*?)\n/)?.[1] || "";
-            const enrollmentCount = parseInt(
-              match.match(/Enrollments: (\d+)/)?.[1] || "0"
-            );
-            const slug = match.match(/Enroll: \/courses\/(.*?)$/m)?.[1] || "";
-            return {
-              title,
-              price,
-              duration,
-              rating,
-              category,
-              instructor,
-              enrollmentCount,
-              slug,
-            };
-          });
-        }
-      }
-
       setChatHistory((prev) => [
         ...prev,
-        { sender: "ai", text: response.data.reply, courses },
+        {
+          sender: "ai",
+          text: response.data.reply,
+          courses: response.data.courses,
+        },
       ]);
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -123,6 +93,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
     );
   };
 
+  const handleCourseClick = (slug: string) => {
+    router.push(`/courses/${slug}`);
+  };
+
   // Auto-scroll to bottom
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -134,29 +108,29 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
   // Redirect to sign-in if not authenticated
   useEffect(() => {
     if (isLoaded && !userId && isOpen) {
-      window.location.href = "/sign-in";
+      router.push("/sign-in");
     }
-  }, [userId, isLoaded, isOpen]);
+  }, [userId, isLoaded, isOpen, router]);
 
   // Sort courses
   const sortCourses = (courses: Course[]) => {
     return [...courses].sort((a, b) => {
       if (sortBy === "price") return a.price - b.price;
       if (sortBy === "duration") return a.duration - b.duration;
-      return b.rating - a.rating; // Default: rating
+      return b.rating - a.rating;
     });
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-6 right-6 z-50">
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105"
+          className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 rounded-full shadow-xl hover:from-blue-600 hover:to-indigo-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400"
           aria-label="Open chatbot"
         >
           <svg
-            className="w-6 h-6"
+            className="w-7 h-7"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -171,16 +145,16 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
         </button>
       )}
       {isOpen && (
-        <div className="w-80 md:w-96 bg-white shadow-2xl rounded-lg flex flex-col max-h-[80vh] transition-all duration-300">
-          <div className="flex justify-between items-center bg-blue-600 text-white p-3 rounded-t-lg">
-            <h2 className="text-lg font-semibold">BrainiX Smart Helper</h2>
+        <div className="w-full max-w-md bg-background shadow-2xl rounded-2xl flex flex-col h-[85vh] transition-all duration-300">
+          <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl">
+            <h2 className="text-xl font-bold">BrainiX AI Assistant</h2>
             <button
               onClick={() => setIsOpen(false)}
-              className="hover:text-gray-200"
+              className="hover:bg-blue-700 p-1 rounded-full transition-colors"
               aria-label="Close chatbot"
             >
               <svg
-                className="w-5 h-5"
+                className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -194,11 +168,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               </svg>
             </button>
           </div>
-          <div className="p-4 flex space-x-2">
+          <div className="p-4 flex flex-wrap gap-2 bg-muted/50">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 p-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
             >
               <option value="">All Categories</option>
               <option value="Technology">Technology</option>
@@ -210,7 +184,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               onChange={(e) =>
                 setSortBy(e.target.value as "rating" | "price" | "duration")
               }
-              className="w-1/2 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
               <option value="rating">Sort by Rating</option>
               <option value="price">Sort by Price</option>
@@ -219,65 +193,83 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
           </div>
           <div
             ref={chatContainerRef}
-            className="flex-1 p-4 overflow-y-auto bg-gray-50 scrollbar-thin"
-            style={{ maxHeight: "calc(80vh - 200px)" }}
+            className="flex-1 p-4 overflow-y-auto bg-muted/20 scrollbar-thin space-y-4"
+            style={{ maxHeight: "calc(85vh - 220px)" }}
           >
             {chatHistory.length === 0 && (
-              <div className="text-center text-gray-500">
+              <div className="text-center text-gray-600 py-4">
                 Ask about courses, BrainiX features, or your learning progress!
               </div>
             )}
             {chatHistory.map((chat, index) => (
-              <div
-                key={index}
-                className={`mb-3 flex ${
-                  chat.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
+              <div key={index} className="space-y-2">
                 <div
-                  className={`max-w-[75%] p-3 rounded-lg ${
-                    chat.sender === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
+                  className={`flex ${
+                    chat.sender === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {chat.text}
-                  {chat.courses && chat.courses.length > 0 && (
-                    <div className="mt-2">
-                      {sortCourses(
-                        chat.courses.filter((course) =>
-                          categoryFilter
-                            ? course.category === categoryFilter
-                            : true
-                        )
-                      ).map((course) => (
-                        <div
-                          key={course.slug}
-                          className="bg-white p-3 rounded-lg shadow mt-2 relative"
-                        >
-                          <h3 className="font-semibold text-lg">
-                            {course.title}
-                          </h3>
-                          <p>Price: ${course.price.toFixed(2)}</p>
-                          <p>Duration: {course.duration} hours</p>
-                          <p>Rating: {course.rating.toFixed(1)}/5</p>
-                          <p>Category: {course.category}</p>
-                          <p>Instructor: {course.instructor}</p>
-                          <p>Enrollments: {course.enrollmentCount}</p>
-                          <div className="flex space-x-2 mt-2">
-                            <Link
-                              href={`/courses/${course.slug}`}
-                              className="inline-block bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                            >
-                              Enroll Now
-                            </Link>
+                  <div
+                    className={`max-w-[80%] p-3 rounded-xl ${
+                      chat.sender === "user"
+                        ? "bg-blue-500 text-white"
+                        : "bg-card text-card-foreground shadow-sm border border-border"
+                    }`}
+                  >
+                    {chat.text}
+                  </div>
+                </div>
+                {chat.courses && chat.courses.length > 0 && (
+                  <div className="space-y-3">
+                    {sortCourses(
+                      chat.courses.filter((course) =>
+                        categoryFilter
+                          ? course.category === categoryFilter
+                          : true
+                      )
+                    ).map((course) => (
+                      <div
+                        key={course.slug}
+                        onClick={() => handleCourseClick(course.slug)}
+                        className="bg-card p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-border"
+                      >
+                        <div className="flex items-start space-x-4">
+                          <Image
+                            src={
+                              course.thumbnail ||
+                              "https://via.placeholder.com/150"
+                            }
+                            alt={`${course.title} thumbnail`}
+                            className="w-20 h-20 object-cover rounded-md"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg text-gray-800">
+                              {course.title}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              Instructor: {course.instructor}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Price: ${course.price.toFixed(2)}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Duration: {course.duration} hours
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Rating: {course.rating.toFixed(1)}/5
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Enrollments: {course.enrollmentCount}
+                            </p>
                             <button
-                              onClick={() => toggleFavorite(course.slug)}
-                              className={`p-1 rounded ${
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent card click
+                                toggleFavorite(course.slug);
+                              }}
+                              className={`mt-2 p-1 rounded ${
                                 favorites.includes(course.slug)
                                   ? "text-red-500"
                                   : "text-gray-500"
-                              }`}
+                              } hover:text-red-600 transition-colors`}
                               aria-label={
                                 favorites.includes(course.slug)
                                   ? "Remove from favorites"
@@ -304,54 +296,73 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                             </button>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-200 p-3 rounded-lg">
-                  <span className="animate-pulse">Typing...</span>
+                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200">
+                  <span className="animate-pulse text-gray-600">Typing...</span>
                 </div>
               </div>
             )}
           </div>
-          <div className="p-4 bg-white border-t">
-            <input
-              type="text"
-              value={message}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setMessage(e.target.value)
-              }
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              placeholder={
-                isLoaded && !userId ? "Sign in to chat" : "Ask about courses..."
-              }
-              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                e.key === "Enter" && !isLoading && sendMessage()
-              }
-              disabled={isLoading || !userId}
-            />
-            <button
-              type="button"
-              onClick={sendMessage}
-              className="mt-2 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed transition"
-              disabled={isLoading || !userId}
-            >
-              {isLoading ? "Sending..." : "Send"}
-            </button>
+          <div className="p-4 bg-white border-t border-gray-200">
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={message}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setMessage(e.target.value)
+                }
+                className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 bg-gray-50"
+                placeholder={
+                  isLoaded && !userId
+                    ? "Sign in to chat"
+                    : "Ask about courses..."
+                }
+                onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                  e.key === "Enter" && !isLoading && sendMessage()
+                }
+                disabled={isLoading || !userId}
+              />
+              <button
+                type="button"
+                onClick={sendMessage}
+                className="p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
+                disabled={isLoading || !userId}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       )}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .scrollbar-thin::-webkit-scrollbar-thumb {
-          background-color: #9ca3af;
-          border-radius: 3px;
+          background-color: #d1d5db;
+          border-radius: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: #f3f4f6;
         }
       `}</style>
     </div>

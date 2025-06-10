@@ -184,7 +184,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               onChange={(e) =>
                 setSortBy(e.target.value as "rating" | "price" | "duration")
               }
-              className="flex-1 p-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background"
+              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
               <option value="rating">Sort by Rating</option>
               <option value="price">Sort by Price</option>
@@ -310,7 +310,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               </div>
             )}
           </div>
-          <div className="p-4 bg-background border-t border-border">
+          <div className="p-4 bg-white border-t border-gray-200">
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -318,7 +318,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setMessage(e.target.value)
                 }
-                className="flex-1 p-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 bg-muted"
+                className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 bg-gray-50"
                 placeholder={
                   isLoaded && !userId
                     ? "Sign in to chat"

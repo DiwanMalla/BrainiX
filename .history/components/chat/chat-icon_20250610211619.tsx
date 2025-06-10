@@ -184,7 +184,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               onChange={(e) =>
                 setSortBy(e.target.value as "rating" | "price" | "duration")
               }
-              className="flex-1 p-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background"
+              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
               <option value="rating">Sort by Rating</option>
               <option value="price">Sort by Price</option>

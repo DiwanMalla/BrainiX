@@ -145,7 +145,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
         </button>
       )}
       {isOpen && (
-        <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl flex flex-col h-[85vh] transition-all duration-300">
+        <div className="w-full max-w-md bg-background shadow-2xl rounded-2xl flex flex-col h-[85vh] transition-all duration-300">
           <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl">
             <h2 className="text-xl font-bold">BrainiX AI Assistant</h2>
             <button
@@ -168,11 +168,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
               </svg>
             </button>
           </div>
-          <div className="p-4 flex flex-wrap gap-2 bg-gray-100">
+          <div className="p-4 flex flex-wrap gap-2 bg-muted/50">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="flex-1 p-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
             >
               <option value="">All Categories</option>
               <option value="Technology">Technology</option>
