@@ -42,7 +42,7 @@ interface CommentItemProps {
   replyContent: string;
   setReplyContent: (content: string) => void;
   isSubmitting: boolean;
-  handleAddReply: (commentId: string) => Promise<void>;
+  handleAddReply: (commentId: string, parentComment: Comment) => Promise<void>;
   expandedReplies: string[];
   toggleReplies: (commentId: string) => void;
   maxNestingLevel?: number;
