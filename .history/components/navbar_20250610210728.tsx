@@ -37,7 +37,6 @@ import { listenToWishlistUpdate, dispatchCartUpdate } from "@/lib/event";
 import { useCart, CartItem } from "@/lib/cart-context";
 import { useOnClickOutside } from "@/hooks/use-on-click-outside";
 import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Course {
   id: string;
@@ -582,8 +581,6 @@ export default function Navbar() {
               </span>
             )}
           </Button>
-
-          <ThemeToggle />
 
           {user ? (
             <UserButton afterSignOutUrl="/" />

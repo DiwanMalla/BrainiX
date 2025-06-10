@@ -583,8 +583,6 @@ export default function Navbar() {
             )}
           </Button>
 
-          <ThemeToggle />
-
           {user ? (
             <UserButton afterSignOutUrl="/" />
           ) : (

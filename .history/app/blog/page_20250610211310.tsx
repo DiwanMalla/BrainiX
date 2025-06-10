@@ -39,6 +39,7 @@ async function getPosts(): Promise<Post[]> {
         authorId: post.author?.id || "anonymous",
         updatedAt: post.updatedAt || post.createdAt || new Date().toISOString(),
         createdAt: post.createdAt || new Date().toISOString(),
+        createdAt: post.createdAt ?? new Date().toISOString(),
       })
     );
   } catch (error) {

@@ -13,7 +13,7 @@ type RawBlogPost = Omit<Post, "createdAt" | "updatedAt"> & {
   updatedAt?: string;
 };
 
-async function getPosts(): Promise<Post[]> {
+async function getPosts(): Promise<BlogPost[]> {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL ||
@@ -32,13 +32,9 @@ async function getPosts(): Promise<Post[]> {
     const data: RawBlogPost[] = await response.json();
 
     return data.map(
-      (post): Post => ({
+      (post): BlogPost => ({
         ...post,
-        slug: post.slug || post.id,
-        status: post.status || "PUBLISHED",
-        authorId: post.author?.id || "anonymous",
-        updatedAt: post.updatedAt || post.createdAt || new Date().toISOString(),
-        createdAt: post.createdAt || new Date().toISOString(),
+        createdAt: post.createdAt ?? new Date().toISOString(),
       })
     );
   } catch (error) {

@@ -5,15 +5,30 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/BackButton";
 
-import { type Post } from "@/lib/blog/type";
+// Post type as used in the app
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  thumbnail: string | null;
+  author: {
+    name: string | null;
+    image: string | null;
+  };
+  comments: { id: string }[];
+  likes: { id: string }[];
+  totalViews: number;
+  tags: string[];
+  content: string;
+  createdAt: string;
+}
 
 // Type used for parsing API response
-type RawBlogPost = Omit<Post, "createdAt" | "updatedAt"> & {
+type RawBlogPost = Omit<BlogPost, "createdAt"> & {
   createdAt?: string;
-  updatedAt?: string;
 };
 
-async function getPosts(): Promise<Post[]> {
+async function getPosts(): Promise<BlogPost[]> {
   try {
     const baseUrl =
       process.env.NEXT_PUBLIC_BASE_URL ||
@@ -32,13 +47,9 @@ async function getPosts(): Promise<Post[]> {
     const data: RawBlogPost[] = await response.json();
 
     return data.map(
-      (post): Post => ({
+      (post): BlogPost => ({
         ...post,
-        slug: post.slug || post.id,
-        status: post.status || "PUBLISHED",
-        authorId: post.author?.id || "anonymous",
-        updatedAt: post.updatedAt || post.createdAt || new Date().toISOString(),
-        createdAt: post.createdAt || new Date().toISOString(),
+        createdAt: post.createdAt ?? new Date().toISOString(),
       })
     );
   } catch (error) {

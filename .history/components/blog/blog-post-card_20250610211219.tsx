@@ -82,7 +82,7 @@ export function BlogPostCard({ post }: { post: Post }) {
             {post.totalViews}
           </div>
         </div>
-        <Link href={`/blog/post/${post.slug}`}>
+        <Link href={`/blog/${post.id}`}>
           <Badge
             variant="outline"
             className="hover:bg-primary hover:text-primary-foreground transition-colors"

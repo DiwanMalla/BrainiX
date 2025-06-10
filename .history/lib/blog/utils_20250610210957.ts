@@ -10,7 +10,7 @@ export function formatDate(date: Date | string): string {
     month: "short",
     day: "numeric",
     year: "numeric",
-  }).format(typeof date === "string" ? new Date(date) : date);
+  }).format(typeof date === 'string' ? new Date(date) : date);
 }
 
 export function getReadingTime(content: string): number {
