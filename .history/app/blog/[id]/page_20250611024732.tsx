@@ -35,10 +35,8 @@ async function getPostById(
     return null;
   }
 }
-type PageProps = {
-  params: { id: string };
-};
-export default async function PostPage({ params }: PageProps) {
+
+export default async function PostPage({ params }: { params: { id: string } }) {
   const { id } = params;
   if (!id) {
     notFound();
