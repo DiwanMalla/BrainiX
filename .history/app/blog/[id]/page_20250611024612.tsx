@@ -37,7 +37,7 @@ async function getPostById(
 }
 
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
   if (!id) {
     notFound();
   }

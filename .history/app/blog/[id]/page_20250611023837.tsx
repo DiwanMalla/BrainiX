@@ -36,7 +36,14 @@ async function getPostById(
   }
 }
 
-export default async function PostPage({ params }: { params: { id: string } }) {
+interface PageParams {
+  params: {
+    id: string;
+  };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function PostPage({ params }: PageParams) {
   const { id } = params;
   if (!id) {
     notFound();
@@ -142,7 +149,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
               {isAuthor && (
                 <div className="flex space-x-2">
-                  <Link href="/edit/${id}">
+                  <Link href={`/blog/edit/${id}`}>
                     <Button variant="outline" size="sm">
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
