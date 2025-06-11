@@ -343,7 +343,10 @@ export default function Navbar() {
                           }}
                         >
                           <Image
-                            src={course.thumbnail || "/placeholder.svg"}
+                            src={getCourseThumbnail(
+                              course.thumbnail,
+                              course.category.name
+                            )}
                             alt={course.title}
                             width={80}
                             height={60}

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios, { AxiosError } from "axios";
 import { useAuth } from "@clerk/nextjs";
+
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -200,136 +201,109 @@ const Chatbot: React.FC<ChatbotProps> = ({ courseId }) => {
                 Ask about courses, BrainiX features, or your learning progress!
               </div>
             )}
-            {chatHistory.map((chat, index) => {
-              // Log chat details
-              console.log("Chat:", {
-                index,
-                sender: chat.sender,
-                text: chat.text,
-                courses: chat.courses || [],
-              });
-
-              // Log individual courses if present
-              if (chat.courses && chat.courses.length > 0) {
-                chat.courses.forEach((course, courseIndex) => {
-                  console.log(`Course ${courseIndex + 1}:`, {
-                    title: course.title,
-                    price: course.price,
-                    duration: course.duration,
-                    rating: course.rating,
-                    category: course.category,
-                    instructor: course.instructor,
-                    enrollmentCount: course.enrollmentCount,
-                    slug: course.slug,
-                    thumbnail: course.thumbnail || "Placeholder",
-                  });
-                });
-              }
-
-              return (
-                <div key={index} className="space-y-2">
+            {chatHistory.map((chat, index) => (
+              <div key={index} className="space-y-2">
+                <div
+                  className={`flex ${
+                    chat.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
                   <div
-                    className={`flex ${
-                      chat.sender === "user" ? "justify-end" : "justify-start"
+                    className={`max-w-[80%] p-3 rounded-xl ${
+                      chat.sender === "user"
+                        ? "bg-blue-500 text-white"
+                        : "bg-card text-card-foreground shadow-sm border border-border"
                     }`}
                   >
-                    <div
-                      className={`max-w-[80%] p-3 rounded-xl ${
-                        chat.sender === "user"
-                          ? "bg-blue-500 text-white"
-                          : "bg-card text-card-foreground shadow-sm border border-border"
-                      }`}
-                    >
-                      {chat.text}
-                    </div>
+                    {chat.text}
                   </div>
-                  {chat.courses && chat.courses.length > 0 && (
-                    <div className="space-y-3">
-                      {sortCourses(
-                        chat.courses.filter((course) =>
-                          categoryFilter
-                            ? course.category === categoryFilter
-                            : true
-                        )
-                      ).map((course) => (
-                        <div
-                          key={course.slug}
-                          onClick={() => handleCourseClick(course.slug)}
-                          className="bg-card p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-border"
-                        >
-                          <div className="flex items-start space-x-4">
-                            <Image
-                              src={
-                                course.thumbnail ||
-                                "https://via.placeholder.com/150"
+                </div>
+                {chat.courses && chat.courses.length > 0 && (
+                  <div className="space-y-3">
+                    {sortCourses(
+                      chat.courses.filter((course) =>
+                        categoryFilter
+                          ? course.category === categoryFilter
+                          : true
+                      )
+                    ).map((course) => (
+                      <div
+                        key={course.slug}
+                        onClick={() => handleCourseClick(course.slug)}
+                        className="bg-card p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-border"
+                      >
+                        <div className="flex items-start space-x-4">
+                          <Image
+                            src={
+                              course.thumbnail ||
+                              "https://via.placeholder.com/150"
+                            }
+                            alt={`${course.title} thumbnail`}
+                            width={80}
+                            height={80}
+                            className="w-20 h-20 object-cover rounded-md"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg">
+                              {course.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              Instructor: {course.instructor}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Price: ${course.price.toFixed(2)}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Duration: {course.duration} hours
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Rating: {course.rating.toFixed(1)}/5
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Enrollments: {course.enrollmentCount}
+                            </p>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent card click
+                                toggleFavorite(course.slug);
+                              }}
+                              className={`mt-2 p-1 rounded ${
+                                favorites.includes(course.slug)
+                                  ? "text-red-500"
+                                  : "text-gray-500"
+                              } hover:text-red-600 transition-colors`}
+                              aria-label={
+                                favorites.includes(course.slug)
+                                  ? "Remove from favorites"
+                                  : "Add to favorites"
                               }
-                              alt={`${course.title} thumbnail`}
-                              width={80}
-                              height={80}
-                              className="w-20 h-20 object-cover rounded-md"
-                            />
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-lg">
-                                {course.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                Instructor: {course.instructor}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Price: ${course.price.toFixed(2)}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Duration: {course.duration} hours
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Rating: {course.rating.toFixed(1)}/5
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Enrollments: {course.enrollmentCount}
-                              </p>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation(); // Prevent card click
-                                  toggleFavorite(course.slug);
-                                }}
-                                className={`mt-2 p-1 rounded ${
+                            >
+                              <svg
+                                className="w-5 h-5"
+                                fill={
                                   favorites.includes(course.slug)
-                                    ? "text-red-500"
-                                    : "text-gray-500"
-                                } hover:text-red-600 transition-colors`}
-                                aria-label={
-                                  favorites.includes(course.slug)
-                                    ? "Remove from favorites"
-                                    : "Add to favorites"
+                                    ? "currentColor"
+                                    : "none"
                                 }
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                               >
-                                <svg
-                                  className="w-5 h-5"
-                                  fill={
-                                    favorites.includes(course.slug)
-                                      ? "currentColor"
-                                      : "none"
-                                  }
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
+                              </svg>
+                            </button>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200">

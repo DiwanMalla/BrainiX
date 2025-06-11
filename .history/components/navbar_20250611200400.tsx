@@ -342,6 +342,9 @@ export default function Navbar() {
                             setCourses([]);
                           }}
                         >
+                          <div>
+                            <p></p>
+                          </div>
                           <Image
                             src={course.thumbnail || "/placeholder.svg"}
                             alt={course.title}

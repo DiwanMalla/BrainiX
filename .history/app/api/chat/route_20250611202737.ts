@@ -177,19 +177,19 @@ export async function POST(req: NextRequest) {
             rating: true,
             category: {
               select: {
-                name: true,
-              },
+                name: true
+              }
             },
             slug: true,
             _count: {
               select: {
-                enrollments: true,
-              },
+                enrollments: true
+              }
             },
             instructor: {
               select: {
-                name: true,
-              },
+                name: true
+              }
             },
             thumbnail: true,
           },
@@ -200,42 +200,24 @@ export async function POST(req: NextRequest) {
           courseCards = courses.map((course) => {
             const html = `
               <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                <img src="${course.thumbnail || ""}" alt="${
-              course.title
-            } thumbnail" class="w-full h-32 object-cover rounded mb-2" />
-                <h3 class="text-lg font-semibold text-gray-800">${
-                  course.title
-                }</h3>
-                <p class="text-sm text-gray-600">Instructor: ${
-                  course.instructor?.name || "Unknown"
-                }</p>
-                <p class="text-sm text-gray-600">Price: $${course.price.toFixed(
-                  2
-                )}</p>
-                <p class="text-sm text-gray-600">Duration: ${
-                  course.duration
-                } hours</p>
-                <p class="text-sm text-gray-600">Rating: ${
-                  course.rating?.toFixed(1) || "N/A"
-                }/5</p>
-                <p class="text-sm text-gray-600">Category: ${
-                  course.category?.name || "Uncategorized"
-                }</p>
-                <p class="text-sm text-gray-600">Enrolled: ${
-                  course._count?.enrollments || 0
-                }</p>
-                <a href="/courses/${
-                  course.slug
-                }" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Enroll Now</a>
+                <img src="${course.thumbnail || ''}" alt="${course.title} thumbnail" class="w-full h-32 object-cover rounded mb-2" />
+                <h3 class="text-lg font-semibold text-gray-800">${course.title}</h3>
+                <p class="text-sm text-gray-600">Instructor: ${course.instructor?.name || 'Unknown'}</p>
+                <p class="text-sm text-gray-600">Price: $${course.price.toFixed(2)}</p>
+                <p class="text-sm text-gray-600">Duration: ${course.duration} hours</p>
+                <p class="text-sm text-gray-600">Rating: ${course.rating?.toFixed(1) || "N/A"}/5</p>
+                <p class="text-sm text-gray-600">Category: ${course.category?.name || 'Uncategorized'}</p>
+                <p class="text-sm text-gray-600">Enrolled: ${course._count?.enrollments || 0}</p>
+                <a href="/courses/${course.slug}" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Enroll Now</a>
               </div>
             `;
             courseResponse += `
               - **${course.title}**
-                - Instructor: ${course.instructor?.name || "Unknown"}
+                - Instructor: ${course.instructor?.name || 'Unknown'}
                 - Price: $${course.price.toFixed(2)}
                 - Duration: ${course.duration} hours
                 - Rating: ${course.rating?.toFixed(1) || "N/A"}/5
-                - Category: ${course.category?.name || "Uncategorized"}
+                - Category: ${course.category?.name || 'Uncategorized'}
                 - Enrolled: ${course._count?.enrollments || 0}
                 - Enroll: /courses/${course.slug}
             `;
@@ -244,12 +226,12 @@ export async function POST(req: NextRequest) {
               price: course.price,
               duration: course.duration,
               rating: course.rating,
-              category: course.category?.name || "Uncategorized",
+              category: course.category?.name || 'Uncategorized',
               slug: course.slug,
               html,
-              enrollmentCount: course._count?.enrollments || 0,
-              instructor: course.instructor?.name || "Unknown",
-              thumbnail: course.thumbnail || "",
+              enrollmentCount: course.enrollments?._count || 0,
+              instructor: course.instructor?.name || 'Unknown',
+              thumbnail: course.thumbnail || '',
             };
           });
         } else {

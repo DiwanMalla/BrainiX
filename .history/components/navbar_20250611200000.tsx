@@ -169,6 +169,28 @@ export default function Navbar() {
     [toast]
   );
 
+  function getCourseThumbnail(
+    thumbnail: string,
+    name: string
+  ): string | import("next/dist/shared/lib/get-img-props").StaticImport {
+    if (thumbnail && thumbnail.trim() !== "") {
+      return thumbnail;
+    }
+    // Fallback placeholder based on category name (optional)
+    const category = name?.toLowerCase().replace(/\s+/g, "-");
+    switch (category) {
+      case "web-development":
+        return "/placeholders/web-dev.svg";
+      case "data-science":
+        return "/placeholders/data-science.svg";
+      case "business":
+        return "/placeholders/business.svg";
+      case "design":
+        return "/placeholders/design.svg";
+      default:
+        return "/placeholder.svg";
+    }
+  }
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto max-w-7xl flex h-16 items-center justify-between px-4 md:px-6">
@@ -343,7 +365,10 @@ export default function Navbar() {
                           }}
                         >
                           <Image
-                            src={course.thumbnail || "/placeholder.svg"}
+                            src={getCourseThumbnail(
+                              course.thumbnail,
+                              course.category.name
+                            )}
                             alt={course.title}
                             width={80}
                             height={60}

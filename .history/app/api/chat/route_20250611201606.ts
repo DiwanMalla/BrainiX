@@ -16,9 +16,6 @@ interface CourseCard {
   category: string;
   slug: string;
   html: string;
-  enrollmentCount: number;
-  instructor: string;
-  thumbnail: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -74,8 +71,23 @@ export async function POST(req: NextRequest) {
             price: true,
             duration: true,
             rating: true,
-            category: true,
+            category: { 
+              select: { 
+                name: true 
+              }
+            },
             slug: true,
+            instructor: {
+              select: {
+                name: true
+              }
+            },
+            _count: {
+              select: {
+                enrollments: true
+              }
+            },
+            thumbnail: true
           },
         });
         if (course) {
@@ -89,7 +101,7 @@ export async function POST(req: NextRequest) {
                 ? course.rating.toFixed(1)
                 : "N/A"
             }/5
-            - Category: ${course.category}
+            - Category: ${course.category.name}
             - Enroll: /courses/${course.slug}
           `;
         } else {
@@ -175,68 +187,57 @@ export async function POST(req: NextRequest) {
             price: true,
             duration: true,
             rating: true,
-            category: {
-              select: {
-                name: true,
-              },
+            category: { 
+              select: { 
+                name: true 
+              }
             },
             slug: true,
-            _count: {
-              select: {
-                enrollments: true,
-              },
-            },
             instructor: {
               select: {
-                name: true,
-              },
+                name: true
+              }
             },
-            thumbnail: true,
+            _count: {
+              select: {
+                enrollments: true
+              }
+            },
+            thumbnail: true
           },
           take: 3,
         });
 
         if (courses.length > 0) {
+          courseResponse = "Here are some recommended courses:\n";
           courseCards = courses.map((course) => {
             const html = `
               <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                <img src="${course.thumbnail || ""}" alt="${
-              course.title
-            } thumbnail" class="w-full h-32 object-cover rounded mb-2" />
-                <h3 class="text-lg font-semibold text-gray-800">${
-                  course.title
-                }</h3>
-                <p class="text-sm text-gray-600">Instructor: ${
-                  course.instructor?.name || "Unknown"
-                }</p>
-                <p class="text-sm text-gray-600">Price: $${course.price.toFixed(
-                  2
-                )}</p>
-                <p class="text-sm text-gray-600">Duration: ${
-                  course.duration
-                } hours</p>
-                <p class="text-sm text-gray-600">Rating: ${
-                  course.rating?.toFixed(1) || "N/A"
-                }/5</p>
-                <p class="text-sm text-gray-600">Category: ${
-                  course.category?.name || "Uncategorized"
-                }</p>
-                <p class="text-sm text-gray-600">Enrolled: ${
-                  course._count?.enrollments || 0
-                }</p>
-                <a href="/courses/${
-                  course.slug
-                }" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Enroll Now</a>
+                <div class="flex items-start space-x-4">
+                  <img 
+                    src="${course.thumbnail || `/placeholder-course.jpg`}" 
+                    alt="${course.title} thumbnail" 
+                    class="w-20 h-20 object-cover rounded-md"
+                  />
+                  <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-800">${course.title}</h3>
+                    <p class="text-sm text-gray-600">Price: $${course.price.toFixed(2)}</p>
+                    <p class="text-sm text-gray-600">Duration: ${course.duration} hours</p>
+                    <p class="text-sm text-gray-600">Rating: ${course.rating?.toFixed(1) || "N/A"}/5</p>
+                    <p class="text-sm text-gray-600">Category: ${course.category.name}</p>
+                    <p class="text-sm text-gray-600">Instructor: ${course.instructor.name}</p>
+                    <p class="text-sm text-gray-600">Enrolled: ${course._count.enrollments} students</p>
+                    <a href="/courses/${course.slug}" class="mt-2 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Enroll Now</a>
+                  </div>
+                </div>
               </div>
             `;
             courseResponse += `
               - **${course.title}**
-                - Instructor: ${course.instructor?.name || "Unknown"}
                 - Price: $${course.price.toFixed(2)}
                 - Duration: ${course.duration} hours
                 - Rating: ${course.rating?.toFixed(1) || "N/A"}/5
-                - Category: ${course.category?.name || "Uncategorized"}
-                - Enrolled: ${course._count?.enrollments || 0}
+                - Category: ${course.category.name}
                 - Enroll: /courses/${course.slug}
             `;
             return {
@@ -244,12 +245,12 @@ export async function POST(req: NextRequest) {
               price: course.price,
               duration: course.duration,
               rating: course.rating,
-              category: course.category?.name || "Uncategorized",
+              category: course.category.name,
               slug: course.slug,
+              instructor: course.instructor.name,
+              enrollmentCount: course._count.enrollments,
+              thumbnail: course.thumbnail,
               html,
-              enrollmentCount: course._count?.enrollments || 0,
-              instructor: course.instructor?.name || "Unknown",
-              thumbnail: course.thumbnail || "",
             };
           });
         } else {
