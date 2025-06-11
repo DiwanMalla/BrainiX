@@ -34,7 +34,7 @@ export default function CTASection({ isSignedIn }: CTASectionProps) {
             <Button
               size="lg"
               variant="outline"
-              className="border-primary-foreground "
+              className="bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary"
               asChild
             >
               <Link href="/courses">Explore Courses</Link>

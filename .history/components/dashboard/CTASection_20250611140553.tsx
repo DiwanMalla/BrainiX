@@ -7,7 +7,7 @@ type CTASectionProps = {
 
 export default function CTASection({ isSignedIn }: CTASectionProps) {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center space-y-6 text-center">
           <div className="space-y-2">
@@ -24,7 +24,7 @@ export default function CTASection({ isSignedIn }: CTASectionProps) {
             <Button
               size="lg"
               variant="outline"
-              className="border-primary-foreground "
+              className="bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary"
               asChild
             >
               <Link href={isSignedIn ? "/dashboard" : "/auth?tab=signup"}>
@@ -34,7 +34,7 @@ export default function CTASection({ isSignedIn }: CTASectionProps) {
             <Button
               size="lg"
               variant="outline"
-              className="border-primary-foreground "
+              className="bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary"
               asChild
             >
               <Link href="/courses">Explore Courses</Link>
