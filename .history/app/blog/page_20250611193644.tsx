@@ -16,7 +16,9 @@ type RawBlogPost = Omit<Post, "createdAt" | "updatedAt"> & {
 async function getPosts(): Promise<Post[]> {
   try {
     // Construct the absolute URL
-    const baseUrl = process.env.VERCEL_URL ? `c` : "http://localhost:3000";
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
     const apiUrl = `${baseUrl}/api/blog`;
 
     console.log("Fetching from URL:", apiUrl); // Debug log to verify the URL

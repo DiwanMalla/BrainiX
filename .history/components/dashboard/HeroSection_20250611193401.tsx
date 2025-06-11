@@ -10,8 +10,8 @@ type HeroSectionProps = {
 export default function HeroSection({ isSignedIn }: HeroSectionProps) {
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-primary/5 to-background">
-      <div className="container mx-auto max-w-7xl px-4 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+        <div className="grid gap-6 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1.2fr_600px]">
           <div className="flex flex-col justify-center space-y-6">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
