@@ -37,7 +37,7 @@ export function BlogPostCard({ post }: { post: Post }) {
               </Badge>
             ))}
           </div>
-          <Link href={`/blog/${post.id}`}>
+          <Link href={`/blog/post/${post.id}`}>
             <h3 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors cursor-pointer line-clamp-2">
               {post.title}
             </h3>
@@ -85,7 +85,7 @@ export function BlogPostCard({ post }: { post: Post }) {
             {post.totalViews}
           </div>
         </div>
-        <Link href={`/blog/${post.id}`}>
+        <Link href={`/blog/post/${post.id}`}>
           <Badge
             variant="outline"
             className="hover:bg-primary hover:text-primary-foreground transition-colors"
