@@ -27,8 +27,8 @@ export default function CTASection({ isSignedIn }: CTASectionProps) {
               className="border-primary-foreground "
               asChild
             >
-              <Link href={isSignedIn ? "/my-learning" : "/auth?tab=signup"}>
-                {isSignedIn ? "Go to My Learning" : "Join for Free"}
+              <Link href={isSignedIn ? "/" : "/auth?tab=signup"}>
+                {isSignedIn ? "Go to Dashboard" : "Join for Free"}
               </Link>
             </Button>
             <Button

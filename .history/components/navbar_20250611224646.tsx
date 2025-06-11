@@ -190,16 +190,6 @@ export default function Navbar() {
     return debouncedValue;
   };
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-  useEffect(() => {
-    if (debouncedSearchQuery) {
-      searchCourses(debouncedSearchQuery);
-    } else {
-      setCourses([]);
-    }
-  }, [debouncedSearchQuery, searchCourses]);
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto max-w-7xl flex h-16 items-center justify-between px-4 md:px-6">

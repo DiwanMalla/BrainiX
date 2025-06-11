@@ -57,16 +57,16 @@ export default function Navbar() {
   const router = useRouter();
   const { user } = useClerk();
   const { toast } = useToast();
-  const { cartItems, setCartItems, isLoading: cartLoading } = useCart(); // Use cart context
-  const [wishlistItems, setWishlistItems] = useState<CartItem[]>([]); // Use CartItem type for consistency
+  const { cartItems, setCartItems, isLoading: cartLoading } = useCart();
+  const [wishlistItems, setWishlistItems] = useState<CartItem[]>([]);
   const [enrolledCourses, setEnrolledCourses] = useState<CartItem[]>([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const searchRef = useRef<HTMLDivElement>(
     null
   ) as React.RefObject<HTMLDivElement>;
@@ -79,7 +79,6 @@ export default function Navbar() {
     }
 
     try {
-      setIsWishlistLoading(true);
       const [wishlistRes, enrollmentsRes] = await Promise.all([
         fetch("/api/wishlist", { cache: "no-store" }),
         fetch("/api/enrollments", { cache: "no-store" }),
@@ -99,8 +98,6 @@ export default function Navbar() {
     } catch (error) {
       console.error("Error fetching navbar data:", error);
       toast({ title: "Error", description: "Failed to load data" });
-    } finally {
-      setIsWishlistLoading(false);
     }
   }, [user, toast, setWishlistItems, setEnrolledCourses]);
 
@@ -172,33 +169,6 @@ export default function Navbar() {
     },
     [toast]
   );
-
-  // Add debounce utility function
-  const useDebounce = (value: string, delay: number) => {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [value, delay]);
-
-    return debouncedValue;
-  };
-
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-  useEffect(() => {
-    if (debouncedSearchQuery) {
-      searchCourses(debouncedSearchQuery);
-    } else {
-      setCourses([]);
-    }
-  }, [debouncedSearchQuery, searchCourses]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -284,21 +254,12 @@ export default function Navbar() {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                {user?.publicMetadata.role === "instructor" ? (
-                  <Link
-                    href="/my-learning"
-                    className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                  >
-                    My Learning
-                  </Link>
-                ) : (
-                  <Link
-                    href="/my-learning"
-                    className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                  >
-                    My Learning
-                  </Link>
-                )}
+                <Link
+                  href="/my-learning"
+                  className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                >
+                  My Learning
+                </Link>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -313,7 +274,10 @@ export default function Navbar() {
                 placeholder="Search courses..."
                 className="w-[300px] md:w-[400px] pr-10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  searchCourses(e.target.value);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && searchQuery.trim()) {
                     router.push(
@@ -455,9 +419,7 @@ export default function Navbar() {
                   View All
                 </Button>
               </div>
-              {isWishlistLoading ? (
-                <p className="p-4 text-center">Loading...</p>
-              ) : wishlistItems.length > 0 ? (
+              {wishlistItems.length > 0 ? (
                 wishlistItems.map((item) => (
                   <div
                     key={item.id}
