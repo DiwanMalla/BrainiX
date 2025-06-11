@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
       "kajabi-storefronts-production.kajabi-cdn.com",
       "assets-global.website-files.com",
       "svgrepo.com",
+      "th.bing.com",
+      "motionbgs.com",
     ], // Allow images from external domains
   },
 };

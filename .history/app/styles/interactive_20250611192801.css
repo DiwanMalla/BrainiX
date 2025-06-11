@@ -1,0 +1,54 @@
+/* Interactive Elements */
+@layer components {
+  button,
+  [role="button"],
+  a,
+  select,
+  summary,
+  .interactive {
+    @apply cursor-pointer transition-opacity duration-200;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  textarea {
+    @apply cursor-text;
+  }
+
+  [aria-busy="true"],
+  .loading {
+    @apply cursor-wait;
+  }
+
+  [aria-describedby],
+  [title]:not([title=""]),
+  .help {
+    @apply cursor-help;
+  }
+
+  :disabled,
+  [aria-disabled="true"],
+  .disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  button:not(:disabled):hover,
+  a:hover,
+  .interactive:hover {
+    @apply opacity-80;
+  }
+
+  /* Image Loading Animation */
+  .image-loading {
+    @apply opacity-0 transition-opacity duration-300;
+  }
+
+  .image-loaded {
+    @apply opacity-100;
+  }
+}
