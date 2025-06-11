@@ -177,7 +177,7 @@ export default function CategoryDetailPage() {
     // Listen for wishlist updates
     const unsubscribe = listenToWishlistUpdate(fetchWishlist);
     return () => unsubscribe();
-  }, []);
+  }, [slug, user, setLoading, setError, setCategory, fetchWishlist]);
 
   const handleCourseClick = (courseSlug: string) => {
     console.log(`Navigating to course: ${courseSlug}`);
