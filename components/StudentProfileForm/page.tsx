@@ -176,13 +176,13 @@ const StudentProfileForm = ({ isSignup = false }: { isSignup?: boolean }) => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-sm border border-gray-100 animate-in fade-in duration-500">
+    <div className="flex min-h-screen items-center justify-center bg-background text-foreground px-4 py-12 sm:px-6 lg:px-8 transition-colors duration-300">
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-card p-8 shadow-sm border border-border animate-in fade-in duration-500">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Complete Your Student Profile
           </h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             Tell us about yourself to personalize your learning experience
           </p>
         </div>

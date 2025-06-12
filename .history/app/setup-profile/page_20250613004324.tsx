@@ -11,7 +11,7 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors duration-300">
       <Navbar />
       <main className="flex-1">
         <StudentProfileForm />
