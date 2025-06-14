@@ -49,8 +49,7 @@ async function getPosts(): Promise<Post[]> {
 }
 
 const BlogPostCard = dynamic(
-  () => import("@/components/blog/blog-post-card").then((m) => m.BlogPostCard),
-  { ssr: false }
+  () => import("@/components/blog/blog-post-card").then((m) => m.BlogPostCard)
 );
 
 function BlogPostCardSkeleton() {
