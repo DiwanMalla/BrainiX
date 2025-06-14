@@ -859,8 +859,17 @@ function CoursePageContent({ slug }: { slug: string }) {
   );
 }
 
-// Wrapper component to handle params Promise
-export default async function CoursePage({ params }: CoursePageProps) {
-  const { slug } = await params; // Resolve the params Promise
+// Main component that handles params
+export default function CoursePage({ params }: CoursePageProps) {
+  const [slug, setSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setSlug(resolvedParams.slug);
+    });
+  }, [params]);
+
+  if (!slug) return <div>Loading...</div>;
+
   return <CoursePageContent slug={slug} />;
 }

@@ -47,9 +47,9 @@ export default function StudentDashboard() {
         const coursesData = await coursesRes.json();
         const progressRes = await fetch("/api/courses/progress");
         const progressData = await progressRes.json();
-        const merged = coursesData.map((course: any) => {
+        const merged = coursesData.map((course: { id: string; certificateAvailable?: boolean; [key: string]: unknown }) => {
           const progressEntry = progressData.find(
-            (p: any) => p.courseId === course.id
+            (p: { courseId: string; progress: number }) => p.courseId === course.id
           );
           return {
             ...course,
@@ -61,18 +61,18 @@ export default function StudentDashboard() {
           };
         });
         setCourses(merged);
-        const completed = merged.filter((c: any) => c.progress === 100).length;
+        const completed = merged.filter((c: { progress: number }) => c.progress === 100).length;
         const inProgress = merged.filter(
-          (c: any) => c.progress > 0 && c.progress < 100
+          (c: { progress: number }) => c.progress > 0 && c.progress < 100
         ).length;
-        const certificates = merged.filter((c: any) => c.hasCertificate).length;
+        const certificates = merged.filter((c: { hasCertificate: boolean }) => c.hasCertificate).length;
         setStats({
           totalCourses: merged.length,
           inProgress,
           completed,
           certificates,
         });
-      } catch (err) {
+      } catch {
         // fallback: empty
       } finally {
         setLoading(false);
