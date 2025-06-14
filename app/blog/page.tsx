@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { BlogPostCard } from "@/components/blog/blog-post-card";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import { PenTool, TrendingUp, Clock, Users } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,15 @@ async function getPosts(): Promise<Post[]> {
     console.error("Error fetching posts:", error);
     return [];
   }
+}
+
+const BlogPostCard = dynamic(
+  () => import("@/components/blog/blog-post-card").then((m) => m.BlogPostCard),
+  { ssr: false }
+);
+
+function BlogPostCardSkeleton() {
+  return <div className="animate-pulse rounded-lg bg-muted h-[320px] w-full" />;
 }
 
 export default async function BlogPage() {
@@ -124,7 +134,6 @@ export default async function BlogPage() {
             Recently Updated
           </Badge>
         </div>
-
         {posts.length === 0 ? (
           <div className="text-center py-16 space-y-4">
             <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center">
@@ -140,16 +149,21 @@ export default async function BlogPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {posts.map((post) => (
-              <BlogPostCard
-                key={post.id}
-                post={{
-                  ...post,
-                }}
-              />
-            ))}
-          </div>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <BlogPostCardSkeleton key={i} />
+                ))}
+              </div>
+            }
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {posts.map((post) => (
+                <BlogPostCard key={post.id} post={{ ...post }} />
+              ))}
+            </div>
+          </Suspense>
         )}
       </section>
     </div>

@@ -152,7 +152,7 @@ export default function AIGeneratedQuiz({
             ); // Debug form value
             return (
               <Card key={question.id}>
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 bg-background text-foreground">
                   <div className="flex items-center gap-2 mb-3">
                     <p className="font-medium">
                       {index + 1}. {question.text}
@@ -172,8 +172,6 @@ export default function AIGeneratedQuiz({
                     disabled={isSubmitted}
                     value={formData.answers?.[question.id] || ""}
                     onValueChange={(value) => {
-                      // Manually set the selected value
-                      // Use setValue from useForm
                       setValue(`answers.${question.id}`, value);
                     }}
                   >
@@ -182,19 +180,23 @@ export default function AIGeneratedQuiz({
                         ? result?.selectedAnswer === option
                         : formData.answers?.[question.id] === option;
                       const isCorrect = result?.correctAnswer === option;
-                      const optionStyle =
-                        isSubmitted && result
-                          ? isCorrect
-                            ? "bg-green-100"
-                            : isSelected && !isCorrect
-                            ? "bg-red-100"
-                            : ""
-                          : "";
-
+                      // Improved highlight: use border and subtle bg, not strong bg
+                      let optionStyle = "";
+                      if (isSubmitted && result) {
+                        if (isCorrect) {
+                          optionStyle =
+                            "border border-green-500 bg-green-50 dark:bg-green-900/30 text-green-900 dark:text-green-200";
+                        } else if (isSelected && !isCorrect) {
+                          optionStyle =
+                            "border border-red-500 bg-red-50 dark:bg-red-900/30 text-red-900 dark:text-red-200";
+                        } else {
+                          optionStyle = "";
+                        }
+                      }
                       return (
                         <div
                           key={i}
-                          className={`flex items-center gap-2 p-2 rounded-md ${optionStyle}`}
+                          className={`flex items-center gap-2 p-2 rounded-md transition-colors ${optionStyle}`}
                         >
                           <RadioGroupItem
                             value={option}
@@ -209,7 +211,7 @@ export default function AIGeneratedQuiz({
                   </RadioGroup>
 
                   {isSubmitted && result && (
-                    <div className="mt-4 p-3 bg-gray-100 rounded-md">
+                    <div className="mt-4 p-3 rounded-md bg-muted text-muted-foreground dark:bg-gray-800 dark:text-gray-200">
                       <p className="text-sm font-medium">Explanation:</p>
                       <p className="text-sm">{result.explanation}</p>
                     </div>
@@ -219,12 +221,24 @@ export default function AIGeneratedQuiz({
             );
           })}
           {isSubmitted ? (
-            <Button type="button" onClick={resetQuiz} className="w-full">
-              Try Another Quiz
+            <Button
+              type="button"
+              onClick={() => {
+                resetQuiz();
+                generateQuiz();
+              }}
+              className="w-full cursor-pointer"
+              disabled={isLoading}
+            >
+              {isLoading ? "Generating..." : "Try Another Quiz"}
             </Button>
           ) : (
-            <Button type="submit" className="w-full">
-              Submit Answers
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={isLoading}
+            >
+              {isLoading ? "Submitting..." : "Submit Answers"}
             </Button>
           )}
         </form>

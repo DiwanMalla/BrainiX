@@ -78,7 +78,7 @@ export function BlogPostCard({ post }: { post: Post }) {
         <div className="flex items-center space-x-4">
           <div className="flex items-center text-sm text-muted-foreground">
             <MessageSquare className="mr-1 h-4 w-4" />
-            {post.comments.length}
+            {post.comments?.length}
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <Eye className="mr-1 h-4 w-4" />
