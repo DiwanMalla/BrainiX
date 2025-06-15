@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BrainiX - AI-Powered Learning Platform</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #8b5a9f 100%
+        );
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 1s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .poster {
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #f8fafc 25%,
+          #f0f9ff 50%,
+          #f1f5f9 75%,
+          #fefefe 100%
+        );
+        display: grid;
+        grid-template-rows: auto 1fr;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      } /* Header Section */
+      .header {
+        background: linear-gradient(
+          135deg,
+          #4f46e5 0%,
+          #7c3aed 25%,
+          #c026d3 50%,
+          #db2777 75%,
+          #e11d48 100%
+        );
+        color: white;
+        padding: 0.8rem 2rem;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+      }
+      .logo {
+        font-size: 2rem;
+        font-weight: 900;
+        margin-bottom: 0.1rem;
+        background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        letter-spacing: -0.02em;
+        filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
+      }
+      .tagline {
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
+        opacity: 0.95;
+      }
+      .subtitle {
+        font-size: 0.8rem;
+        opacity: 0.9;
+      } /* Main Content */
+      .content {
+        display: grid;
+        grid-template-columns: 1.4fr 0.8fr 280px;
+        gap: 1rem;
+        padding: 1rem;
+        align-items: start;
+        position: relative;
+        z-index: 10;
+        overflow-y: auto;
+        max-height: calc(100vh - 120px);
+      } /* Features Section */
+      .features-section h2 {
+        font-size: 1.2rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        font-weight: 800;
+        background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        margin-bottom: 0.8rem;
+      }
+      .feature-card {
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #f8fafc 50%,
+          #f0f9ff 100%
+        );
+        border-radius: 10px;
+        padding: 0.8rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+        border: 2px solid #4f46e5;
+        background: linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #f0f9ff 50%,
+          #e0e7ff 100%
+        );
+      }
+      .feature-icon {
+        width: 35px;
+        height: 35px;
+        margin: 0 auto 0.4rem;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      .feature-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.2rem;
+      }
+      .feature-desc {
+        font-size: 0.65rem;
+        color: #6b7280;
+        line-height: 1.2;
+      }
+      .highlight-box {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 10px;
+        padding: 0.6rem;
+        text-align: center;
+        margin-top: 0.6rem;
+      }
+      .highlight-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #92400e;
+        margin-bottom: 0.2rem;
+      }
+      .highlight-text {
+        color: #78350f;
+        font-weight: 600;
+        font-size: 0.7rem;
+      } /* Technology Section */
+      .tech-section h2 {
+        font-size: 1rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        font-weight: 800;
+        background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .tech-stack {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+        margin-bottom: 0.8rem;
+      }
+      .tech-item {
+        background: white;
+        border-radius: 6px;
+        padding: 0.4rem;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s ease;
+      }
+      .tech-item:hover {
+        border-color: #4f46e5;
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
+      }
+      .tech-name {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 0.65rem;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 0.5rem;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-radius: 6px;
+        border: 2px solid #0ea5e9;
+      }
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #0ea5e9;
+        display: block;
+      }
+      .stat-label {
+        font-size: 0.6rem;
+        color: #0f172a;
+        margin-top: 0.5rem;
+        font-weight: 600;
+      } /* Tech Stack Section */
+      .tech-stack-section {
+        margin-top: 1rem;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+        border-radius: 10px;
+        border: 2px solid #6366f1;
+      }
+
+      .tech-stack-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.6rem;
+        text-align: center;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.3rem;
+      }
+
+      .tech-badge {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: white;
+        padding: 0.3rem 0.5rem;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 0.55rem;
+        font-weight: 700;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #475569;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .tech-badge::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .tech-badge:hover::before {
+        opacity: 1;
+      }
+
+      .tech-badge-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+      }
+
+      .tech-icon {
+        width: 14px;
+        height: 14px;
+        object-fit: contain;
+      }
+
+      .tech-badge:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-color: #6366f1;
+      }
+
+      /* QR Code Section */
+      .qr-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .qr-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+      }
+      .qr-title {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #1f2937;
+        text-align: center;
+        margin-bottom: 0.3rem;
+        background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .qr-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .qr-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border: 2px solid #f3f4f6;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+      .qr-item:hover {
+        border-color: #6366f1;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1),
+          0 4px 6px -2px rgba(99, 102, 241, 0.05);
+        background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      }
+      .qr-code {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 0.3rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .qr-item:hover .qr-code {
+        border-color: #6366f1;
+        box-shadow: 0 4px 8px rgba(99, 102, 241, 0.15);
+      }
+      .qr-label {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 0.7rem;
+        text-align: center;
+      }
+      .qr-url {
+        font-size: 0.5rem;
+        color: #6b7280;
+        text-align: center;
+        word-break: break-all;
+        margin-top: 0.2rem;
+      }
+
+      /* Homepage Image Section */
+      .homepage-section {
+        margin-top: 0.8rem;
+        text-align: center;
+      }
+
+      .images-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-top: 0.8rem;
+      }
+
+      .image-item {
+        text-align: center;
+      }
+
+      .homepage-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(45deg, #4f46e5, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .homepage-image {
+        width: 100%;
+        max-width: 110px;
+        height: auto;
+        min-height: 80px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        filter: brightness(1.02) contrast(1.05);
+      }
+
+      .homepage-image:hover {
+        transform: scale(1.08);
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1),
+          0 4px 6px -2px rgba(99, 102, 241, 0.05);
+        border-color: #6366f1;
+        filter: brightness(1.05) contrast(1.1);
+      }
+
+      /* Footer */
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.6rem;
+      }
+      .footer-right {
+        font-size: 0.6rem;
+        opacity: 0.8;
+      } /* Professional Section */
+      .professional-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 2px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 0.8rem;
+        margin-top: 0.6rem;
+        text-align: left;
+      }
+
+      .professional-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .professional-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+      }
+
+      .professional-item {
+        background: white;
+        padding: 0.5rem;
+        border-radius: 6px;
+        border-left: 3px solid #4f46e5;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .professional-item-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.2rem;
+      }
+
+      .professional-item-desc {
+        font-size: 0.6rem;
+        color: #64748b;
+        line-height: 1.3;
+      }
+
+      /* Background Effects */
+      .poster::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 25% 25%,
+            rgba(99, 102, 241, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            rgba(139, 92, 246, 0.03) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(236, 72, 153, 0.02) 0%,
+            transparent 70%
+          );
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .poster::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.02'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        z-index: 1;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="poster">
+      <div class="header">
+        <div class="logo">🧠 BrainiX</div>
+        <div class="tagline">Your Gateway to Knowledge and Skills</div>
+        <div class="subtitle">
+          Discover courses, connect with instructors, and unlock your potential
+          with our intelligent learning platform
+        </div>
+      </div>
+      <div class="content">
+        <div class="features-section">
+          <h2>Revolutionizing Online Education</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">🤖</div>
+              <div class="feature-title">AI-Powered Course Recommendations</div>
+              <div class="feature-desc">
+                BrainiX analyzes your learning style and progress to suggest the
+                perfect courses for your educational journey
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">�</div>
+              <div class="feature-title">Interactive Learning Experience</div>
+              <div class="feature-desc">
+                Engage with multimedia content, quizzes, and hands-on projects
+                designed to enhance knowledge retention
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">�‍🏫</div>
+              <div class="feature-title">Expert Instructor Network</div>
+              <div class="feature-desc">
+                Learn from industry professionals and experienced educators who
+                bring real-world expertise to every lesson
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">�</div>
+              <div class="feature-title">Personalized Learning Paths</div>
+              <div class="feature-desc">
+                Create customized study plans that adapt to your schedule,
+                goals, and preferred learning methods
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box">
+            <div class="highlight-title">
+              🚀 Transform Your Future with BrainiX
+            </div>
+            <div class="highlight-text">
+              Join thousands of learners who have discovered new skills,
+              advanced their careers, and achieved their dreams through our
+              innovative platform
+            </div>
+            <div
+              class="highlight-text"
+              style="margin-top: 0.8rem; font-size: 0.75rem; line-height: 1.4"
+            >
+              Whether you're a beginner starting your first course or a
+              professional looking to upskill, BrainiX provides the tools,
+              resources, and community support you need to succeed. Our
+              intelligent platform adapts to your learning style, tracks your
+              progress, and celebrates your achievements every step of the way.
+            </div>
+            <div
+              class="highlight-text"
+              style="
+                margin-top: 0.6rem;
+                font-size: 0.7rem;
+                font-style: italic;
+                color: #78350f;
+              "
+            >
+              "Start your learning journey today and discover what you're truly
+              capable of achieving!"
+            </div>
+          </div>
+          <div class="tech-stack-section">
+            <div class="tech-stack-title">⚡ Built With Modern Technology</div>
+            <div class="tech-grid">
+              <div class="tech-badge nextjs">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg"
+                    alt="Next.js"
+                  />
+                  Next.js 14
+                </div>
+              </div>
+              <div class="tech-badge react">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+                    alt="React"
+                  />
+                  React 18
+                </div>
+              </div>
+              <div class="tech-badge typescript">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+                    alt="TypeScript"
+                  />
+                  TypeScript
+                </div>
+              </div>
+              <div class="tech-badge tailwind">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://static-00.iconduck.com/assets.00/tailwind-css-icon-2048x1229-u8dzt4uh.png"
+                    alt="Tailwind"
+                  />
+                  Tailwind CSS
+                </div>
+              </div>
+              <div class="tech-badge prisma">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://www.prisma.io/images/favicon-32x32.png"
+                    alt="Prisma"
+                  />
+                  Prisma ORM
+                </div>
+              </div>
+              <div class="tech-badge postgresql">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg"
+                    alt="PostgreSQL"
+                  />
+                  PostgreSQL
+                </div>
+              </div>
+              <div class="tech-badge clerk">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://cdn.sanity.io/images/o0o2tn5x/production/2399b991025c365aafaa6fca85d91deac801e654-1046x1046.png"
+                    alt="Clerk"
+                  />
+                  Clerk Auth
+                </div>
+              </div>
+              <div class="tech-badge stripe">
+                <div class="tech-badge-content">
+                  <img
+                    class="tech-icon"
+                    src="https://stripe.com/favicon.ico"
+                    alt="Stripe"
+                  />
+                  Stripe API
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tech-section">
+          <h2>What Makes BrainiX Special</h2>
+          <div class="tech-stack">
+            <div class="tech-item">
+              <div class="tech-name">Course Marketplace</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-name">Progress Tracking</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-name">Interactive Quizzes</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-name">Secure Payment</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-name">Mobile Friendly</div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-name">24/7 Support</div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat-item">
+              <span class="stat-number">📖</span>
+              <span class="stat-label">Comprehensive Course Library</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">🏆</span>
+              <span class="stat-label">Skill Certificates</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">💬</span>
+              <span class="stat-label">Community Support</span>
+            </div>
+          </div>
+
+          <div class="professional-section">
+            <div class="professional-title">
+              💼 Professional Learning Solutions
+            </div>
+            <div class="professional-content">
+              <div class="professional-item">
+                <div class="professional-item-title">
+                  Enterprise-Grade Security
+                </div>
+                <div class="professional-item-desc">
+                  Advanced encryption and secure authentication ensure your
+                  learning data and progress remain protected
+                </div>
+              </div>
+              <div class="professional-item">
+                <div class="professional-item-title">
+                  Scalable Learning Infrastructure
+                </div>
+                <div class="professional-item-desc">
+                  Built to handle thousands of concurrent users with seamless
+                  performance and reliability
+                </div>
+              </div>
+              <div class="professional-item">
+                <div class="professional-item-title">Analytics & Reporting</div>
+                <div class="professional-item-desc">
+                  Comprehensive learning analytics and detailed progress reports
+                  for institutional and corporate clients
+                </div>
+              </div>
+              <div class="professional-item">
+                <div class="professional-item-title">
+                  Integration Capabilities
+                </div>
+                <div class="professional-item-desc">
+                  Seamless integration with existing LMS systems and third-party
+                  educational tools
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="qr-section">
+          <div class="qr-title">Experience BrainiX</div>
+          <div class="qr-container">
+            <div class="qr-item">
+              <img
+                class="qr-code"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://brainix-capstone.vercel.app"
+                alt="Live Demo QR"
+              />
+              <div class="qr-label">🌐 Live Demo</div>
+              <div class="qr-url">brainix-capstone.vercel.app</div>
+            </div>
+            <div class="qr-item">
+              <img
+                class="qr-code"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://github.com/diwanmalla/BrainiX"
+                alt="GitHub QR"
+              />
+              <div class="qr-label">💻 Source Code</div>
+              <div class="qr-url">github.com/diwanmalla/BrainiX</div>
+            </div>
+            <div class="qr-item">
+              <img
+                class="qr-code"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https://github.com/DiwanMalla/brainiX-app"
+                alt="Mobile App QR"
+              />
+              <div class="qr-label">📱 Mobile App</div>
+              <div class="qr-url">github.com/DiwanMalla/brainiX-app</div>
+            </div>
+          </div>
+
+          <div class="images-container">
+            <div class="image-item">
+              <div class="homepage-title">🏠 Web Platform</div>
+              <img
+                class="homepage-image"
+                src="public/images/homepage.jpeg"
+                alt="BrainiX Homepage"
+              />
+            </div>
+            <div class="image-item">
+              <div class="homepage-title">📱 Mobile App</div>
+              <img
+                class="homepage-image"
+                src="public/images/mobile.PNG"
+                alt="BrainiX Mobile App"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
