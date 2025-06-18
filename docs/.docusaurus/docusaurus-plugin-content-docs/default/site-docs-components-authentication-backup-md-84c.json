@@ -1,0 +1,15 @@
+{
+  "id": "components/authentication-backup",
+  "title": "Authentication System",
+  "description": "The BrainiX platform implements a comprehensive authentication and authorization system using Clerk for secure user management with role-based access control.",
+  "source": "@site/docs/components/authentication-backup.md",
+  "sourceDirName": "components",
+  "slug": "/components/authentication-backup",
+  "permalink": "/docs/components/authentication-backup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/authentication-backup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

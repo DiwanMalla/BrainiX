@@ -1,0 +1,15 @@
+{
+  "id": "components/course-management-backup",
+  "title": "Course Management System",
+  "description": "The BrainiX platform provides a comprehensive course management system that enables instructors to create, organize, and deliver educational content while tracking student progress and engagement.",
+  "source": "@site/docs/components/course-management-backup.md",
+  "sourceDirName": "components",
+  "slug": "/components/course-management-backup",
+  "permalink": "/docs/components/course-management-backup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/course-management-backup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

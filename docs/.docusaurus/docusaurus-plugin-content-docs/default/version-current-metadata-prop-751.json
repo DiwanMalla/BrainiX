@@ -1,0 +1,221 @@
+{
+  "pluginId": "default",
+  "version": "current",
+  "label": "Next",
+  "banner": null,
+  "badge": false,
+  "noIndex": false,
+  "className": "docs-version-current",
+  "isLast": true,
+  "docsSidebars": {
+    "tutorialSidebar": [
+      {
+        "type": "link",
+        "label": "Introduction",
+        "href": "/docs/introduction",
+        "docId": "introduction",
+        "unlisted": false
+      },
+      {
+        "type": "link",
+        "label": "Welcome to BrainiX",
+        "href": "/docs/",
+        "docId": "index",
+        "unlisted": false
+      },
+      {
+        "type": "category",
+        "label": "Architecture",
+        "items": [
+          {
+            "type": "link",
+            "label": "System Architecture Overview",
+            "href": "/docs/architecture/overview",
+            "docId": "architecture/overview",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Technology Stack",
+            "href": "/docs/architecture/technology-stack",
+            "docId": "architecture/technology-stack",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Database Schema",
+            "href": "/docs/architecture/database-schema",
+            "docId": "architecture/database-schema",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "API Design",
+            "href": "/docs/architecture/api-design",
+            "docId": "architecture/api-design",
+            "unlisted": false
+          }
+        ],
+        "collapsed": true,
+        "collapsible": true
+      },
+      {
+        "type": "category",
+        "label": "Components",
+        "items": [
+          {
+            "type": "link",
+            "label": "AI Features",
+            "href": "/docs/components/ai-features",
+            "docId": "components/ai-features",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Authentication System",
+            "href": "/docs/components/authentication",
+            "docId": "components/authentication",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Course Management System",
+            "href": "/docs/components/course-management",
+            "docId": "components/course-management",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "learning-system",
+            "href": "/docs/components/learning-system",
+            "docId": "components/learning-system",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Payment Processing",
+            "href": "/docs/components/payment-processing",
+            "docId": "components/payment-processing",
+            "unlisted": false
+          }
+        ],
+        "collapsed": true,
+        "collapsible": true
+      },
+      {
+        "type": "category",
+        "label": "Frontend",
+        "items": [
+          {
+            "type": "link",
+            "label": "Component System",
+            "href": "/docs/frontend/component-system",
+            "docId": "frontend/component-system",
+            "unlisted": false
+          }
+        ],
+        "collapsed": true,
+        "collapsible": true
+      }
+    ]
+  },
+  "docs": {
+    "architecture/api-design": {
+      "id": "architecture/api-design",
+      "title": "API Design",
+      "description": "Comprehensive REST API architecture and endpoint documentation for BrainiX",
+      "sidebar": "tutorialSidebar"
+    },
+    "architecture/database-schema": {
+      "id": "architecture/database-schema",
+      "title": "Database Schema",
+      "description": "Comprehensive database design and relationships for the BrainiX Learning Platform",
+      "sidebar": "tutorialSidebar"
+    },
+    "architecture/overview": {
+      "id": "architecture/overview",
+      "title": "System Architecture Overview",
+      "description": "High-level architecture and design patterns of the BrainiX Learning Platform",
+      "sidebar": "tutorialSidebar"
+    },
+    "architecture/technology-stack": {
+      "id": "architecture/technology-stack",
+      "title": "Technology Stack",
+      "description": "Comprehensive overview of technologies, frameworks, and tools used in BrainiX",
+      "sidebar": "tutorialSidebar"
+    },
+    "components/ai-features": {
+      "id": "components/ai-features",
+      "title": "AI Features",
+      "description": "The BrainiX platform leverages AI technologies to enhance the learning experience through intelligent quiz generation, personalized recommendations, and chat assistance.",
+      "sidebar": "tutorialSidebar"
+    },
+    "components/ai-features-backup": {
+      "id": "components/ai-features-backup",
+      "title": "AI Features",
+      "description": "The BrainiX platform leverages cutting-edge AI technologies to enhance the learning experience through intelligent quiz generation, personalized course recommendations, and interactive chat assistance."
+    },
+    "components/authentication": {
+      "id": "components/authentication",
+      "title": "Authentication System",
+      "description": "Secure authentication and authorization system using Clerk",
+      "sidebar": "tutorialSidebar"
+    },
+    "components/authentication-backup": {
+      "id": "components/authentication-backup",
+      "title": "Authentication System",
+      "description": "The BrainiX platform implements a comprehensive authentication and authorization system using Clerk for secure user management with role-based access control."
+    },
+    "components/course-management": {
+      "id": "components/course-management",
+      "title": "Course Management System",
+      "description": "The BrainiX platform provides a comprehensive course management system for creating, organizing, and delivering educational content with progress tracking.",
+      "sidebar": "tutorialSidebar"
+    },
+    "components/course-management-backup": {
+      "id": "components/course-management-backup",
+      "title": "Course Management System",
+      "description": "The BrainiX platform provides a comprehensive course management system that enables instructors to create, organize, and deliver educational content while tracking student progress and engagement."
+    },
+    "components/learning-system": {
+      "id": "components/learning-system",
+      "title": "learning-system",
+      "description": "",
+      "sidebar": "tutorialSidebar"
+    },
+    "components/learning-system-backup": {
+      "id": "components/learning-system-backup",
+      "title": "Learning System",
+      "description": "The BrainiX learning system provides an immersive and interactive educational experience with comprehensive progress tracking, AI-powered assessments, and personalized learning paths."
+    },
+    "components/payment-processing": {
+      "id": "components/payment-processing",
+      "title": "Payment Processing",
+      "description": "Secure payment processing with Stripe integration",
+      "sidebar": "tutorialSidebar"
+    },
+    "components/payment-processing-backup": {
+      "id": "components/payment-processing-backup",
+      "title": "Payment Processing",
+      "description": "The BrainiX platform implements secure payment processing using Stripe, featuring multiple payment methods, coupon systems, and order management."
+    },
+    "frontend/component-system": {
+      "id": "frontend/component-system",
+      "title": "Component System",
+      "description": "The BrainiX frontend is built with a modern, scalable component architecture using React 18, TypeScript, and a comprehensive design system powered by Radix UI and Shadcn/ui components.",
+      "sidebar": "tutorialSidebar"
+    },
+    "index": {
+      "id": "index",
+      "title": "Welcome to BrainiX",
+      "description": "Comprehensive technical documentation for the BrainiX Learning Platform",
+      "sidebar": "tutorialSidebar"
+    },
+    "introduction": {
+      "id": "introduction",
+      "title": "Introduction",
+      "description": "Technical documentation for the BrainiX Learning Platform",
+      "sidebar": "tutorialSidebar"
+    }
+  }
+}

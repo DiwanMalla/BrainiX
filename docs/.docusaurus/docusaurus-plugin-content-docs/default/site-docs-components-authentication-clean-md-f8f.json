@@ -1,0 +1,15 @@
+{
+  "id": "components/authentication-clean",
+  "title": "Authentication System",
+  "description": "The BrainiX platform implements secure authentication using Clerk with role-based access control for Students, Instructors, and Admins.",
+  "source": "@site/docs/components/authentication-clean.md",
+  "sourceDirName": "components",
+  "slug": "/components/authentication-clean",
+  "permalink": "/docs/components/authentication-clean",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/authentication-clean.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

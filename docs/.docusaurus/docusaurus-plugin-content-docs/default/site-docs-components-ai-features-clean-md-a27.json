@@ -1,0 +1,15 @@
+{
+  "id": "components/ai-features-clean",
+  "title": "AI Features",
+  "description": "The BrainiX platform leverages AI technologies to enhance the learning experience through intelligent quiz generation, personalized recommendations, and chat assistance.",
+  "source": "@site/docs/components/ai-features-clean.md",
+  "sourceDirName": "components",
+  "slug": "/components/ai-features-clean",
+  "permalink": "/docs/components/ai-features-clean",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/ai-features-clean.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

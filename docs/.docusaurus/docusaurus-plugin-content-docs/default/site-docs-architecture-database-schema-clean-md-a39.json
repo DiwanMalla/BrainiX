@@ -1,0 +1,20 @@
+{
+  "id": "architecture/database-schema-clean",
+  "title": "Database Schema",
+  "description": "Comprehensive database design and relationships for the BrainiX Learning Platform",
+  "source": "@site/docs/architecture/database-schema-clean.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/database-schema-clean",
+  "permalink": "/docs/architecture/database-schema-clean",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/database-schema-clean.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3,
+    "title": "Database Schema",
+    "description": "Comprehensive database design and relationships for the BrainiX Learning Platform"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "components/course-management",
+  "title": "Course Management System",
+  "description": "The BrainiX platform provides a comprehensive course management system for creating, organizing, and delivering educational content with progress tracking.",
+  "source": "@site/docs/components/course-management.md",
+  "sourceDirName": "components",
+  "slug": "/components/course-management",
+  "permalink": "/docs/components/course-management",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/course-management.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Authentication System",
+    "permalink": "/docs/components/authentication"
+  },
+  "next": {
+    "title": "learning-system",
+    "permalink": "/docs/components/learning-system"
+  }
+}

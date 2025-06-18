@@ -1,0 +1,34 @@
+{
+  "id": "introduction",
+  "title": "Introduction",
+  "description": "Technical documentation for the BrainiX Learning Platform",
+  "source": "@site/docs/introduction.md",
+  "sourceDirName": ".",
+  "slug": "/introduction",
+  "permalink": "/docs/introduction",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/introduction.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "id": "introduction",
+    "title": "Introduction",
+    "description": "Technical documentation for the BrainiX Learning Platform",
+    "keywords": [
+      "brainix",
+      "learning platform",
+      "nextjs",
+      "typescript",
+      "ai",
+      "education"
+    ]
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Welcome to BrainiX",
+    "permalink": "/docs/"
+  }
+}

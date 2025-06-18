@@ -1,0 +1,15 @@
+{
+  "id": "components/payment-processing-clean",
+  "title": "payment-processing-clean",
+  "description": "",
+  "source": "@site/docs/components/payment-processing-clean.md",
+  "sourceDirName": "components",
+  "slug": "/components/payment-processing-clean",
+  "permalink": "/docs/components/payment-processing-clean",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/payment-processing-clean.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

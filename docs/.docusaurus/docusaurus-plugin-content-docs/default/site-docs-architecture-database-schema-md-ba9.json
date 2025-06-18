@@ -1,0 +1,29 @@
+{
+  "id": "architecture/database-schema",
+  "title": "Database Schema",
+  "description": "Comprehensive database design and relationships for the BrainiX Learning Platform",
+  "source": "@site/docs/architecture/database-schema.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/database-schema",
+  "permalink": "/docs/architecture/database-schema",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/database-schema.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3,
+    "title": "Database Schema",
+    "description": "Comprehensive database design and relationships for the BrainiX Learning Platform"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Technology Stack",
+    "permalink": "/docs/architecture/technology-stack"
+  },
+  "next": {
+    "title": "API Design",
+    "permalink": "/docs/architecture/api-design"
+  }
+}

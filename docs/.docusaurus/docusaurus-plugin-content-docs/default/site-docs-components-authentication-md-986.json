@@ -1,0 +1,29 @@
+{
+  "id": "components/authentication",
+  "title": "Authentication System",
+  "description": "Secure authentication and authorization system using Clerk",
+  "source": "@site/docs/components/authentication.md",
+  "sourceDirName": "components",
+  "slug": "/components/authentication",
+  "permalink": "/docs/components/authentication",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/authentication.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "title": "Authentication System",
+    "description": "Secure authentication and authorization system using Clerk"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "AI Features",
+    "permalink": "/docs/components/ai-features"
+  },
+  "next": {
+    "title": "Course Management System",
+    "permalink": "/docs/components/course-management"
+  }
+}

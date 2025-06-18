@@ -1,0 +1,20 @@
+{
+  "id": "architecture/overview-fixed",
+  "title": "System Architecture Overview",
+  "description": "High-level architecture and design patterns of the BrainiX Learning Platform",
+  "source": "@site/docs/architecture/overview-fixed.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/overview-fixed",
+  "permalink": "/docs/architecture/overview-fixed",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/overview-fixed.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "title": "System Architecture Overview",
+    "description": "High-level architecture and design patterns of the BrainiX Learning Platform"
+  }
+}

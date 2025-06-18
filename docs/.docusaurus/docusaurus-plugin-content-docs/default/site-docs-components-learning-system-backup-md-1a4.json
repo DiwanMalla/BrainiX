@@ -1,0 +1,15 @@
+{
+  "id": "components/learning-system-backup",
+  "title": "Learning System",
+  "description": "The BrainiX learning system provides an immersive and interactive educational experience with comprehensive progress tracking, AI-powered assessments, and personalized learning paths.",
+  "source": "@site/docs/components/learning-system-backup.md",
+  "sourceDirName": "components",
+  "slug": "/components/learning-system-backup",
+  "permalink": "/docs/components/learning-system-backup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/learning-system-backup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

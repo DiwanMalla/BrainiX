@@ -1,0 +1,15 @@
+{
+  "id": "components/learning-system-clean",
+  "title": "Learning System",
+  "description": "The BrainiX learning system provides an interactive educational experience with progress tracking, AI-powered assessments, and personalized learning paths.",
+  "source": "@site/docs/components/learning-system-clean.md",
+  "sourceDirName": "components",
+  "slug": "/components/learning-system-clean",
+  "permalink": "/docs/components/learning-system-clean",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/learning-system-clean.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

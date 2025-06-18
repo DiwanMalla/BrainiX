@@ -1,0 +1,20 @@
+{
+  "id": "frontend/component-system",
+  "title": "Component System",
+  "description": "The BrainiX frontend is built with a modern, scalable component architecture using React 18, TypeScript, and a comprehensive design system powered by Radix UI and Shadcn/ui components.",
+  "source": "@site/docs/frontend/component-system.md",
+  "sourceDirName": "frontend",
+  "slug": "/frontend/component-system",
+  "permalink": "/docs/frontend/component-system",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/frontend/component-system.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Payment Processing",
+    "permalink": "/docs/components/payment-processing"
+  }
+}

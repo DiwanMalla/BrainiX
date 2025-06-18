@@ -1,0 +1,29 @@
+{
+  "id": "components/payment-processing",
+  "title": "Payment Processing",
+  "description": "Secure payment processing with Stripe integration",
+  "source": "@site/docs/components/payment-processing.md",
+  "sourceDirName": "components",
+  "slug": "/components/payment-processing",
+  "permalink": "/docs/components/payment-processing",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/payment-processing.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_position": 4,
+    "title": "Payment Processing",
+    "description": "Secure payment processing with Stripe integration"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "learning-system",
+    "permalink": "/docs/components/learning-system"
+  },
+  "next": {
+    "title": "Component System",
+    "permalink": "/docs/frontend/component-system"
+  }
+}

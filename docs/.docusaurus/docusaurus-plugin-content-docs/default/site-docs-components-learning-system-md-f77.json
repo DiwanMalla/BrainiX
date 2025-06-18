@@ -1,0 +1,24 @@
+{
+  "id": "components/learning-system",
+  "title": "learning-system",
+  "description": "",
+  "source": "@site/docs/components/learning-system.md",
+  "sourceDirName": "components",
+  "slug": "/components/learning-system",
+  "permalink": "/docs/components/learning-system",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/learning-system.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Course Management System",
+    "permalink": "/docs/components/course-management"
+  },
+  "next": {
+    "title": "Payment Processing",
+    "permalink": "/docs/components/payment-processing"
+  }
+}

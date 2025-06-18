@@ -1,0 +1,24 @@
+{
+  "id": "components/ai-features",
+  "title": "AI Features",
+  "description": "The BrainiX platform leverages AI technologies to enhance the learning experience through intelligent quiz generation, personalized recommendations, and chat assistance.",
+  "source": "@site/docs/components/ai-features.md",
+  "sourceDirName": "components",
+  "slug": "/components/ai-features",
+  "permalink": "/docs/components/ai-features",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/ai-features.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "API Design",
+    "permalink": "/docs/architecture/api-design"
+  },
+  "next": {
+    "title": "Authentication System",
+    "permalink": "/docs/components/authentication"
+  }
+}

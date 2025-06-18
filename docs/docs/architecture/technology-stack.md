@@ -6,13 +6,14 @@ description: Comprehensive overview of technologies, frameworks, and tools used 
 
 # Technology Stack
 
-BrainiX leverages a modern, production-ready technology stack designed for scalability, performance, and developer experience. This document details every technology choice and the reasoning behind each decision.
+BrainiX leverages a modern, production-ready technology stack designed for scalability, performance, and developer experience.
 
 ## 🎯 Technology Philosophy
 
 Our technology selections are based on:
+
 - **Developer Experience**: Modern tooling with excellent DX
-- **Performance**: Optimized for speed and efficiency  
+- **Performance**: Optimized for speed and efficiency
 - **Scalability**: Ready for enterprise-level growth
 - **Community**: Strong ecosystem and long-term support
 - **Security**: Industry-standard security practices
@@ -21,37 +22,197 @@ Our technology selections are based on:
 
 ### Core Framework
 
-<div className="tech-specs">
-
-| Technology | Version | Purpose | Why Chosen |
-|------------|---------|---------|------------|
-| **Next.js** | 14.2.x | React Framework | App Router, SSR/SSG, API routes, excellent DX |
-| **React** | 18.3.x | UI Library | Component-based, huge ecosystem, team expertise |
-| **TypeScript** | 5.4.x | Type System | Type safety, better IDE support, fewer runtime errors |
-
-</div>
+| Technology     | Version | Purpose         | Why Chosen                                            |
+| -------------- | ------- | --------------- | ----------------------------------------------------- |
+| **Next.js**    | 14.2.x  | React Framework | App Router, SSR/SSG, API routes, excellent DX         |
+| **React**      | 18.3.x  | UI Library      | Component-based, huge ecosystem, team expertise       |
+| **TypeScript** | 5.4.x   | Type System     | Type safety, better IDE support, fewer runtime errors |
 
 ```typescript
 // Next.js 14 App Router configuration
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     appDir: true,
-    serverComponentsExternalPackages: ['@prisma/client'],
-    optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react']
+    serverComponentsExternalPackages: ["@prisma/client"],
   },
   images: {
-    domains: ['res.cloudinary.com', 'images.unsplash.com'],
-    formats: ['image/webp', 'image/avif']
+    domains: ["res.cloudinary.com", "images.unsplash.com"],
   },
-  webpack: (config, { dev, isServer }) => {
-    if (dev && !isServer) {
-      config.optimization.usedExports = true;
+};
+```
+
+### UI & Styling
+
+| Technology       | Purpose             | Implementation                          |
+| ---------------- | ------------------- | --------------------------------------- |
+| **Tailwind CSS** | Utility-First CSS   | Rapid UI development, consistent design |
+| **Shadcn/ui**    | Component Library   | Pre-built accessible components         |
+| **Radix UI**     | Headless Components | Accessibility-first primitives          |
+
+```css
+/* Tailwind configuration for custom theme */
+module.exports = {
+  content: ['./app/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3b82f6',
+        secondary: '#6366f1'
+      }
     }
-    return config;
   }
 };
 ```
+
+### State Management
+
+| Technology        | Purpose      | Use Case                    |
+| ----------------- | ------------ | --------------------------- |
+| **React Context** | Global State | User auth, cart state       |
+| **React Query**   | Server State | API data fetching & caching |
+| **Zustand**       | Client State | Simple state management     |
+
+## 🔧 Backend Technologies
+
+### Core Backend
+
+| Technology             | Version | Purpose     | Implementation                         |
+| ---------------------- | ------- | ----------- | -------------------------------------- |
+| **Next.js API Routes** | 14.2.x  | Backend API | Server-side logic, RESTful endpoints   |
+| **Prisma**             | 5.x     | ORM         | Database modeling, migrations, queries |
+| **PostgreSQL**         | 15+     | Database    | Production-ready RDBMS                 |
+
+```typescript
+// Prisma schema example
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(STUDENT)
+  courses   Enrollment[]
+  createdAt DateTime @default(now())
+}
+```
+
+### Authentication & Security
+
+| Technology | Purpose          | Features                                |
+| ---------- | ---------------- | --------------------------------------- |
+| **Clerk**  | Authentication   | Multi-provider auth, session management |
+| **RBAC**   | Authorization    | Role-based access control               |
+| **JWT**    | Token Management | Secure API access                       |
+
+### Payment Processing
+
+| Technology   | Purpose         | Integration                              |
+| ------------ | --------------- | ---------------------------------------- |
+| **Stripe**   | Payment Gateway | Subscriptions, one-time payments         |
+| **Webhooks** | Event Handling  | Payment confirmations, user provisioning |
+
+## 🤖 AI & Machine Learning
+
+### Core AI Technologies
+
+| Technology          | Purpose            | Implementation                            |
+| ------------------- | ------------------ | ----------------------------------------- |
+| **OpenAI GPT-4**    | Content Generation | Course creation, Q&A assistance           |
+| **Langchain**       | AI Orchestration   | Chain complex AI workflows                |
+| **Vector Database** | Semantic Search    | Course content search and recommendations |
+
+```typescript
+// AI integration example
+import { openai } from "@/lib/openai";
+
+export async function generateCourseContent(prompt: string) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{ role: "user", content: prompt }],
+  });
+  return response.choices[0].message.content;
+}
+```
+
+## 🛠️ Development Tools
+
+### Core Development
+
+| Tool         | Purpose         | Benefits                     |
+| ------------ | --------------- | ---------------------------- |
+| **VS Code**  | IDE             | Excellent TypeScript support |
+| **ESLint**   | Code Linting    | Code quality enforcement     |
+| **Prettier** | Code Formatting | Consistent code style        |
+| **Husky**    | Git Hooks       | Pre-commit quality checks    |
+
+### Package Management
+
+| Tool      | Purpose          | Why Chosen                            |
+| --------- | ---------------- | ------------------------------------- |
+| **pnpm**  | Package Manager  | Faster installs, disk space efficient |
+| **Turbo** | Monorepo Tooling | Build system optimization             |
+
+## 📊 Monitoring & Analytics
+
+### Performance Monitoring
+
+| Technology           | Purpose              | Implementation              |
+| -------------------- | -------------------- | --------------------------- |
+| **Vercel Analytics** | Performance Tracking | Real-time metrics           |
+| **Sentry**           | Error Tracking       | Production error monitoring |
+| **PostHog**          | User Analytics       | User behavior tracking      |
+
+## 🚀 Deployment & Infrastructure
+
+### Hosting & Deployment
+
+| Technology     | Purpose          | Benefits                    |
+| -------------- | ---------------- | --------------------------- |
+| **Vercel**     | Frontend Hosting | Seamless Next.js deployment |
+| **Railway**    | Database Hosting | PostgreSQL with backups     |
+| **Cloudinary** | Media Storage    | Image/video optimization    |
+
+### CI/CD Pipeline
+
+```yaml
+# GitHub Actions workflow
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pnpm install
+      - run: pnpm build
+      - uses: vercel/action@v1
+```
+
+## 🔒 Security Features
+
+### Security Implementations
+
+| Feature                   | Technology         | Purpose                 |
+| ------------------------- | ------------------ | ----------------------- |
+| **Environment Variables** | .env.local         | Secure configuration    |
+| **CORS**                  | Next.js middleware | Cross-origin protection |
+| **Rate Limiting**         | Custom middleware  | API protection          |
+| **Data Validation**       | Zod                | Runtime type checking   |
+
+```typescript
+// Security middleware example
+export function middleware(request: NextRequest) {
+  // Rate limiting and security checks
+  return clerkMiddleware()(request);
+}
+```
+
+This technology stack provides a robust foundation for BrainiX, ensuring scalability, maintainability, and an excellent developer experience while delivering a high-performance learning platform.
+return config;
+}
+};
+
+````
 
 ### Styling & UI
 
@@ -98,18 +259,18 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 }
-```
+````
 
 ### State Management & Data Fetching
 
 <div className="tech-specs">
 
-| Technology | Version | Purpose | Implementation |
-|------------|---------|---------|----------------|
-| **React Context** | Built-in | Global state | User context, cart context, theme context |
-| **React Hook Form** | 7.5.x | Form management | Type-safe forms, validation, performance |
-| **Zod** | 3.23.x | Schema validation | Runtime type checking, form validation |
-| **SWR / React Query** | 2.2.x | Data fetching | Caching, revalidation, optimistic updates |
+| Technology            | Version  | Purpose           | Implementation                            |
+| --------------------- | -------- | ----------------- | ----------------------------------------- |
+| **React Context**     | Built-in | Global state      | User context, cart context, theme context |
+| **React Hook Form**   | 7.5.x    | Form management   | Type-safe forms, validation, performance  |
+| **Zod**               | 3.23.x   | Schema validation | Runtime type checking, form validation    |
+| **SWR / React Query** | 2.2.x    | Data fetching     | Caching, revalidation, optimistic updates |
 
 </div>
 
@@ -118,7 +279,7 @@ module.exports = {
 interface AppContextType {
   user: User | null;
   cart: CartItem[];
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   addToCart: (courseId: string) => Promise<void>;
   removeFromCart: (courseId: string) => Promise<void>;
   toggleTheme: () => void;
@@ -131,16 +292,20 @@ const courseSchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
   description: z.string().min(10).max(5000),
   price: z.number().positive().max(9999.99),
-  categoryId: z.string().uuid()
+  categoryId: z.string().uuid(),
 });
 
 type CourseFormData = z.infer<typeof courseSchema>;
 
 const CourseForm = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CourseFormData>({
-    resolver: zodResolver(courseSchema)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CourseFormData>({
+    resolver: zodResolver(courseSchema),
   });
-  
+
   const onSubmit = async (data: CourseFormData) => {
     // Handle form submission
   };
@@ -153,11 +318,11 @@ const CourseForm = () => {
 
 <div className="tech-specs">
 
-| Technology | Version | Purpose | Advantages |
-|------------|---------|---------|------------|
-| **Node.js** | 20.x LTS | Runtime environment | JavaScript everywhere, large ecosystem |
-| **Next.js API Routes** | 14.2.x | Backend framework | Serverless functions, edge runtime support |
-| **Middleware** | Custom | Request processing | Authentication, validation, logging |
+| Technology             | Version  | Purpose             | Advantages                                 |
+| ---------------------- | -------- | ------------------- | ------------------------------------------ |
+| **Node.js**            | 20.x LTS | Runtime environment | JavaScript everywhere, large ecosystem     |
+| **Next.js API Routes** | 14.2.x   | Backend framework   | Serverless functions, edge runtime support |
+| **Middleware**         | Custom   | Request processing  | Authentication, validation, logging        |
 
 </div>
 
@@ -165,11 +330,11 @@ const CourseForm = () => {
 
 <div className="tech-specs">
 
-| Technology | Version | Purpose | Benefits |
-|------------|---------|---------|---------|
-| **PostgreSQL** | 15.x | Primary database | ACID compliance, JSON support, performance |
-| **Prisma** | 5.1.x | ORM & Query Builder | Type safety, migrations, excellent DX |
-| **Redis** | 7.x | Caching layer | In-memory performance, pub/sub, sessions |
+| Technology     | Version | Purpose             | Benefits                                   |
+| -------------- | ------- | ------------------- | ------------------------------------------ |
+| **PostgreSQL** | 15.x    | Primary database    | ACID compliance, JSON support, performance |
+| **Prisma**     | 5.1.x   | ORM & Query Builder | Type safety, migrations, excellent DX      |
+| **Redis**      | 7.x     | Caching layer       | In-memory performance, pub/sub, sessions   |
 
 </div>
 
@@ -189,15 +354,15 @@ model User {
   email    String @unique
   name     String
   role     UserRole @default(STUDENT)
-  
+
   // Relations
   courses     Course[]     @relation("InstructorCourses")
   enrollments Enrollment[]
   orders      Order[]
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("users")
 }
 
@@ -207,17 +372,17 @@ model Course {
   description String  @db.Text
   price       Decimal @db.Decimal(10, 2)
   published   Boolean @default(false)
-  
+
   // Relations
   instructor   User   @relation("InstructorCourses", fields: [instructorId], references: [id])
   instructorId String
-  
+
   modules     Module[]
   enrollments Enrollment[]
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("courses")
 }
 ```
@@ -226,25 +391,25 @@ model Course {
 
 <div className="tech-specs">
 
-| Technology | Version | Purpose | Features |
-|------------|---------|---------|----------|
-| **Clerk** | 4.29.x | Authentication | SSO, MFA, user management, webhooks |
-| **JWT** | Standard | Token format | Stateless authentication, claims-based |
-| **bcrypt** | 5.1.x | Password hashing | Secure password storage |
-| **Helmet** | 7.0.x | Security headers | XSS protection, CSRF prevention |
+| Technology | Version  | Purpose          | Features                               |
+| ---------- | -------- | ---------------- | -------------------------------------- |
+| **Clerk**  | 4.29.x   | Authentication   | SSO, MFA, user management, webhooks    |
+| **JWT**    | Standard | Token format     | Stateless authentication, claims-based |
+| **bcrypt** | 5.1.x    | Password hashing | Secure password storage                |
+| **Helmet** | 7.0.x    | Security headers | XSS protection, CSRF prevention        |
 
 </div>
 
 ```typescript
 // Clerk middleware configuration
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/courses(.*)',
-  '/api/webhooks(.*)'
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/courses(.*)",
+  "/api/webhooks(.*)",
 ]);
 
 export default clerkMiddleware((auth, request) => {
@@ -254,7 +419,7 @@ export default clerkMiddleware((auth, request) => {
 });
 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
 ```
 
@@ -262,29 +427,29 @@ export const config = {
 
 <div className="tech-specs">
 
-| Technology | Version | Purpose | Integration |
-|------------|---------|---------|-------------|
-| **Stripe** | Latest | Payment processing | Checkout, webhooks, subscriptions |
-| **Stripe Elements** | Latest | Secure forms | PCI compliance, card processing |
+| Technology          | Version | Purpose            | Integration                       |
+| ------------------- | ------- | ------------------ | --------------------------------- |
+| **Stripe**          | Latest  | Payment processing | Checkout, webhooks, subscriptions |
+| **Stripe Elements** | Latest  | Secure forms       | PCI compliance, card processing   |
 
 </div>
 
 ```typescript
 // Stripe integration
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
+  apiVersion: "2023-10-16",
   typescript: true,
 });
 
 // Create checkout session
 export async function createCheckoutSession(orderData: OrderData) {
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: orderData.items.map(item => ({
+    payment_method_types: ["card"],
+    line_items: orderData.items.map((item) => ({
       price_data: {
-        currency: 'usd',
+        currency: "usd",
         product_data: {
           name: item.course.title,
           description: item.course.description,
@@ -293,7 +458,7 @@ export async function createCheckoutSession(orderData: OrderData) {
       },
       quantity: 1,
     })),
-    mode: 'payment',
+    mode: "payment",
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/cart`,
     metadata: {
@@ -310,12 +475,12 @@ export async function createCheckoutSession(orderData: OrderData) {
 
 <div className="tech-specs">
 
-| Service | Version | Purpose | Integration |
-|---------|---------|---------|-------------|
-| **Groq Cloud** | Latest | AI Quiz Generation | Llama 3.1 70B model for content analysis |
-| **Google Gemini** | Latest | Chat & Recommendations | Natural language processing |
-| **YouTube API** | v3 | Video Management | Video embedding, metadata |
-| **Cloudinary** | Latest | Media Management | Image/video processing, CDN |
+| Service           | Version | Purpose                | Integration                              |
+| ----------------- | ------- | ---------------------- | ---------------------------------------- |
+| **Groq Cloud**    | Latest  | AI Quiz Generation     | Llama 3.1 70B model for content analysis |
+| **Google Gemini** | Latest  | Chat & Recommendations | Natural language processing              |
+| **YouTube API**   | v3      | Video Management       | Video embedding, metadata                |
+| **Cloudinary**    | Latest  | Media Management       | Image/video processing, CDN              |
 
 </div>
 
@@ -323,28 +488,32 @@ export async function createCheckoutSession(orderData: OrderData) {
 // AI service integration
 class AIQuizService {
   async generateQuiz(lessonContent: string): Promise<Question[]> {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3-70b-8192',
-        messages: [
-          {
-            role: 'system',
-            content: 'Generate 5 multiple-choice questions based on lesson content.'
-          },
-          {
-            role: 'user',
-            content: lessonContent
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000
-      })
-    });
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama3-70b-8192",
+          messages: [
+            {
+              role: "system",
+              content:
+                "Generate 5 multiple-choice questions based on lesson content.",
+            },
+            {
+              role: "user",
+              content: lessonContent,
+            },
+          ],
+          temperature: 0.7,
+          max_tokens: 2000,
+        }),
+      }
+    );
 
     const data = await response.json();
     return this.parseQuestions(data.choices[0].message.content);
@@ -358,12 +527,12 @@ class AIQuizService {
 
 <div className="tech-specs">
 
-| Tool | Version | Purpose | Configuration |
-|------|---------|---------|---------------|
-| **ESLint** | 8.57.x | Code linting | TypeScript rules, React hooks |
-| **Prettier** | 3.0.x | Code formatting | Consistent style, automatic formatting |
-| **Husky** | 8.0.x | Git hooks | Pre-commit validation |
-| **lint-staged** | 13.2.x | Staged file linting | Performance optimization |
+| Tool            | Version | Purpose             | Configuration                          |
+| --------------- | ------- | ------------------- | -------------------------------------- |
+| **ESLint**      | 8.57.x  | Code linting        | TypeScript rules, React hooks          |
+| **Prettier**    | 3.0.x   | Code formatting     | Consistent style, automatic formatting |
+| **Husky**       | 8.0.x   | Git hooks           | Pre-commit validation                  |
+| **lint-staged** | 13.2.x  | Staged file linting | Performance optimization               |
 
 </div>
 
@@ -395,27 +564,27 @@ class AIQuizService {
 
 <div className="tech-specs">
 
-| Tool | Version | Purpose | Features |
-|------|---------|---------|---------|
-| **Jest** | 29.5.x | Unit testing | Snapshot testing, mocking, coverage |
-| **React Testing Library** | 14.0.x | Component testing | User-centric testing approach |
-| **Playwright** | 1.36.x | E2E testing | Cross-browser, visual regression |
-| **MSW** | 1.2.x | API mocking | Service worker based mocking |
+| Tool                      | Version | Purpose           | Features                            |
+| ------------------------- | ------- | ----------------- | ----------------------------------- |
+| **Jest**                  | 29.5.x  | Unit testing      | Snapshot testing, mocking, coverage |
+| **React Testing Library** | 14.0.x  | Component testing | User-centric testing approach       |
+| **Playwright**            | 1.36.x  | E2E testing       | Cross-browser, visual regression    |
+| **MSW**                   | 1.2.x   | API mocking       | Service worker based mocking        |
 
 </div>
 
 ```typescript
 // Jest configuration
 const config = {
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{js,jsx,ts,tsx}',
+    "src/**/*.{js,jsx,ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.stories.{js,jsx,ts,tsx}",
   ],
   coverageThreshold: {
     global: {
@@ -434,12 +603,12 @@ export default config;
 
 <div className="tech-specs">
 
-| Tool | Version | Purpose | Features |
-|------|---------|---------|---------|
-| **Webpack** | 5.x (Next.js) | Module bundling | Code splitting, optimization |
-| **Turbopack** | Latest | Next.js bundler | Faster builds (development) |
-| **Vercel** | Platform | Deployment | Edge functions, CDN, analytics |
-| **GitHub Actions** | Latest | CI/CD | Automated testing, deployment |
+| Tool               | Version       | Purpose         | Features                       |
+| ------------------ | ------------- | --------------- | ------------------------------ |
+| **Webpack**        | 5.x (Next.js) | Module bundling | Code splitting, optimization   |
+| **Turbopack**      | Latest        | Next.js bundler | Faster builds (development)    |
+| **Vercel**         | Platform      | Deployment      | Edge functions, CDN, analytics |
+| **GitHub Actions** | Latest        | CI/CD           | Automated testing, deployment  |
 
 </div>
 
@@ -459,9 +628,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
-      
+          node-version: "20"
+          cache: "npm"
+
       - run: npm ci
       - run: npm run type-check
       - run: npm run lint
@@ -477,19 +646,19 @@ jobs:
       - uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ## 📊 Monitoring & Analytics
 
 <div className="tech-specs">
 
-| Tool | Version | Purpose | Features |
-|------|---------|---------|---------|
-| **Sentry** | 7.x | Error tracking | Real-time error monitoring, performance |
-| **Vercel Analytics** | Latest | Web analytics | Core web vitals, user insights |
-| **LogRocket** | Latest | Session replay | User behavior analysis |
-| **Uptime Robot** | Service | Uptime monitoring | Availability tracking |
+| Tool                 | Version | Purpose           | Features                                |
+| -------------------- | ------- | ----------------- | --------------------------------------- |
+| **Sentry**           | 7.x     | Error tracking    | Real-time error monitoring, performance |
+| **Vercel Analytics** | Latest  | Web analytics     | Core web vitals, user insights          |
+| **LogRocket**        | Latest  | Session replay    | User behavior analysis                  |
+| **Uptime Robot**     | Service | Uptime monitoring | Availability tracking                   |
 
 </div>
 
@@ -522,15 +691,15 @@ jobs:
 
 ## 🎯 Technology Decision Matrix
 
-| Category | Chosen Technology | Alternatives Considered | Decision Factors |
-|----------|-------------------|-------------------------|------------------|
-| **Frontend Framework** | Next.js 14 | Remix, Nuxt.js, Create React App | SSR/SSG, API routes, deployment ease |
-| **Styling** | Tailwind CSS | Styled Components, Emotion, CSS Modules | Rapid development, consistency |
-| **Database** | PostgreSQL | MySQL, MongoDB, Supabase | ACID compliance, JSON support |
-| **ORM** | Prisma | TypeORM, Drizzle, Sequelize | Type safety, DX, migrations |
-| **Authentication** | Clerk | Auth0, Firebase Auth, NextAuth | Features, pricing, integration |
-| **Payments** | Stripe | PayPal, Square, Paddle | Developer experience, features |
-| **Deployment** | Vercel | Netlify, Railway, AWS | Next.js optimization, edge functions |
+| Category               | Chosen Technology | Alternatives Considered                 | Decision Factors                     |
+| ---------------------- | ----------------- | --------------------------------------- | ------------------------------------ |
+| **Frontend Framework** | Next.js 14        | Remix, Nuxt.js, Create React App        | SSR/SSG, API routes, deployment ease |
+| **Styling**            | Tailwind CSS      | Styled Components, Emotion, CSS Modules | Rapid development, consistency       |
+| **Database**           | PostgreSQL        | MySQL, MongoDB, Supabase                | ACID compliance, JSON support        |
+| **ORM**                | Prisma            | TypeORM, Drizzle, Sequelize             | Type safety, DX, migrations          |
+| **Authentication**     | Clerk             | Auth0, Firebase Auth, NextAuth          | Features, pricing, integration       |
+| **Payments**           | Stripe            | PayPal, Square, Paddle                  | Developer experience, features       |
+| **Deployment**         | Vercel            | Netlify, Railway, AWS                   | Next.js optimization, edge functions |
 
 ## 📈 Performance Metrics
 
@@ -538,20 +707,20 @@ jobs:
 // Performance monitoring configuration
 const performanceConfig = {
   bundleSize: {
-    maxSize: '500KB', // Main bundle
-    chunks: 'async',  // Code splitting strategy
+    maxSize: "500KB", // Main bundle
+    chunks: "async", // Code splitting strategy
   },
   lighthouse: {
     performance: 90,
     accessibility: 95,
     bestPractices: 90,
-    seo: 90
+    seo: 90,
   },
   webVitals: {
-    lcp: 2.5,  // Largest Contentful Paint
-    fid: 100,  // First Input Delay
-    cls: 0.1   // Cumulative Layout Shift
-  }
+    lcp: 2.5, // Largest Contentful Paint
+    fid: 100, // First Input Delay
+    cls: 0.1, // Cumulative Layout Shift
+  },
 };
 ```
 

@@ -1,0 +1,29 @@
+{
+  "id": "architecture/technology-stack",
+  "title": "Technology Stack",
+  "description": "Comprehensive overview of technologies, frameworks, and tools used in BrainiX",
+  "source": "@site/docs/architecture/technology-stack.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/technology-stack",
+  "permalink": "/docs/architecture/technology-stack",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/technology-stack.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2,
+    "title": "Technology Stack",
+    "description": "Comprehensive overview of technologies, frameworks, and tools used in BrainiX"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "System Architecture Overview",
+    "permalink": "/docs/architecture/overview"
+  },
+  "next": {
+    "title": "Database Schema",
+    "permalink": "/docs/architecture/database-schema"
+  }
+}

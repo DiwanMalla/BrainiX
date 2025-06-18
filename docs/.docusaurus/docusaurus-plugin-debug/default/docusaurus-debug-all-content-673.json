@@ -1,0 +1,568 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "loadedVersions": [
+        {
+          "versionName": "current",
+          "label": "Next",
+          "banner": null,
+          "badge": false,
+          "noIndex": false,
+          "className": "docs-version-current",
+          "path": "/docs",
+          "tagsPath": "/docs/tags",
+          "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs",
+          "editUrlLocalized": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "isLast": true,
+          "routePriority": -1,
+          "sidebarFilePath": "/Users/diwanmalla/Desktop/Capstone Project/BrainiX/docs/sidebars.js",
+          "contentPath": "/Users/diwanmalla/Desktop/Capstone Project/BrainiX/docs/docs",
+          "contentPathLocalized": "/Users/diwanmalla/Desktop/Capstone Project/BrainiX/docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "docs": [
+            {
+              "id": "architecture/api-design",
+              "title": "API Design",
+              "description": "Comprehensive REST API architecture and endpoint documentation for BrainiX",
+              "source": "@site/docs/architecture/api-design.md",
+              "sourceDirName": "architecture",
+              "slug": "/architecture/api-design",
+              "permalink": "/docs/architecture/api-design",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/api-design.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "sidebar_position": 4,
+                "title": "API Design",
+                "description": "Comprehensive REST API architecture and endpoint documentation for BrainiX"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Database Schema",
+                "permalink": "/docs/architecture/database-schema"
+              },
+              "next": {
+                "title": "AI Features",
+                "permalink": "/docs/components/ai-features"
+              }
+            },
+            {
+              "id": "architecture/database-schema",
+              "title": "Database Schema",
+              "description": "Comprehensive database design and relationships for the BrainiX Learning Platform",
+              "source": "@site/docs/architecture/database-schema.md",
+              "sourceDirName": "architecture",
+              "slug": "/architecture/database-schema",
+              "permalink": "/docs/architecture/database-schema",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/database-schema.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "sidebar_position": 3,
+                "title": "Database Schema",
+                "description": "Comprehensive database design and relationships for the BrainiX Learning Platform"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Technology Stack",
+                "permalink": "/docs/architecture/technology-stack"
+              },
+              "next": {
+                "title": "API Design",
+                "permalink": "/docs/architecture/api-design"
+              }
+            },
+            {
+              "id": "architecture/overview",
+              "title": "System Architecture Overview",
+              "description": "High-level architecture and design patterns of the BrainiX Learning Platform",
+              "source": "@site/docs/architecture/overview.md",
+              "sourceDirName": "architecture",
+              "slug": "/architecture/overview",
+              "permalink": "/docs/architecture/overview",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/overview.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "sidebar_position": 1,
+                "title": "System Architecture Overview",
+                "description": "High-level architecture and design patterns of the BrainiX Learning Platform"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Welcome to BrainiX",
+                "permalink": "/docs/"
+              },
+              "next": {
+                "title": "Technology Stack",
+                "permalink": "/docs/architecture/technology-stack"
+              }
+            },
+            {
+              "id": "architecture/technology-stack",
+              "title": "Technology Stack",
+              "description": "Comprehensive overview of technologies, frameworks, and tools used in BrainiX",
+              "source": "@site/docs/architecture/technology-stack.md",
+              "sourceDirName": "architecture",
+              "slug": "/architecture/technology-stack",
+              "permalink": "/docs/architecture/technology-stack",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/technology-stack.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "sidebar_position": 2,
+                "title": "Technology Stack",
+                "description": "Comprehensive overview of technologies, frameworks, and tools used in BrainiX"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "System Architecture Overview",
+                "permalink": "/docs/architecture/overview"
+              },
+              "next": {
+                "title": "Database Schema",
+                "permalink": "/docs/architecture/database-schema"
+              }
+            },
+            {
+              "id": "components/ai-features",
+              "title": "AI Features",
+              "description": "The BrainiX platform leverages AI technologies to enhance the learning experience through intelligent quiz generation, personalized recommendations, and chat assistance.",
+              "source": "@site/docs/components/ai-features.md",
+              "sourceDirName": "components",
+              "slug": "/components/ai-features",
+              "permalink": "/docs/components/ai-features",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/ai-features.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "API Design",
+                "permalink": "/docs/architecture/api-design"
+              },
+              "next": {
+                "title": "Authentication System",
+                "permalink": "/docs/components/authentication"
+              }
+            },
+            {
+              "id": "components/ai-features-backup",
+              "title": "AI Features",
+              "description": "The BrainiX platform leverages cutting-edge AI technologies to enhance the learning experience through intelligent quiz generation, personalized course recommendations, and interactive chat assistance.",
+              "source": "@site/docs/components/ai-features-backup.md",
+              "sourceDirName": "components",
+              "slug": "/components/ai-features-backup",
+              "permalink": "/docs/components/ai-features-backup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/ai-features-backup.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {}
+            },
+            {
+              "id": "components/authentication",
+              "title": "Authentication System",
+              "description": "Secure authentication and authorization system using Clerk",
+              "source": "@site/docs/components/authentication.md",
+              "sourceDirName": "components",
+              "slug": "/components/authentication",
+              "permalink": "/docs/components/authentication",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/authentication.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "sidebar_position": 1,
+                "title": "Authentication System",
+                "description": "Secure authentication and authorization system using Clerk"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "AI Features",
+                "permalink": "/docs/components/ai-features"
+              },
+              "next": {
+                "title": "Course Management System",
+                "permalink": "/docs/components/course-management"
+              }
+            },
+            {
+              "id": "components/authentication-backup",
+              "title": "Authentication System",
+              "description": "The BrainiX platform implements a comprehensive authentication and authorization system using Clerk for secure user management with role-based access control.",
+              "source": "@site/docs/components/authentication-backup.md",
+              "sourceDirName": "components",
+              "slug": "/components/authentication-backup",
+              "permalink": "/docs/components/authentication-backup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/authentication-backup.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {}
+            },
+            {
+              "id": "components/course-management",
+              "title": "Course Management System",
+              "description": "The BrainiX platform provides a comprehensive course management system for creating, organizing, and delivering educational content with progress tracking.",
+              "source": "@site/docs/components/course-management.md",
+              "sourceDirName": "components",
+              "slug": "/components/course-management",
+              "permalink": "/docs/components/course-management",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/course-management.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Authentication System",
+                "permalink": "/docs/components/authentication"
+              },
+              "next": {
+                "title": "learning-system",
+                "permalink": "/docs/components/learning-system"
+              }
+            },
+            {
+              "id": "components/course-management-backup",
+              "title": "Course Management System",
+              "description": "The BrainiX platform provides a comprehensive course management system that enables instructors to create, organize, and deliver educational content while tracking student progress and engagement.",
+              "source": "@site/docs/components/course-management-backup.md",
+              "sourceDirName": "components",
+              "slug": "/components/course-management-backup",
+              "permalink": "/docs/components/course-management-backup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/course-management-backup.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {}
+            },
+            {
+              "id": "components/learning-system",
+              "title": "learning-system",
+              "description": "",
+              "source": "@site/docs/components/learning-system.md",
+              "sourceDirName": "components",
+              "slug": "/components/learning-system",
+              "permalink": "/docs/components/learning-system",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/learning-system.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Course Management System",
+                "permalink": "/docs/components/course-management"
+              },
+              "next": {
+                "title": "Payment Processing",
+                "permalink": "/docs/components/payment-processing"
+              }
+            },
+            {
+              "id": "components/learning-system-backup",
+              "title": "Learning System",
+              "description": "The BrainiX learning system provides an immersive and interactive educational experience with comprehensive progress tracking, AI-powered assessments, and personalized learning paths.",
+              "source": "@site/docs/components/learning-system-backup.md",
+              "sourceDirName": "components",
+              "slug": "/components/learning-system-backup",
+              "permalink": "/docs/components/learning-system-backup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/learning-system-backup.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {}
+            },
+            {
+              "id": "components/payment-processing",
+              "title": "Payment Processing",
+              "description": "Secure payment processing with Stripe integration",
+              "source": "@site/docs/components/payment-processing.md",
+              "sourceDirName": "components",
+              "slug": "/components/payment-processing",
+              "permalink": "/docs/components/payment-processing",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/payment-processing.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "sidebar_position": 4,
+                "title": "Payment Processing",
+                "description": "Secure payment processing with Stripe integration"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "learning-system",
+                "permalink": "/docs/components/learning-system"
+              },
+              "next": {
+                "title": "Component System",
+                "permalink": "/docs/frontend/component-system"
+              }
+            },
+            {
+              "id": "components/payment-processing-backup",
+              "title": "Payment Processing",
+              "description": "The BrainiX platform implements secure payment processing using Stripe, featuring multiple payment methods, coupon systems, and order management.",
+              "source": "@site/docs/components/payment-processing-backup.md",
+              "sourceDirName": "components",
+              "slug": "/components/payment-processing-backup",
+              "permalink": "/docs/components/payment-processing-backup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/payment-processing-backup.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {}
+            },
+            {
+              "id": "frontend/component-system",
+              "title": "Component System",
+              "description": "The BrainiX frontend is built with a modern, scalable component architecture using React 18, TypeScript, and a comprehensive design system powered by Radix UI and Shadcn/ui components.",
+              "source": "@site/docs/frontend/component-system.md",
+              "sourceDirName": "frontend",
+              "slug": "/frontend/component-system",
+              "permalink": "/docs/frontend/component-system",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/frontend/component-system.md",
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Payment Processing",
+                "permalink": "/docs/components/payment-processing"
+              }
+            },
+            {
+              "id": "index",
+              "title": "Welcome to BrainiX",
+              "description": "Comprehensive technical documentation for the BrainiX Learning Platform",
+              "source": "@site/docs/index.md",
+              "sourceDirName": ".",
+              "slug": "/",
+              "permalink": "/docs/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/index.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "sidebar_position": 1,
+                "id": "index",
+                "title": "Welcome to BrainiX",
+                "description": "Comprehensive technical documentation for the BrainiX Learning Platform",
+                "keywords": [
+                  "brainix",
+                  "learning platform",
+                  "technical documentation",
+                  "nextjs",
+                  "typescript"
+                ],
+                "slug": "/"
+              },
+              "sidebar": "tutorialSidebar",
+              "previous": {
+                "title": "Introduction",
+                "permalink": "/docs/introduction"
+              },
+              "next": {
+                "title": "System Architecture Overview",
+                "permalink": "/docs/architecture/overview"
+              }
+            },
+            {
+              "id": "introduction",
+              "title": "Introduction",
+              "description": "Comprehensive technical documentation for the BrainiX Learning Platform",
+              "source": "@site/docs/introduction-backup.md",
+              "sourceDirName": ".",
+              "slug": "/introduction",
+              "permalink": "/docs/introduction",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/introduction-backup.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "sidebar_position": 1,
+                "id": "introduction",
+                "title": "Introduction",
+                "description": "Comprehensive technical documentation for the BrainiX Learning Platform",
+                "keywords": [
+                  "brainix",
+                  "learning platform",
+                  "technical documentation",
+                  "nextjs",
+                  "typescript"
+                ]
+              },
+              "sidebar": "tutorialSidebar",
+              "next": {
+                "title": "Welcome to BrainiX",
+                "permalink": "/docs/"
+              }
+            },
+            {
+              "id": "introduction",
+              "title": "Introduction",
+              "description": "Technical documentation for the BrainiX Learning Platform",
+              "source": "@site/docs/introduction.md",
+              "sourceDirName": ".",
+              "slug": "/introduction",
+              "permalink": "/docs/introduction",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/introduction.md",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "sidebar_position": 1,
+                "id": "introduction",
+                "title": "Introduction",
+                "description": "Technical documentation for the BrainiX Learning Platform",
+                "keywords": [
+                  "brainix",
+                  "learning platform",
+                  "nextjs",
+                  "typescript",
+                  "ai",
+                  "education"
+                ]
+              },
+              "sidebar": "tutorialSidebar",
+              "next": {
+                "title": "Welcome to BrainiX",
+                "permalink": "/docs/"
+              }
+            }
+          ],
+          "drafts": [],
+          "sidebars": {
+            "tutorialSidebar": [
+              {
+                "type": "doc",
+                "id": "introduction"
+              },
+              {
+                "type": "doc",
+                "id": "index"
+              },
+              {
+                "type": "category",
+                "label": "Architecture",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "architecture/overview"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "architecture/technology-stack"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "architecture/database-schema"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "architecture/api-design"
+                  }
+                ],
+                "collapsed": true,
+                "collapsible": true
+              },
+              {
+                "type": "category",
+                "label": "Components",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "components/ai-features"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "components/authentication"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "components/course-management"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "components/learning-system"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "components/payment-processing"
+                  }
+                ],
+                "collapsed": true,
+                "collapsible": true
+              },
+              {
+                "type": "category",
+                "label": "Frontend",
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "frontend/component-system"
+                  }
+                ],
+                "collapsed": true,
+                "collapsible": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "docusaurus-plugin-content-blog": {
+    "default": {
+      "blogSidebarTitle": "Recent posts",
+      "blogPosts": [],
+      "blogListPaginated": [],
+      "blogTags": {},
+      "blogTagsListPath": "/blog/tags",
+      "blogTagsPaginated": []
+    }
+  },
+  "docusaurus-plugin-content-pages": {
+    "default": null
+  },
+  "docusaurus-plugin-debug": {},
+  "docusaurus-theme-classic": {},
+  "docusaurus-theme-mermaid": {},
+  "docusaurus-bootstrap-plugin": {},
+  "docusaurus-mdx-fallback-plugin": {}
+}

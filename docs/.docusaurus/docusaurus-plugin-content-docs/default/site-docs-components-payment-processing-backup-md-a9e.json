@@ -1,0 +1,15 @@
+{
+  "id": "components/payment-processing-backup",
+  "title": "Payment Processing",
+  "description": "The BrainiX platform implements secure payment processing using Stripe, featuring multiple payment methods, coupon systems, and order management.",
+  "source": "@site/docs/components/payment-processing-backup.md",
+  "sourceDirName": "components",
+  "slug": "/components/payment-processing-backup",
+  "permalink": "/docs/components/payment-processing-backup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/payment-processing-backup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

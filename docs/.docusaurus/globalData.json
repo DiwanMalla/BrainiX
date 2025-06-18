@@ -1,0 +1,113 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/docs",
+          "mainDocId": "index",
+          "docs": [
+            {
+              "id": "architecture/api-design",
+              "path": "/docs/architecture/api-design",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/database-schema",
+              "path": "/docs/architecture/database-schema",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/overview",
+              "path": "/docs/architecture/overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/technology-stack",
+              "path": "/docs/architecture/technology-stack",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "components/ai-features",
+              "path": "/docs/components/ai-features",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "components/ai-features-backup",
+              "path": "/docs/components/ai-features-backup"
+            },
+            {
+              "id": "components/authentication",
+              "path": "/docs/components/authentication",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "components/authentication-backup",
+              "path": "/docs/components/authentication-backup"
+            },
+            {
+              "id": "components/course-management",
+              "path": "/docs/components/course-management",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "components/course-management-backup",
+              "path": "/docs/components/course-management-backup"
+            },
+            {
+              "id": "components/learning-system",
+              "path": "/docs/components/learning-system",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "components/learning-system-backup",
+              "path": "/docs/components/learning-system-backup"
+            },
+            {
+              "id": "components/payment-processing",
+              "path": "/docs/components/payment-processing",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "components/payment-processing-backup",
+              "path": "/docs/components/payment-processing-backup"
+            },
+            {
+              "id": "frontend/component-system",
+              "path": "/docs/frontend/component-system",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "index",
+              "path": "/docs/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "introduction",
+              "path": "/docs/introduction",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "introduction",
+              "path": "/docs/introduction",
+              "sidebar": "tutorialSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/docs/introduction",
+                "label": "introduction"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

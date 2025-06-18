@@ -1,0 +1,15 @@
+{
+  "id": "components/ai-features-backup",
+  "title": "AI Features",
+  "description": "The BrainiX platform leverages cutting-edge AI technologies to enhance the learning experience through intelligent quiz generation, personalized course recommendations, and interactive chat assistance.",
+  "source": "@site/docs/components/ai-features-backup.md",
+  "sourceDirName": "components",
+  "slug": "/components/ai-features-backup",
+  "permalink": "/docs/components/ai-features-backup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/components/ai-features-backup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

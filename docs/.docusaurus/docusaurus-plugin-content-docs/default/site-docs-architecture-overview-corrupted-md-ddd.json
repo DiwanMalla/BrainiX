@@ -1,0 +1,20 @@
+{
+  "id": "architecture/overview-corrupted",
+  "title": "System Architecture Overview",
+  "description": "High-level architecture and design patterns of the BrainiX Learning Platform",
+  "source": "@site/docs/architecture/overview-corrupted.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/overview-corrupted",
+  "permalink": "/docs/architecture/overview-corrupted",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/overview-corrupted.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1,
+    "title": "System Architecture Overview",
+    "description": "High-level architecture and design patterns of the BrainiX Learning Platform"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "architecture/api-design",
+  "title": "API Design",
+  "description": "Comprehensive REST API architecture and endpoint documentation for BrainiX",
+  "source": "@site/docs/architecture/api-design.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/api-design",
+  "permalink": "/docs/architecture/api-design",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/DiwanMalla/BrainiX/tree/main/docs/docs/architecture/api-design.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_position": 4,
+    "title": "API Design",
+    "description": "Comprehensive REST API architecture and endpoint documentation for BrainiX"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Database Schema",
+    "permalink": "/docs/architecture/database-schema"
+  },
+  "next": {
+    "title": "AI Features",
+    "permalink": "/docs/components/ai-features"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "/__docusaurus/debug-23b": {
+    "__comp": "__comp---theme-debug-config-23-a-2ff",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    }
+  },
+  "/__docusaurus/debug/config-dcc": {
+    "__comp": "__comp---theme-debug-config-23-a-2ff",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    }
+  },
+  "/__docusaurus/debug/content-13d": {
+    "__comp": "__comp---theme-debug-contentba-8-ce7",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    },
+    "allContent": "allContent---docusaurus-debug-content-246-9aa"
+  },
+  "/__docusaurus/debug/globalData-c88": {
+    "__comp": "__comp---theme-debug-global-dataede-0fa",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    }
+  },
+  "/__docusaurus/debug/metadata-8d3": {
+    "__comp": "__comp---theme-debug-site-metadata-68-e-3d4",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    }
+  },
+  "/__docusaurus/debug/registry-1dc": {
+    "__comp": "__comp---theme-debug-registry-679-501",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    }
+  },
+  "/__docusaurus/debug/routes-8ab": {
+    "__comp": "__comp---theme-debug-routes-946-699",
+    "__context": {
+      "plugin": "plugin---docusaurus-debug-09-a-761"
+    }
+  },
+  "/docs-96a": {
+    "__comp": "__comp---theme-docs-root-5-e-9-0b6",
+    "__context": {
+      "plugin": "plugin---docsb-49-369"
+    }
+  },
+  "/docs-b8b": {
+    "__comp": "__comp---theme-doc-version-roota-7-b-5de",
+    "version": "version---docs-935-398"
+  },
+  "/docs-ed7": {
+    "__comp": "__comp---theme-doc-roota-94-67a"
+  },
+  "/docs/-a8c": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-c-37-4d0"
+  },
+  "/docs/architecture/api-design-4ea": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-architecture-api-design-2-d-1-520"
+  },
+  "/docs/architecture/database-schema-b35": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-architecture-database-schemaba-9-31f"
+  },
+  "/docs/architecture/overview-20a": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-architecture-overview-0-b-1-a4c"
+  },
+  "/docs/architecture/technology-stack-a88": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-architecture-technology-stackc-3-b-473"
+  },
+  "/docs/components/ai-features-0ed": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-ai-featuresf-18-e85"
+  },
+  "/docs/components/ai-features-backup-80b": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-ai-features-backup-1-f-5-e72"
+  },
+  "/docs/components/authentication-b04": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-authentication-986-4e3"
+  },
+  "/docs/components/authentication-backup-e37": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-authentication-backup-84-c-39d"
+  },
+  "/docs/components/course-management-2c3": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-course-management-108-22c"
+  },
+  "/docs/components/course-management-backup-616": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-course-management-backupc-23-ab2"
+  },
+  "/docs/components/learning-system-dca": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-learning-systemf-77-7c8"
+  },
+  "/docs/components/learning-system-backup-cff": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-learning-system-backup-1-a-4-c06"
+  },
+  "/docs/components/payment-processing-74c": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-payment-processing-3-ec-5ce"
+  },
+  "/docs/components/payment-processing-backup-b0c": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-components-payment-processing-backupa-9-e-408"
+  },
+  "/docs/frontend/component-system-8ef": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-frontend-component-system-60-d-0fa"
+  },
+  "/docs/introduction-b92": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-introductionc-6-e-70d"
+  },
+  "/docs/introduction-457": {
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-introductiona-09-6b4"
+  }
+}
