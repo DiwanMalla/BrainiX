@@ -18,6 +18,7 @@ export default [
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
       "@next/next/no-img-element": "warn",
+      "react-hooks/exhaustive-deps": "warn",
       "no-var": "error",
     },
   },

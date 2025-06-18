@@ -103,18 +103,19 @@ export default function InstructorAnalyticsPage() {
         setInstructorCourses(coursesWithEnrollments);
 
         // Flatten enrollments for analytics
-        const allEnrollments = coursesWithEnrollments.flatMap((course: Course) =>
-          (course.enrollments || []).map((enrollment: Enrollment) => ({
-            ...enrollment,
-            courseId: course.id,
-            courseTitle: course.title,
-            coursePrice: course.price,
-            courseRating: course.rating,
-          }))
+        const allEnrollments = coursesWithEnrollments.flatMap(
+          (course: Course) =>
+            (course.enrollments || []).map((enrollment: Enrollment) => ({
+              ...enrollment,
+              courseId: course.id,
+              courseTitle: course.title,
+              coursePrice: course.price,
+              courseRating: course.rating,
+            }))
         );
         setEnrollments(allEnrollments);
       } catch (error) {
-        console.error('Analytics error:', error);
+        console.error("Analytics error:", error);
         setError("Failed to load analytics data. Please try again later.");
       } finally {
         setLoading(false);

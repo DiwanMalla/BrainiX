@@ -1,27 +1,27 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const fs = require("fs");
+const path = require("path");
 
 // Configuration for your project
 const config = {
-  baseUrl: 'http://localhost:3000', // Your documentation server
-  outputPath: './documentation.pdf',
-  
+  baseUrl: "http://localhost:3000", // Your documentation server
+  outputPath: "./documentation.pdf",
+
   // Define your pages and their routes
   pages: [
-    { url: '/docs/introduction', title: 'Introduction', author: 'TeamMember1' },
-    { url: '/docs/architecture', title: 'Architecture', author: 'TeamMember2' },
-    { url: '/docs/api-design', title: 'API Design', author: 'TeamMember3' },
+    { url: "/docs/introduction", title: "Introduction", author: "TeamMember1" },
+    { url: "/docs/architecture", title: "Architecture", author: "TeamMember2" },
+    { url: "/docs/api-design", title: "API Design", author: "TeamMember3" },
     // Add more pages as needed
   ],
-  
+
   // Team information for cover page
   teamMembers: {
-    'Member1': 30,
-    'Member2': 25,
-    'Member3': 25,
-    'Member4': 20
-  }
+    Member1: 30,
+    Member2: 25,
+    Member3: 25,
+    Member4: 20,
+  },
 };
 
 // CSS for professional styling
@@ -139,7 +139,7 @@ const documentCSS = `
 function generateCoverPage() {
   const teamMembersList = Object.entries(config.teamMembers)
     .map(([name, percentage]) => `<div>${name}: ${percentage}%</div>`)
-    .join('');
+    .join("");
 
   return `
     ${documentCSS}
@@ -169,7 +169,7 @@ function generateTableOfContents(pageNumbers = null) {
   `;
 
   config.pages.forEach((page, index) => {
-    const pageNum = pageNumbers ? pageNumbers[index] : '--';
+    const pageNum = pageNumbers ? pageNumbers[index] : "--";
     tocHTML += `
       <div class="toc-item">
         <span class="toc-title-text">${page.title}</span>
@@ -185,11 +185,11 @@ function generateTableOfContents(pageNumbers = null) {
 
 // Main PDF generation function
 async function generatePDF() {
-  console.log('🚀 Starting PDF generation...');
-  
+  console.log("🚀 Starting PDF generation...");
+
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   try {
@@ -197,40 +197,40 @@ async function generatePDF() {
     await page.setViewport({ width: 1200, height: 800 });
 
     // Generate cover page
-    console.log('📄 Generating cover page...');
+    console.log("📄 Generating cover page...");
     const coverPageHTML = generateCoverPage();
-    await page.setContent(coverPageHTML, { waitUntil: 'networkidle0' });
+    await page.setContent(coverPageHTML, { waitUntil: "networkidle0" });
     const coverPagePDF = await page.pdf({
-      format: 'A4',
+      format: "A4",
       printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 }
+      margin: { top: 0, right: 0, bottom: 0, left: 0 },
     });
-    fs.writeFileSync('./cover.pdf', coverPagePDF);
+    fs.writeFileSync("./cover.pdf", coverPagePDF);
 
     // Generate table of contents (placeholder)
-    console.log('📋 Generating table of contents...');
+    console.log("📋 Generating table of contents...");
     const tocHTML = generateTableOfContents();
-    await page.setContent(tocHTML, { waitUntil: 'networkidle0' });
+    await page.setContent(tocHTML, { waitUntil: "networkidle0" });
     const tocPDF = await page.pdf({
-      format: 'A4',
+      format: "A4",
       printBackground: true,
-      margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' }
+      margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
     });
-    fs.writeFileSync('./toc.pdf', tocPDF);
+    fs.writeFileSync("./toc.pdf", tocPDF);
 
     // Generate content pages
-    console.log('📚 Generating content pages...');
+    console.log("📚 Generating content pages...");
     const contentPDFs = [];
-    
+
     for (let i = 0; i < config.pages.length; i++) {
       const pageConfig = config.pages[i];
       console.log(`  Processing: ${pageConfig.title}`);
-      
+
       try {
         const url = `${config.baseUrl}${pageConfig.url}`;
-        await page.goto(url, { 
-          waitUntil: 'networkidle0',
-          timeout: 30000 
+        await page.goto(url, {
+          waitUntil: "networkidle0",
+          timeout: 30000,
         });
 
         // Add CSS to hide navigation and style content
@@ -238,26 +238,30 @@ async function generatePDF() {
 
         // Generate PDF for this page
         const contentPDF = await page.pdf({
-          format: 'A4',
+          format: "A4",
           printBackground: true,
-          margin: { top: '25mm', right: '20mm', bottom: '25mm', left: '20mm' }
+          margin: { top: "25mm", right: "20mm", bottom: "25mm", left: "20mm" },
         });
 
-        const filename = `./content-${i + 1}-${pageConfig.title.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+        const filename = `./content-${i + 1}-${pageConfig.title.replace(
+          /[^a-zA-Z0-9]/g,
+          "-"
+        )}.pdf`;
         fs.writeFileSync(filename, contentPDF);
         contentPDFs.push(filename);
-        
+
         console.log(`  ✅ Generated: ${filename}`);
       } catch (error) {
-        console.log(`  ❌ Error generating ${pageConfig.title}: ${error.message}`);
+        console.log(
+          `  ❌ Error generating ${pageConfig.title}: ${error.message}`
+        );
       }
     }
 
-    console.log('✅ Individual PDFs generated successfully!');
+    console.log("✅ Individual PDFs generated successfully!");
     return { coverPagePDF, tocPDF, contentPDFs };
-
   } catch (error) {
-    console.error('❌ Error during PDF generation:', error);
+    console.error("❌ Error during PDF generation:", error);
   } finally {
     await browser.close();
   }
@@ -266,74 +270,87 @@ async function generatePDF() {
 // Merge PDFs into single document
 async function createMergedPDF() {
   try {
-    const { PDFDocument } = require('pdf-lib');
-    
-    console.log('🔄 Merging PDFs...');
+    const { PDFDocument } = require("pdf-lib");
+
+    console.log("🔄 Merging PDFs...");
     const mergedPdf = await PDFDocument.create();
-    
+
     // Add cover page
-    if (fs.existsSync('./cover.pdf')) {
-      const coverPdfBytes = fs.readFileSync('./cover.pdf');
+    if (fs.existsSync("./cover.pdf")) {
+      const coverPdfBytes = fs.readFileSync("./cover.pdf");
       const coverPdf = await PDFDocument.load(coverPdfBytes);
-      const coverPages = await mergedPdf.copyPages(coverPdf, coverPdf.getPageIndices());
-      coverPages.forEach(page => mergedPdf.addPage(page));
+      const coverPages = await mergedPdf.copyPages(
+        coverPdf,
+        coverPdf.getPageIndices()
+      );
+      coverPages.forEach((page) => mergedPdf.addPage(page));
     }
-    
+
     // Add table of contents
-    if (fs.existsSync('./toc.pdf')) {
-      const tocPdfBytes = fs.readFileSync('./toc.pdf');
+    if (fs.existsSync("./toc.pdf")) {
+      const tocPdfBytes = fs.readFileSync("./toc.pdf");
       const tocPdf = await PDFDocument.load(tocPdfBytes);
-      const tocPages = await mergedPdf.copyPages(tocPdf, tocPdf.getPageIndices());
-      tocPages.forEach(page => mergedPdf.addPage(page));
+      const tocPages = await mergedPdf.copyPages(
+        tocPdf,
+        tocPdf.getPageIndices()
+      );
+      tocPages.forEach((page) => mergedPdf.addPage(page));
     }
-    
+
     // Add content pages
     for (let i = 0; i < config.pages.length; i++) {
-      const filename = `./content-${i + 1}-${config.pages[i].title.replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+      const filename = `./content-${i + 1}-${config.pages[i].title.replace(
+        /[^a-zA-Z0-9]/g,
+        "-"
+      )}.pdf`;
       if (fs.existsSync(filename)) {
         const contentPdfBytes = fs.readFileSync(filename);
         const contentPdf = await PDFDocument.load(contentPdfBytes);
-        const contentPages = await mergedPdf.copyPages(contentPdf, contentPdf.getPageIndices());
-        contentPages.forEach(page => mergedPdf.addPage(page));
+        const contentPages = await mergedPdf.copyPages(
+          contentPdf,
+          contentPdf.getPageIndices()
+        );
+        contentPages.forEach((page) => mergedPdf.addPage(page));
       }
     }
-    
+
     // Save merged PDF
     const pdfBytes = await mergedPdf.save();
     fs.writeFileSync(config.outputPath, pdfBytes);
-    
+
     console.log(`✅ Merged PDF created: ${config.outputPath}`);
     console.log(`📊 Total pages: ${mergedPdf.getPageCount()}`);
-    
   } catch (error) {
-    console.log('❌ Error creating merged PDF:', error.message);
+    console.log("❌ Error creating merged PDF:", error.message);
   }
 }
 
 // Main execution
 async function main() {
-  console.log('🚀 Markdown to PDF Converter');
-  console.log('============================\n');
-  
-  console.log('📋 Configuration:');
+  console.log("🚀 Markdown to PDF Converter");
+  console.log("============================\n");
+
+  console.log("📋 Configuration:");
   console.log(`Base URL: ${config.baseUrl}`);
   console.log(`Pages to process: ${config.pages.length}`);
   console.log(`Output: ${config.outputPath}\n`);
-  
+
   // Ensure your documentation server is running
-  console.log('⚠️  Make sure your documentation server is running on localhost:3000\n');
-  
+  console.log(
+    "⚠️  Make sure your documentation server is running on localhost:3000\n"
+  );
+
   await generatePDF();
   await createMergedPDF();
-  
-  console.log('\n🎉 PDF generation completed!');
+
+  console.log("\n🎉 PDF generation completed!");
 }
 
 // Export functions for use in other projects
 module.exports = {
   generatePDF,
   createMergedPDF,
-  config
+  config,
 };
 
 // Run if called directly

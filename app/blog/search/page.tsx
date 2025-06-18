@@ -1,10 +1,10 @@
 // Blog Search Results Page
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
-import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import type { Post } from "@/lib/blog/type";
 import {
   Select,
   SelectContent,
@@ -22,29 +22,11 @@ function BlogPostCardSkeleton() {
   return <div className="animate-pulse rounded-lg bg-muted h-[320px] w-full" />;
 }
 
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  summary: string;
-  content: string;
-  author: {
-    name: string;
-    avatar?: string;
-  };
-  createdAt: string;
-  totalViews: number;
-  _count: {
-    likes: number;
-    comments: number;
-  };
-}
-
-export default function BlogSearchPage() {
+function BlogSearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const [filter, setFilter] = useState("recent");
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -149,5 +131,20 @@ export default function BlogSearchPage() {
         </Suspense>
       )}
     </div>
+  );
+}
+
+export default function BlogSearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto py-10">
+        <div className="text-center py-16">
+          <h1 className="text-2xl font-bold mb-4">Search Blog Posts</h1>
+          <p className="text-muted-foreground">Loading search...</p>
+        </div>
+      </div>
+    }>
+      <BlogSearchContent />
+    </Suspense>
   );
 }

@@ -37,15 +37,15 @@ export default function BlogCommentsPage() {
 
   const handleApprove = async (id: string) => {
     // TODO: Implement API call to approve comment
-    console.log('Approving comment:', id);
+    console.log("Approving comment:", id);
   };
   const handleReject = async (id: string) => {
     // TODO: Implement API call to reject comment
-    console.log('Rejecting comment:', id);
+    console.log("Rejecting comment:", id);
   };
   const handleDelete = async (id: string) => {
     // TODO: Implement API call to delete comment
-    console.log('Deleting comment:', id);
+    console.log("Deleting comment:", id);
   };
 
   return (
