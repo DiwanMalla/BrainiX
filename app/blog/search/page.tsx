@@ -4,7 +4,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
-import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -22,11 +22,29 @@ function BlogPostCardSkeleton() {
   return <div className="animate-pulse rounded-lg bg-muted h-[320px] w-full" />;
 }
 
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  content: string;
+  author: {
+    name: string;
+    avatar?: string;
+  };
+  createdAt: string;
+  totalViews: number;
+  _count: {
+    likes: number;
+    comments: number;
+  };
+}
+
 export default function BlogSearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const [filter, setFilter] = useState("recent");
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

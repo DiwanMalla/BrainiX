@@ -6,16 +6,30 @@ import { Button } from "@/components/ui/button";
 import { PenTool, BookOpen, Search, Bell } from "lucide-react";
 import { useUser, useClerk, UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/theme-toggle";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  content?: string;
+  excerpt?: string;
+  thumbnail?: string;
+  tags?: string[];
+  author: {
+    name: string;
+    avatar?: string;
+  };
+  createdAt: string;
+  totalViews: number;
+  _count: {
+    likes: number;
+    comments: number;
+  };
+}
 
 // Debounce hook
 function useDebounce(value: string, delay: number) {
@@ -29,11 +43,10 @@ function useDebounce(value: string, delay: number) {
 
 export function Header() {
   const { isSignedIn, user } = useUser();
-  const { signOut } = useClerk();
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);

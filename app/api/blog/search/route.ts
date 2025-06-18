@@ -11,7 +11,7 @@ export async function GET(request: Request) {
       return NextResponse.json([]);
     }
 
-    let orderBy: any = { updatedAt: "desc" };
+    let orderBy: Record<string, unknown> = { updatedAt: "desc" };
     if (filter === "popular") orderBy = { totalViews: "desc" };
     if (filter === "trending") orderBy = { likes: { _count: "desc" } };
     if (filter === "discussed") orderBy = { comments: { _count: "desc" } };

@@ -21,7 +21,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Sun, Moon, HelpCircle, AlertTriangle } from "lucide-react";
+import { HelpCircle, AlertTriangle } from "lucide-react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({

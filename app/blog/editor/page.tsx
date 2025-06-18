@@ -9,7 +9,8 @@ export default function BlogPostEditorPage() {
   const searchParams = useSearchParams();
   const postId = searchParams.get("id");
 
-  // You can fetch the post by id and pass to BlogPostForm for editing
+  // TODO: Fetch the post by id and pass to BlogPostForm for editing
   // For now, just render the form for creating
+  console.log('Editor loaded for post:', postId || 'new post');
   return <BlogPostForm />;
 }

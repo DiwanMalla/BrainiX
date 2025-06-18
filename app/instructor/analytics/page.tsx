@@ -34,6 +34,7 @@ interface Course {
   price: number;
   discount?: number;
   rating: number;
+  enrollments?: Enrollment[];
 }
 
 interface Enrollment {
@@ -44,9 +45,22 @@ interface Enrollment {
   lastActive: string;
 }
 
-interface Student {
+interface Enrollment {
   id: string;
-  enrollments: Enrollment[];
+  enrolledAt: string;
+  createdAt: string;
+  progress: number;
+  course: Course;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  userId?: string;
+  courseId: string;
+  courseTitle: string;
+  status: string;
+  lastActive: string;
 }
 
 export default function InstructorAnalyticsPage() {
@@ -55,7 +69,7 @@ export default function InstructorAnalyticsPage() {
   const router = useRouter();
 
   const [instructorCourses, setInstructorCourses] = useState<Course[]>([]);
-  const [enrollments, setEnrollments] = useState<any[]>([]); // Flat enrollments for analytics
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]); // Flat enrollments for analytics
   const [stats, setStats] = useState({
     totalRevenue: 0,
     totalStudents: 0,
@@ -89,8 +103,8 @@ export default function InstructorAnalyticsPage() {
         setInstructorCourses(coursesWithEnrollments);
 
         // Flatten enrollments for analytics
-        const allEnrollments = coursesWithEnrollments.flatMap((course: any) =>
-          (course.enrollments || []).map((enrollment: any) => ({
+        const allEnrollments = coursesWithEnrollments.flatMap((course: Course) =>
+          (course.enrollments || []).map((enrollment: Enrollment) => ({
             ...enrollment,
             courseId: course.id,
             courseTitle: course.title,
@@ -99,7 +113,8 @@ export default function InstructorAnalyticsPage() {
           }))
         );
         setEnrollments(allEnrollments);
-      } catch (err) {
+      } catch (error) {
+        console.error('Analytics error:', error);
         setError("Failed to load analytics data. Please try again later.");
       } finally {
         setLoading(false);
